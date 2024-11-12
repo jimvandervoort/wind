@@ -8,6 +8,11 @@ const spots = [
     url: 'https://www.windguru.cz/137630',
   },
   {
+    name: 'Dolphin 🐬️',
+    slug: 'dolphin',
+    url: 'https://www.windguru.cz/206959',
+  },
+  {
     name: 'Big Bay 🍆',
     slug: 'bigbay',
     url: 'https://www.windguru.cz/131599',
