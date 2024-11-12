@@ -1,6 +1,6 @@
 import data from '../data.json'
 
-const minKnots = 20;
+const minKnots = 13;
 const minHour = 8;
 const maxHour = 20;
 const maxDays = 100;

@@ -79,9 +79,14 @@ async function run() {
     headless: false,
   });
 
-  const data = await loadSpots(browser);
-  fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
-  await browser.close();
+  try {
+    const data = await loadSpots(browser);
+    fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await browser.close();
+  }
 }
 
 
