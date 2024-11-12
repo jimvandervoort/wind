@@ -8,9 +8,9 @@ const spots = [
     url: 'https://www.windguru.cz/137630',
   },
   {
-    name: 'Misty Cliffs 👻',
-    slug: 'misty',
-    url: 'https://www.windguru.cz/208280',
+    name: 'Big Bay 🍆',
+    slug: 'bigbay',
+    url: 'https://www.windguru.cz/131599',
   },
   {
     name: 'Langebaan 🦭',
@@ -18,15 +18,15 @@ const spots = [
     url: 'https://www.windguru.cz/21691',
   },
   {
+    name: 'Misty Cliffs 👻',
+    slug: 'misty',
+    url: 'https://www.windguru.cz/208280',
+  },
+  {
     name: 'Witsands 🏖️',
     slug: 'witsands',
     url: 'https://www.windguru.cz/131693',
   },
-  {
-    name: 'Platboom 🌴',
-    slug: 'platboom',
-    url: 'https://www.windguru.cz/208281',
-  }
 ]
 
 async function getSpotData(browser, spotUrl) {
