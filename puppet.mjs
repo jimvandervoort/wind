@@ -35,6 +35,7 @@ async function getSpotData(browser, spotUrl) {
   await Promise.all([
     page.waitForSelector('#tabid_0_0_dates'),
     page.waitForSelector('#tabid_0_0_GUST'),
+    page.waitForSelector('#tabid_0_0_WINDSPD'),
   ]);
 
   const dates = await page.$eval('#tabid_0_0_dates',
@@ -49,6 +50,13 @@ async function getSpotData(browser, spotUrl) {
     })
   );
 
+  const wind = await page.$eval('#tabid_0_0_WINDSPD',
+    el => Array.from(el.querySelectorAll('td')).map(td => ({
+      value: parseInt(td.textContent, 10),
+      style: td.getAttribute('style'),
+    }))
+  );
+
   const gusts = await page.$eval('#tabid_0_0_GUST',
     el => Array.from(el.querySelectorAll('td')).map(td => ({
       value: parseInt(td.textContent, 10),
@@ -59,8 +67,9 @@ async function getSpotData(browser, spotUrl) {
   await page.close();
 
   return {
+    wind,
     dates,
-    gusts
+    gusts,
   }
 }
 
