@@ -3,7 +3,7 @@ import data from '../data.json'
 const minKnots = 23;
 const minHour = 8;
 const maxHour = 20;
-const maxDays = 14;
+const maxDays = 8;
 
 const dayNameMap = {
   'Mo': 'MON',

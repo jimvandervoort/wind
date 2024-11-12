@@ -1,6 +1,17 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
+function getRandomSurferEmoji() {
+  const baseSurfer = '\u{1F3C4}'; // Base surfer emoji
+  const genders = ['\u{200D}\u{2640}\u{FE0F}', '\u{200D}\u{2642}\u{FE0F}']; // Female and Male modifiers
+  const skinTones = ['\u{1F3FB}', '\u{1F3FC}', '\u{1F3FD}', '\u{1F3FE}', '\u{1F3FF}']; // Skin tone modifiers
+
+  const randomGender = genders[Math.floor(Math.random() * genders.length)];
+  const randomSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)];
+
+  return baseSurfer + randomSkinTone + randomGender;
+}
+
 const spots = [
   {
     name: 'Khaya Beach 🐕',
@@ -13,12 +24,12 @@ const spots = [
     url: 'https://www.windguru.cz/206959',
   },
   {
-    name: 'Big Bay 🍆',
+    name: `Big Bay ${getRandomSurferEmoji()}`,
     slug: 'bigbay',
     url: 'https://www.windguru.cz/131599',
   },
   {
-    name: 'Langebaan 🦭',
+    name:'Langebaan 🦭',
     slug: 'langebaan',
     url: 'https://www.windguru.cz/21691',
   },
