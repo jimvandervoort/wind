@@ -3,6 +3,8 @@ const minHour = 8;
 const maxHour = 20;
 const maxDays = 7;
 
+const macWindSpots = ['khaya']
+
 const dayNameMap = {
   'Mo': 'MON',
   'Tu': 'TUE',
@@ -31,6 +33,29 @@ function mapRangeClamp(n, a, b, c, d) {
 function worthyDays(day) {
   day.forecast = day.forecast.filter(forecast => forecast.gust.value >= minKnots && forecast.time >= minHour && forecast.time <= maxHour);
   return day;
+}
+
+function mapWindDirection(str) {
+  const dirs = {
+    N: 0,
+    NNE: 22.5,
+    NE: 45,
+    ENE: 67.5,
+    E: 90,
+    ESE: 112.5,
+    SE: 135,
+    SSE: 157.5,
+    S: 180,
+    SSW: 202.5,
+    SW: 225,
+    WSW: 247.5,
+    W: 270,
+    WNW: 292.5,
+    NW: 315,
+    NNW: 337.5,
+  };
+
+  return dirs[str] - 180;
 }
 
 function styleWave(w) {
@@ -105,8 +130,28 @@ function processSpot(spot) {
   };
 }
 
-export function makeReport(data) {
-  const spots = data.map(spot => processSpot(spot));
+function addWind(spot, macWind) {
+  const last = macWind[macWind.length - 1];
+  const deg = mapWindDirection(last.dir);
+
+  if (macWindSpots.includes(spot.spot.slug)) {
+    return {
+      ...spot,
+      live: {
+        ...last,
+        deg,
+      }
+    }
+  }
+
+  return spot;
+}
+
+export function makeReport(data, macWind) {
+  const spots = data
+    .map(spot => processSpot(spot))
+    .map(spot => addWind(spot, macWind))
+
   console.log(spots);
 
   return spots;

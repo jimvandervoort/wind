@@ -5,11 +5,24 @@ defineProps({
 </script>
 
 <template>
-  <h1 class="pt-20 pl-8 mb-1 text-4xl mb-2 font-semibold i">{{ spot.spot.name }}</h1>
-  <div class="flex flex-row flex-wrap items-end gap-0">
+  <div class="flex flex-row justify-between pl-8 pr-12 mt-8">
+    <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
+    <div class="flex">
+      <p v-if="spot.live" class="fira-code text-xs text-left mr-6">
+        {{ spot.live.low }} - {{ spot.live.high }} knts
+        <br/>
+        Direction: {{ spot.live.dir }}
+        <svg class="size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+        </svg>
+      </p>
+      <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>
+    </div>
+  </div>
+  <div class="flex flex-row flex-wrap mb-12">
     <template v-for="day in spot.days">
       <div class="flex flex-row items-end fira-code">
-        <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5" v-if="day.hasWind">{{ day.name }}</h2>
+        <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.hasWind">{{ day.name }}</h2>
         <template v-else>
           <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h2>
           <div class="h-16"></div>
@@ -18,8 +31,9 @@ defineProps({
           <div class="gust w-12 flex flex-col justify-end pl-1"
                :style="`${fc.gust.style}; --wo: ${fc.waveOpacity}; --wave: '${fc.waveStr}'; --wp: ${fc.wavePos}`">
             <div class="dir opacity-90" :style="`--deg: ${fc.deg}`">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="size-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4"
+                   stroke="currentColor" class="size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
               </svg>
             </div>
             <span class="">{{ fc.wind.value }}</span>
@@ -47,7 +61,6 @@ h2 {
 
 .gust {
   position: relative;
-  z-index: 10;
 }
 
 .gust::before {
@@ -63,7 +76,6 @@ h2 {
   left: 0;
   width: 43%;
   height: 100%;
-  z-index: 0;
 }
 
 .gust::after {
@@ -73,9 +85,5 @@ h2 {
   font-size: .8rem;
   opacity: 1;
   top: -1.0rem;
-}
-
-.gust span {
-  z-index: 10;
 }
 </style>
