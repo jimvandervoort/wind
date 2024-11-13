@@ -1,5 +1,3 @@
-import data from '../data.json'
-
 const minKnots = 23;
 const minHour = 8;
 const maxHour = 20;
@@ -18,6 +16,16 @@ const dayNameMap = {
 // Takes a number "n" and maps it from the range [a, b] to the range [c, d]
 function mapRange(n, a, b, c, d) {
   return (n - a) * (d - c) / (b - a) + c;
+}
+
+function mapRangeClamp(n, a, b, c, d) {
+  const m = mapRange(n, a, b, c, d);
+
+  if (c < d) {
+    return Math.min(Math.max(m, c), d);
+  }
+
+  return Math.max(Math.min(m, c), d);
 }
 
 function worthyDays(day) {
@@ -60,7 +68,8 @@ function processSpot(spot) {
       gust: spot.data.gusts[i],
       wind: spot.data.wind[i],
       wave: spot.data.waves[i],
-      waveOpacity: mapRange(spot.data.waves[i], 1.5, 4, 0, 1),
+      waveOpacity: mapRangeClamp(spot.data.waves[i], 1, 4, 0.4, 1),
+      wavePos:  `${mapRangeClamp(spot.data.waves[i], 1, 4, 150, 120)}%`,
     }
   });
 
@@ -80,7 +89,7 @@ function processSpot(spot) {
   };
 }
 
-export function makeReport() {
+export function makeReport(data) {
   const spots = data.map(spot => processSpot(spot));
   console.log(spots);
 
