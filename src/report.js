@@ -63,13 +63,14 @@ function mapToDay(combined) {
 
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
+    const w = spot.data.waves[i];
     return {
       ...day,
       gust: spot.data.gusts[i],
       wind: spot.data.wind[i],
-      wave: spot.data.waves[i],
-      waveOpacity: mapRangeClamp(spot.data.waves[i], 1, 4, 0.4, 1),
-      wavePos:  `${mapRangeClamp(spot.data.waves[i], 1, 4, 150, 120)}%`,
+      wave: w,
+      waveOpacity: w > 0 ? mapRangeClamp(w, 1, 4, 0.4, 1) : 0,
+      wavePos:  `${mapRangeClamp(w, 1, 4, 150, 120)}%`,
     }
   });
 

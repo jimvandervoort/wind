@@ -17,11 +17,11 @@ const spots = [
     slug: 'bigbay',
     url: 'https://www.windguru.cz/131599',
   },
-  // {
-  //   name: 'Langebaan 🦭',
-  //   slug: 'langebaan',
-  //   url: 'https://www.windguru.cz/21691',
-  // },
+  {
+    name: 'Langebaan 🦭',
+    slug: 'langebaan',
+    url: 'https://www.windguru.cz/21691',
+  },
   {
     name: 'Misty Cliffs 👻',
     slug: 'misty',
@@ -34,6 +34,17 @@ const spots = [
   },
 ]
 
+async function getWaves(page, len) {
+  const hasWaves = !!await page.$('#tabid_0_0_HTSGW');
+  if (hasWaves) {
+    return page.$eval('#tabid_0_0_HTSGW',
+      el => Array.from(el.querySelectorAll('td')).map(td => parseFloat(td.textContent))
+    );
+  }
+
+  return Array(len).fill(0);
+}
+
 async function getSpotData(browser, spotUrl) {
   const page = await browser.newPage();
   await page.goto(spotUrl);
@@ -41,7 +52,6 @@ async function getSpotData(browser, spotUrl) {
     page.waitForSelector('#tabid_0_0_dates'),
     page.waitForSelector('#tabid_0_0_GUST'),
     page.waitForSelector('#tabid_0_0_WINDSPD'),
-    page.waitForSelector('#tabid_0_0_HTSGW'),
   ]);
 
   const dates = await page.$eval('#tabid_0_0_dates',
@@ -63,16 +73,14 @@ async function getSpotData(browser, spotUrl) {
     }))
   );
 
-  const waves = await page.$eval('#tabid_0_0_HTSGW',
-    el => Array.from(el.querySelectorAll('td')).map(td => parseFloat(td.textContent))
-  );
-
   const gusts = await page.$eval('#tabid_0_0_GUST',
     el => Array.from(el.querySelectorAll('td')).map(td => ({
       value: parseInt(td.textContent, 10),
       style: td.getAttribute('style'),
     }))
   );
+
+  const waves = await getWaves(page, gusts.length);
 
   await page.close();
 
