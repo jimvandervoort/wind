@@ -11,7 +11,7 @@ defineProps({
       <div class="flex flex-row items-end fira-code">
         <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5" v-if="day.hasWind">{{ day.name }}</h2>
         <template v-else>
-          <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-white">{{ day.name }}</h2>
+          <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-600">{{ day.name }}</h2>
           <div class="h-16"></div>
         </template>
         <div v-for="fc in day.forecast" class="mt-6">
