@@ -62,7 +62,7 @@ h2 {
 
 .gust::before {
   content: '';
-  background-image: urL("https://em-content.zobj.net/source/apple/391/water-wave_1f30a.png");
+  background-image: urL("/assets/wave.png");
   background-repeat: no-repeat;
   background-size: 130% auto;
   overflow: hidden;
