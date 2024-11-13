@@ -56,7 +56,7 @@ h2 {
   position: absolute;
   right: .1rem;
   font-size: .8rem;
-  opacity: var(--wo);
+  opacity: 1;
   top: -1.0rem;
 }
 

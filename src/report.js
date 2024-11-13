@@ -1,4 +1,4 @@
-const minKnots = 23;
+const minKnots = 20;
 const minHour = 8;
 const maxHour = 20;
 const maxDays = 7;
@@ -35,9 +35,9 @@ function worthyDays(day) {
 
 function styleWave(w) {
   return {
-    wave: w,
-    waveOpacity: w > 0 ? mapRangeClamp(w, 1, 4, 0.4, 1) : 0,
-    wavePos: `${mapRangeClamp(w, 1, 4, 150, 120)}%`,
+    wave: w > 0 ? w : '',
+    waveOpacity: w > 0 ? mapRangeClamp(w, 1, 3, .5, 1) : 0,
+    wavePos: `${mapRangeClamp(w, 1, 4, 160, 110)}%`,
   }
 }
 
