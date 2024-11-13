@@ -42,6 +42,16 @@ function styleWave(w) {
   }
 }
 
+function styleDir(dirStr) {
+  const dir = parseInt(dirStr.deg.match(/\((\d+)°\)/)[1], 10)
+
+  return {
+    dir,
+    dirStr,
+    deg: `${dir - 180}deg`,
+  }
+}
+
 function mapToDay(combined) {
   const result = [];
 
@@ -72,17 +82,12 @@ function mapToDay(combined) {
 
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
-    const dirStr = spot.data.dir[i]
-    const dir = parseInt(dirStr.deg.match(/\((\d+)°\)/)[1], 10)
-
     return {
       ...day,
       ...styleWave(spot.data.waves[i]),
+      ...styleDir(spot.data.dir[i]),
       gust: spot.data.gusts[i],
       wind: spot.data.wind[i],
-      dir,
-      dirStr,
-      deg: `${dir - 180}deg`,
     }
   });
 
