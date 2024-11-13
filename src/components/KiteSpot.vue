@@ -15,7 +15,7 @@ defineProps({
           <div class="h-16"></div>
         </template>
         <div v-for="fc in day.forecast" class="mt-6">
-          <div class="gust h-16 w-12 flex flex-col justify-end pl-1" :style="`${fc.gust.style}; --wo: ${fc.waveOpacity}; --wave: '${fc.wave}'; --wp: ${fc.wavePos}`">
+          <div class="gust h-16 w-12 flex flex-col justify-end pl-1" :style="`${fc.gust.style}; --wo: ${fc.waveOpacity}; --wave: '${fc.waveStr}'; --wp: ${fc.wavePos}`">
             <span class="font-bold">{{ fc.gust.value }}</span>
             <span class="">{{ fc.timeStr }}</span>
           </div>
