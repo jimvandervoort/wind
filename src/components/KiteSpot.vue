@@ -5,23 +5,24 @@ defineProps({
 </script>
 
 <template>
-  <h1 class="pt-20 pl-3 mb-1 text-4xl mb-2 font-semibold i">{{ spot.spot.name }}</h1>
+  <h1 class="pt-20 pl-8 mb-1 text-4xl mb-2 font-semibold i">{{ spot.spot.name }}</h1>
   <div class="flex flex-row flex-wrap items-end gap-0">
     <template v-for="day in spot.days">
       <div class="flex flex-row items-end fira-code">
         <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5" v-if="day.hasWind">{{ day.name }}</h2>
         <template v-else>
-          <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-600">{{ day.name }}</h2>
+          <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h2>
           <div class="h-16"></div>
         </template>
         <div v-for="fc in day.forecast" class="mt-6">
-          <div class="gust h-16 w-12 flex flex-col justify-end pl-1"
+          <div class="gust w-12 flex flex-col justify-end pl-1"
                :style="`${fc.gust.style}; --wo: ${fc.waveOpacity}; --wave: '${fc.waveStr}'; --wp: ${fc.wavePos}`">
             <div class="dir opacity-90" :style="`--deg: ${fc.deg}`">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor" class="size-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
               </svg>
             </div>
+            <span class="">{{ fc.wind.value }}</span>
             <span class="font-bold">{{ fc.gust.value }}</span>
             <span class="">{{ fc.timeStr }}</span>
           </div>
