@@ -7,17 +7,14 @@ defineProps({
 <template>
   <div class="flex flex-row justify-between pl-8 pr-12 mt-8">
     <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
-    <div class="flex">
-      <p v-if="spot.live" class="fira-code text-xs text-left mr-6">
-        {{ spot.live.low }} - {{ spot.live.high }} knts
-        <br/>
-        Direction: {{ spot.live.dir }}
-        <svg class="size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-        </svg>
-      </p>
-      <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>
-    </div>
+    <p v-if="spot.live" class="fira-code text-xs text-left tracking-tighter text-lg font-semibold mr-6">
+      Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts {{ spot.live.dir }}
+      <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`" xmlns="http://www.w3.org/2000/svg"
+           fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+      </svg>
+    </p>
+    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>
   </div>
   <div class="flex flex-row flex-wrap mb-12">
     <template v-for="day in spot.days">
