@@ -1,7 +1,7 @@
 const minKnots = 20;
 const minHour = 8;
 const maxHour = 20;
-const maxDays = 7;
+const maxDays = 6;
 
 const macWindSpots = ['khaya']
 
