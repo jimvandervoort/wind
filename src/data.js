@@ -43,7 +43,7 @@ function makeDays({dates, gusts}) {
       result.push({
         name: dates[i].dayName,
         num: dates[i].dayNum,
-        gusts: []
+        forecast: []
       });
     }
 

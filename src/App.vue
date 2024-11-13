@@ -1,8 +1,8 @@
 <script setup>
 import KiteSpots from './components/KiteSpots.vue'
-import {ingest} from './data.js'
+import {makeReport} from './report.js'
 
-const spots = ingest();
+const spots = makeReport();
 </script>
 
 <template>

@@ -1,17 +1,6 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
-function getRandomSurferEmoji() {
-  const baseSurfer = '\u{1F3C4}'; // Base surfer emoji
-  const genders = ['\u{200D}\u{2640}\u{FE0F}', '\u{200D}\u{2642}\u{FE0F}']; // Female and Male modifiers
-  const skinTones = ['\u{1F3FB}', '\u{1F3FC}', '\u{1F3FD}', '\u{1F3FE}', '\u{1F3FF}']; // Skin tone modifiers
-
-  const randomGender = genders[Math.floor(Math.random() * genders.length)];
-  const randomSkinTone = skinTones[Math.floor(Math.random() * skinTones.length)];
-
-  return baseSurfer + randomSkinTone + randomGender;
-}
-
 const spots = [
   {
     name: 'Khaya Beach 🐕',
@@ -24,15 +13,15 @@ const spots = [
     url: 'https://www.windguru.cz/206959',
   },
   {
-    name: `Big Bay ${getRandomSurferEmoji()}`,
+    name: 'Big Bay 🍆',
     slug: 'bigbay',
     url: 'https://www.windguru.cz/131599',
   },
-  {
-    name:'Langebaan 🦭',
-    slug: 'langebaan',
-    url: 'https://www.windguru.cz/21691',
-  },
+  // {
+  //   name: 'Langebaan 🦭',
+  //   slug: 'langebaan',
+  //   url: 'https://www.windguru.cz/21691',
+  // },
   {
     name: 'Misty Cliffs 👻',
     slug: 'misty',
@@ -41,7 +30,7 @@ const spots = [
   {
     name: 'Witsands 🏖️',
     slug: 'witsands',
-    url: 'https://www.windguru.cz/131693',
+    url: 'https://www.windguru.cz/131707',
   },
 ]
 
@@ -52,6 +41,7 @@ async function getSpotData(browser, spotUrl) {
     page.waitForSelector('#tabid_0_0_dates'),
     page.waitForSelector('#tabid_0_0_GUST'),
     page.waitForSelector('#tabid_0_0_WINDSPD'),
+    page.waitForSelector('#tabid_0_0_HTSGW'),
   ]);
 
   const dates = await page.$eval('#tabid_0_0_dates',
@@ -73,6 +63,10 @@ async function getSpotData(browser, spotUrl) {
     }))
   );
 
+  const waves = await page.$eval('#tabid_0_0_HTSGW',
+    el => Array.from(el.querySelectorAll('td')).map(td => parseFloat(td.textContent))
+  );
+
   const gusts = await page.$eval('#tabid_0_0_GUST',
     el => Array.from(el.querySelectorAll('td')).map(td => ({
       value: parseInt(td.textContent, 10),
@@ -86,6 +80,7 @@ async function getSpotData(browser, spotUrl) {
     wind,
     dates,
     gusts,
+    waves,
   }
 }
 
@@ -113,6 +108,5 @@ async function run() {
     await browser.close();
   }
 }
-
 
 await run();
