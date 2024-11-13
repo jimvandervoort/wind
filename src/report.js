@@ -33,6 +33,14 @@ function worthyDays(day) {
   return day;
 }
 
+function styleWave(w) {
+  return {
+    wave: w,
+    waveOpacity: w > 0 ? mapRangeClamp(w, 1, 4, 0.4, 1) : 0,
+    wavePos: `${mapRangeClamp(w, 1, 4, 150, 120)}%`,
+  }
+}
+
 function mapToDay(combined) {
   const result = [];
 
@@ -63,14 +71,11 @@ function mapToDay(combined) {
 
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
-    const w = spot.data.waves[i];
     return {
       ...day,
       gust: spot.data.gusts[i],
       wind: spot.data.wind[i],
-      wave: w,
-      waveOpacity: w > 0 ? mapRangeClamp(w, 1, 4, 0.4, 1) : 0,
-      wavePos:  `${mapRangeClamp(w, 1, 4, 150, 120)}%`,
+      ...styleWave(spot.data.waves[i]),
     }
   });
 
@@ -79,7 +84,7 @@ function processSpot(spot) {
     hasWind: day.forecast.length > 0,
   })).filter(day => {
     const maxUnixTime = new Date().getTime() / 1000 + maxDays * 24 * 60 * 60;
-    return  day.unixTime < maxUnixTime;
+    return day.unixTime < maxUnixTime;
   });
 
   return {
