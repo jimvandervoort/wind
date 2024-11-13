@@ -52,6 +52,7 @@ async function getSpotData(browser, spotUrl) {
     page.waitForSelector('#tabid_0_0_dates'),
     page.waitForSelector('#tabid_0_0_GUST'),
     page.waitForSelector('#tabid_0_0_WINDSPD'),
+    page.waitForSelector('#tabid_0_0_SMER'),
   ]);
 
   const dates = await page.$eval('#tabid_0_0_dates',
@@ -80,6 +81,11 @@ async function getSpotData(browser, spotUrl) {
     }))
   );
 
+  const dir = await page.$eval('#tabid_0_0_SMER', el => Array.from(el.querySelectorAll('td')).map(td => ({
+    transform: td.querySelector('g').getAttribute('transform').replace(/ translate(.*)/, ''),
+    deg: td.querySelector('span').title,
+  })));
+
   const waves = await getWaves(page, gusts.length);
 
   await page.close();
@@ -89,6 +95,7 @@ async function getSpotData(browser, spotUrl) {
     dates,
     gusts,
     waves,
+    dir,
   }
 }
 

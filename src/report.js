@@ -72,11 +72,17 @@ function mapToDay(combined) {
 
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
+    const dirStr = spot.data.dir[i]
+    const dir = parseInt(dirStr.deg.match(/\((\d+)°\)/)[1], 10)
+
     return {
       ...day,
+      ...styleWave(spot.data.waves[i]),
       gust: spot.data.gusts[i],
       wind: spot.data.wind[i],
-      ...styleWave(spot.data.waves[i]),
+      dir,
+      dirStr,
+      deg: `${dir - 180}deg`,
     }
   });
 
