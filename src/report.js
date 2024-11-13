@@ -81,8 +81,6 @@ function processSpot(spot) {
     return  day.unixTime < maxUnixTime;
   });
 
-  delete spot.data;
-
   return {
     spot,
     days: days,
