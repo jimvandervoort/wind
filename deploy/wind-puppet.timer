@@ -2,7 +2,7 @@
 Description=Scrape windguru
 
 [Timer]
-OnCalendar=*:0/5
+OnCalendar=*:0/4
 Persistent=true
 
 [Install]
