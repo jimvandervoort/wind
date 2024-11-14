@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Data
-data.json
-wind.json
+public/*.json

@@ -1,12 +1,13 @@
 <script setup>
 import KiteSpots from './components/KiteSpots.vue';
-import {makeReport} from './report.js';
-import data from '../data.json';
-import macWind from '../wind.json';
+import {useFetchInterval} from "./useFetchInterval.js";
 
-const spots = makeReport(data, macWind);
+const { report, error } = useFetchInterval();
+if (error) {
+  console.error(error);
+}
 </script>
 
 <template>
-  <KiteSpots :spots="spots"/>
+  <KiteSpots :spots="report"/>
 </template>

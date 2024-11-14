@@ -1,0 +1,23 @@
+[Unit]
+Description=Wind Nginx Docker Container Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+# Stop and remove any existing container named 'wind_nginx'
+ExecStartPre=-/usr/bin/docker stop wind_nginx
+ExecStartPre=-/usr/bin/docker rm wind_nginx
+# Create a new container named 'wind_nginx'
+ExecStartPre=/usr/bin/docker create \
+    --name wind_nginx \
+    -p 80:80 \
+    -v /root/wind/dist:/usr/share/nginx/html:ro \
+    nginx:latest
+# Start the container
+ExecStart=/usr/bin/docker start -a wind_nginx
+# Stop the container on service stop
+ExecStop=/usr/bin/docker stop wind_nginx
+
+[Install]
+WantedBy=multi-user.target

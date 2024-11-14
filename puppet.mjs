@@ -57,6 +57,8 @@ async function getWaves(page, len) {
 }
 
 async function getSpotData(browser, spotUrl) {
+  console.log('Loading url:', spotUrl);
+
   const page = await browser.newPage();
   await page.goto(spotUrl);
   await Promise.all([
@@ -65,6 +67,8 @@ async function getSpotData(browser, spotUrl) {
     page.waitForSelector('#tabid_0_0_WINDSPD'),
     page.waitForSelector('#tabid_0_0_SMER'),
   ]);
+
+  console.log('Page load complete');
 
   const dates = await page.$eval('#tabid_0_0_dates',
     el => Array.from(el.querySelectorAll('td')).map(td => {
@@ -101,6 +105,8 @@ async function getSpotData(browser, spotUrl) {
 
   await page.close();
 
+  console.log('Processed spot complete');
+
   return {
     wind,
     dates,
@@ -111,28 +117,37 @@ async function getSpotData(browser, spotUrl) {
 }
 
 async function loadSpots(browser) {
-  const datas = spots.map(async spot => {
-    return {
+  const datas = [];
+  for (const spot of spots) {
+    console.log('Processing:', spot.slug);
+    const data = await getSpotData(browser, spot.url);
+    datas.push({
       ...spot,
-      data: await getSpotData(browser, spot.url)
-    }
-  });
+      data
+    });
+  }
   return await Promise.all(datas);
 }
 
 async function run() {
+  console.log('Launching browser');
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   try {
     const data = await loadSpots(browser);
-    fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+    console.log('Saving result');
+    fs.writeFileSync('dist/data.json', JSON.stringify(data, null, 2));
   } catch (e) {
     console.error(e);
+    process.exitCode = 1;
   } finally {
     await browser.close();
   }
+
+  console.log('Have a nice day!')
 }
 
 await run();
