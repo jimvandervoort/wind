@@ -62,7 +62,7 @@ function styleWave(w) {
   return {
     wave: w > 0 ? w : '',
     waveStr: w > 0 ? w.toFixed(1) : '',
-    waveOpacity: w > 0 ? mapRangeClamp(w, 1, 3, .5, 1) : 0,
+    waveOpacity: w > 0 ? mapRangeClamp(w, 1, 3, 1, 1) : 0,
     wavePos: `${mapRangeClamp(w, 0, 4, 160, 110)}%`,
   }
 }
