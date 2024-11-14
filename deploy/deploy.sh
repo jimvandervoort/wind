@@ -6,6 +6,7 @@ ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
 
 npm run build
+cp dist/*.png dist/assets
 rm -f dist/*.json
 scp -r dist/* wind:wind/dist
 
@@ -15,6 +16,8 @@ ssh wind chmod +x /bin/wind-fetch.sh
 scp deploy/*.{service,timer} wind:/etc/systemd/system
 
 docker --context wind build -t wind .
+
+scp deploy/default.conf wind:wind/default.conf
 
 ssh wind systemctl daemon-reload
 ssh wind systemctl enable --now wind-nginx

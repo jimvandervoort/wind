@@ -14,7 +14,7 @@ defineProps({
         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
       </svg>
     </p>
-    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>
+<!--    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>-->
   </div>
   <div class="flex flex-row flex-wrap mb-12">
     <template v-for="day in spot.days">
