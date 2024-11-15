@@ -2,6 +2,8 @@
 
 set -Eeuxo pipefail
 
+export VITE_WIND_VERSION="$(git rev-parse HEAD)"
+
 ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
 
@@ -15,7 +17,7 @@ scp deploy/wind-fetch.sh wind:/bin/wind-fetch.sh
 ssh wind chmod +x /bin/wind-fetch.sh
 scp deploy/*.{service,timer} wind:/etc/systemd/system
 
-docker --context wind build -t wind .
+docker --context wind build --build-arg "VITE_WIND_VERSION=$VITE_WIND_VERSION" -t wind .
 
 scp deploy/default.conf wind:wind/default.conf
 

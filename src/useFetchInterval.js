@@ -1,7 +1,8 @@
-import { ref, onMounted, onUnmounted } from 'vue';
-import { makeReport } from "./report.js";
+import {onMounted, onUnmounted, ref} from 'vue';
+import {makeReport} from "./report.js";
 
 const interval = 60000;
+const myVersion = import.meta.env.VITE_WIND_VERSION || 'local';
 
 export function useFetchInterval() {
   const report = ref(null);
@@ -24,6 +25,15 @@ export function useFetchInterval() {
       const data = await dataResponse.json();
       const windData = await windResponse.json();
 
+      const theirVersion = data[0].version;
+      console.log({theirVersion, myVersion});
+      if (myVersion !== theirVersion) {
+        console.info('Server updated, reloading in 30s');
+        setTimeout(() => {
+          window.location.reload();
+        }, 30000);
+      }
+
       // Process the data with makeReport
       report.value = makeReport(data, windData);
     } catch (err) {
@@ -37,5 +47,5 @@ export function useFetchInterval() {
     onUnmounted(() => clearInterval(intervalId)); // Clear interval on unmount
   });
 
-  return { report, error };
+  return {report, error};
 }

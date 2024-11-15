@@ -35,6 +35,7 @@ const spots = [
 ];
 
 const isProd = process.env.NODE_ENV === "production";
+const version = process.env.VITE_WIND_VERSION || 'local';
 
 function getRandomSurferEmoji() {
   const baseSurfer = '\u{1F3C4}'; // Base surfer emoji
@@ -124,6 +125,7 @@ async function loadSpots(browser) {
     console.log('Processing:', spot.slug);
     const data = await getSpotData(browser, spot.url);
     datas.push({
+      version,
       ...spot,
       data
     });
@@ -134,7 +136,7 @@ async function loadSpots(browser) {
 async function run() {
   console.log('Launching browser');
   const browser = await puppeteer.launch({
-    headless: isProd,
+    headless: true,
     args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
   });
 

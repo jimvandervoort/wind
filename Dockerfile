@@ -5,4 +5,7 @@ WORKDIR /wind
 COPY package.json .
 RUN npm install && mkdir data
 
+ARG VITE_WIND_VERSION
+ENV VITE_WIND_VERSION=${VITE_WIND_VERSION}
+
 COPY puppet.mjs .
