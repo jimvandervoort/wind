@@ -5,7 +5,7 @@ const spots = [
   {
     name: 'Khaya Beach 🐕',
     slug: 'khaya',
-    url: 'https://www.windguru.cz/137630',
+    url: 'https://www.windguru.cz/208276',
   },
   {
     name: 'Dolphin 🐬️',
