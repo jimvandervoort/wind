@@ -6,10 +6,10 @@ defineProps({
 
 <template>
   <div class="flex flex-row justify-between pl-8 pr-12 mt-8">
-    <a :href="spot.spot.name">
+    <a :href="spot.spot.url" rel="noreferrer">
       <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
     </a>
-    <a href="https://mac-wind.appspot.com/?show=15min">
+    <a href="https://mac-wind.appspot.com/?show=15min" rel="noreferrer">
       <p v-if="spot.live" class="fira-code text-xs text-left tracking-tighter text-lg font-semibold mr-6">
         Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts {{ spot.live.dir }}
         <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
@@ -23,7 +23,7 @@ defineProps({
   </div>
   <div class="flex flex-row flex-wrap mb-12">
     <template v-for="day in spot.days">
-      <a class="flex flex-row items-end fira-code" :href="spot.spot.url">
+      <a class="flex flex-row items-end fira-code" :href="spot.spot.url" rel="noreferrer">
         <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.hasWind">{{ day.name }}</h2>
         <template v-else>
           <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h2>
