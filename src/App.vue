@@ -7,5 +7,5 @@ const { report, error } = useFetchInterval();
 
 <template>
   <KiteSpots :spots="report"/>
-  <pre class="mt-3" v-if="error">{{error}}</pre>
+  <pre class="m-3" v-if="error">Failed to load latest wind data: {{error}}</pre>
 </template>
