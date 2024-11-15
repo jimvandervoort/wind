@@ -131,7 +131,7 @@ function processSpot(spot) {
 }
 
 function addWind(spot, macWind) {
-  const last = macWind[macWind.length - 1];
+  const last = macWind[0];
   const deg = mapWindDirection(last.dir);
 
   if (macWindSpots.includes(spot.spot.slug)) {
