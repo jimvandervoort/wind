@@ -2,7 +2,7 @@
 
 set -Eeuxo pipefail
 
-export VITE_WIND_VERSION="$(git rev-parse HEAD)"
+export VITE_WIND_VERSION="$(date -u '+%Y%m%d_%H%M')"
 
 ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
