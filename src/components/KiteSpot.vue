@@ -6,19 +6,24 @@ defineProps({
 
 <template>
   <div class="flex flex-row justify-between pl-8 pr-12 mt-8">
-    <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
-    <p v-if="spot.live" class="fira-code text-xs text-left tracking-tighter text-lg font-semibold mr-6">
-      Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts {{ spot.live.dir }}
-      <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`" xmlns="http://www.w3.org/2000/svg"
-           fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-      </svg>
-    </p>
-<!--    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>-->
+    <a :href="spot.spot.name">
+      <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
+    </a>
+    <a href="https://mac-wind.appspot.com/?show=15min">
+      <p v-if="spot.live" class="fira-code text-xs text-left tracking-tighter text-lg font-semibold mr-6">
+        Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts {{ spot.live.dir }}
+        <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
+             xmlns="http://www.w3.org/2000/svg"
+             fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+        </svg>
+      </p>
+    </a>
+    <!--    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>-->
   </div>
   <div class="flex flex-row flex-wrap mb-12">
     <template v-for="day in spot.days">
-      <div class="flex flex-row items-end fira-code">
+      <a class="flex flex-row items-end fira-code" :href="spot.spot.url">
         <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.hasWind">{{ day.name }}</h2>
         <template v-else>
           <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h2>
@@ -38,7 +43,7 @@ defineProps({
             <span class="">{{ fc.timeStr }}</span>
           </div>
         </div>
-      </div>
+      </a>
     </template>
   </div>
 </template>

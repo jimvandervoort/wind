@@ -34,6 +34,8 @@ const spots = [
   },
 ];
 
+const isProd = process.env.NODE_ENV === "production";
+
 function getRandomSurferEmoji() {
   const baseSurfer = '\u{1F3C4}'; // Base surfer emoji
   const genders = ['\u{200D}\u{2640}\u{FE0F}', '\u{200D}\u{2642}\u{FE0F}']; // Female and Male modifiers
@@ -132,14 +134,15 @@ async function loadSpots(browser) {
 async function run() {
   console.log('Launching browser');
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: isProd,
+    args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
   });
 
   try {
     const data = await loadSpots(browser);
-    console.log('Saving result');
-    fs.writeFileSync('dist/data.json', JSON.stringify(data, null, 2));
+    const output = isProd ? `dist/data.json` : `public/data.json`;
+    console.log(`Saving result to ${output}`);
+    fs.writeFileSync(output, JSON.stringify(data, null, 2));
   } catch (e) {
     console.error(e);
     process.exitCode = 1;

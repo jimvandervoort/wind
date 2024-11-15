@@ -8,6 +8,7 @@ fetch() {
   /usr/bin/docker run \
     --init \
     --rm \
+    -e NODE_ENV=production \
     --name wind_puppet \
     --cap-add SYS_ADMIN \
     -v "/root/wind/dist:/wind/dist" \

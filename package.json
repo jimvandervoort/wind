@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "fetch:wg": "node puppet.mjs",
-    "fetch:mw": "curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' > wind.json.tmp && mv wind.json.tmp wind.json",
+    "fetch:mw": "curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' > wind.json.tmp && mv wind.json.tmp public/wind.json",
     "fetch": "npm run fetch:wg && npm run fetch:mw"
   },
   "dependencies": {
