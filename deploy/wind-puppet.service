@@ -6,3 +6,5 @@ After=docker.service
 [Service]
 Type=oneshot
 ExecStart=/bin/wind-fetch.sh
+StandardOutput=journal
+StandardError=journal

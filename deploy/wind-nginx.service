@@ -5,6 +5,8 @@ After=docker.service
 
 [Service]
 Restart=always
+StandardOutput=journal
+StandardError=journal
 # Stop and remove any existing container named 'wind_nginx'
 ExecStartPre=-/usr/bin/docker stop wind_nginx
 ExecStartPre=-/usr/bin/docker rm wind_nginx
