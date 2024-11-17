@@ -13,7 +13,7 @@ ExecStartPre=/usr/bin/docker create \
     --name wind_nginx \
     -p 80:80 \
     -v /root/wind/dist:/usr/share/nginx/html:ro \
-    -v /root/wind/default.conf:/etc/nginx/conf.d/default.conf:ro \
+    -v /root/wind/nginx.conf:/etc/nginx/nginx.conf:ro \
     nginx:latest
 # Start the container
 ExecStart=/usr/bin/docker start -a wind_nginx

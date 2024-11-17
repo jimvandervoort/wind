@@ -19,7 +19,7 @@ scp deploy/*.{service,timer} wind:/etc/systemd/system
 
 docker --context wind build --build-arg "VITE_WIND_VERSION=$VITE_WIND_VERSION" -t wind .
 
-scp deploy/default.conf wind:wind/default.conf
+scp deploy/*.conf wind:wind
 
 ssh wind systemctl daemon-reload
 ssh wind systemctl enable --now wind-nginx
