@@ -1,7 +1,7 @@
 import {onMounted, onUnmounted, ref} from 'vue';
 import {makeReport} from "./report.js";
 
-const interval = 60000;
+const interval = 1000;
 const myVersion = import.meta.env.VITE_WIND_VERSION || 'local';
 
 export function useFetchInterval() {

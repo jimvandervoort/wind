@@ -1,0 +1,8 @@
+[Unit]
+Description=Scrape windguru
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/wind-stats.sh
