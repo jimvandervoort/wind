@@ -11,9 +11,10 @@ export function useFetchInterval() {
   const fetchData = async () => {
     try {
       // Fetch both files
-      const [dataResponse, windResponse] = await Promise.all([
+      const [dataResponse, windResponse, langeWindResponse] = await Promise.all([
         fetch('/data.json'),
-        fetch('/wind.json')
+        fetch('/wind.json'),
+        fetch('/langewind.json'),
       ]);
 
       // Check for errors in the response
@@ -23,7 +24,8 @@ export function useFetchInterval() {
 
       // Parse the JSON data
       const data = await dataResponse.json();
-      const windData = await windResponse.json();
+      const macWind = await windResponse.json();
+      const langeWind = await langeWindResponse.json();
 
       const theirVersion = data[0].version;
       console.log({theirVersion, myVersion});
@@ -35,7 +37,7 @@ export function useFetchInterval() {
       }
 
       // Process the data with makeReport
-      report.value = makeReport(data, windData);
+      report.value = makeReport(data, macWind, langeWind);
     } catch (err) {
       error.value = err;
     }

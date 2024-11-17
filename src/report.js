@@ -130,27 +130,42 @@ function processSpot(spot) {
   };
 }
 
-function addWind(spot, macWind) {
-  const last = macWind[0];
-  const deg = mapWindDirection(last.dir);
+function addWind(spot, macWind, langeWind) {
+  const macLast = macWind[0];
+  const deg = mapWindDirection(macLast.dir);
 
-  if (macWindSpots.includes(spot.spot.slug)) {
+  if (spot.spot.slug === "khaya") {
     return {
       ...spot,
       live: {
-        ...last,
+        ...macLast,
         deg,
+        url: 'https://mac-wind.appspot.com/?show=15min',
       }
+    }
+  }
+
+  if (spot.spot.slug === "langebaan") {
+    const langeLive = {
+      low: langeWind.windMin,
+      high: langeWind.windMax,
+      dir: langeWind.compassDir,
+      deg: mapWindDirection(langeWind.compassDir),
+      url: 'https://capekiting.co.za/langebaan/',
+    }
+    return {
+      ...spot,
+      live: langeLive,
     }
   }
 
   return spot;
 }
 
-export function makeReport(data, macWind) {
+export function makeReport(data, macWind, langeWind) {
   const spots = data
     .map(spot => processSpot(spot))
-    .map(spot => addWind(spot, macWind))
+    .map(spot => addWind(spot, macWind, langeWind))
 
   console.log(spots);
 
