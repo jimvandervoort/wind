@@ -18,7 +18,7 @@ export function useFetchInterval() {
       ]);
 
       // Check for errors in the response
-      if (!dataResponse.ok || !windResponse.ok) {
+      if (!dataResponse.ok || !windResponse.ok || !langeWindResponse.ok) {
         throw new Error('Network response was not ok');
       }
 
