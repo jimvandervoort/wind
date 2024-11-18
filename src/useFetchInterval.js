@@ -38,6 +38,7 @@ export function useFetchInterval() {
 
       // Process the data with makeReport
       report.value = makeReport(data, macWind, langeWind);
+      error.value = null;
     } catch (err) {
       error.value = err;
     }
