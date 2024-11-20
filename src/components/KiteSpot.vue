@@ -69,7 +69,7 @@ h2 {
 
 .gust::before {
   content: '';
-  background-image: url('/src/wave.png');
+  background-image: url('/src/assets/wave.png');
   background-repeat: no-repeat;
   background-size: 130% auto;
   overflow: hidden;
