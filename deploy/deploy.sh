@@ -8,7 +8,6 @@ ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
 
 npm run build
-cp dist/*.png dist/assets
 rm -f dist/*.json
 scp -r dist/* wind:wind/dist
 

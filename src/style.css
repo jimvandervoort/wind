@@ -5,6 +5,11 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: #0c1215;
   color: #e2e8f0;
+  cursor: url('/src/fish.png') 4 12, auto;
+}
+
+a {
+  cursor: url('/src/fish.png') 4 12, pointer; /* Use a different custom cursor for links */
 }
 
 .fira-code {
