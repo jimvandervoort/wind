@@ -5,12 +5,12 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex flex-row items-center pl-8 pr-12 mt-8">
+  <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12 mt-8">
     <a :href="spot.spot.url" rel="noreferrer">
-      <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
+      <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold">{{ spot.spot.name }}</h1>
     </a>
     <a v-if="spot.live" :href="spot.live.url" rel="noreferrer">
-      <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter text-lg font-semibold mr-6">
+      <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
         Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
         <span class="whitespace-nowrap">
           {{ spot.live.dir }}
@@ -69,7 +69,7 @@ h2 {
 
 .gust::before {
   content: '';
-  background-image: urL("/assets/wave.png");
+  background-image: url('/src/wave.png');
   background-repeat: no-repeat;
   background-size: 130% auto;
   overflow: hidden;
