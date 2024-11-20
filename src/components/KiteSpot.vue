@@ -5,21 +5,23 @@ defineProps({
 </script>
 
 <template>
-  <div class="flex flex-row justify-between pl-8 pr-12 mt-8">
+  <div class="flex flex-row items-center pl-8 pr-12 mt-8">
     <a :href="spot.spot.url" rel="noreferrer">
       <h1 :id="spot.spot.slug" class="mb-1 text-2xl font-semibold">{{ spot.spot.name }}</h1>
     </a>
     <a v-if="spot.live" :href="spot.live.url" rel="noreferrer">
-      <p class="fira-code text-xs text-left tracking-tighter text-lg font-semibold mr-6">
-        Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts {{ spot.live.dir }}
-        <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
-             xmlns="http://www.w3.org/2000/svg"
-             fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-        </svg>
+      <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter text-lg font-semibold mr-6">
+        Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
+        <span class="whitespace-nowrap">
+          {{ spot.live.dir }}
+          <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
+               xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+          </svg>
+        </span>
       </p>
     </a>
-    <!--    <p class="fira-code text-xs text-right">Tide Low: 15:00<br/>Tide High: 20:00</p>-->
   </div>
   <a class="flex flex-row flex-wrap mb-12" :href="spot.spot.url" rel="noreferrer">
     <template v-for="day in spot.days">
