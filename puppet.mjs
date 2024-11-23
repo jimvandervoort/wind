@@ -23,6 +23,11 @@ const spots = [
     url: 'https://www.windguru.cz/21691',
   },
   {
+    name: 'Shark Bay 🦈',
+    slug: 'sharkbay',
+    url: 'https://www.windguru.cz/67005',
+  },
+  {
     name: 'Misty Cliffs 👻',
     slug: 'misty',
     url: 'https://www.windguru.cz/208280',
