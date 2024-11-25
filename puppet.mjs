@@ -33,6 +33,11 @@ const spots = [
     url: 'https://www.windguru.cz/208280',
   },
   {
+    name: 'Hermanus 🐋',
+    slug: 'hermanus',
+    url: 'https://www.windguru.cz/80216',
+  },
+  {
     name: 'Witsands 🏖️',
     slug: 'witsands',
     url: 'https://www.windguru.cz/131707',
@@ -135,7 +140,7 @@ async function loadSpots(browser) {
       data
     });
   }
-  return await Promise.all(datas);
+  return datas;
 }
 
 async function run() {
