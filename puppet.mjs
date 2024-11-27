@@ -159,7 +159,7 @@ async function run() {
     const data = await loadSpots(browser);
     const output = isProd ? `dist/data.json` : `public/data.json`;
     console.log(`Saving result to ${output}`);
-    fs.writeFileSync(output, JSON.stringify(data, null, 2));
+    fs.writeFileSync(output, JSON.stringify(data));
   } catch (e) {
     console.error(e);
     process.exitCode = 1;

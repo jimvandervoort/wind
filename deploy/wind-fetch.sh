@@ -15,10 +15,10 @@ fetch() {
     wind \
     node /wind/puppet.mjs
 
-  curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' | jq '[.[0]]' > /tmp/wind.json
+  curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' | jq -c '[.[0]]' > /tmp/wind.json
   mv /tmp/wind.json /root/wind/dist/
 
-  curl -fSs 'https://capekiting.co.za/wp-json/api/v1/get-wind-data/?page_id=9001&timespanhours=6' | jq '.wind_data.kiteometer[0]' > /tmp/langewind.json
+  curl -fSs 'https://capekiting.co.za/wp-json/api/v1/get-wind-data/?page_id=9001&timespanhours=6' | jq -c '.wind_data.kiteometer[0]' > /tmp/langewind.json
   mv /tmp/langewind.json /root/wind/dist/
 
   echo "END $(date)"
