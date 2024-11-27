@@ -1,4 +1,3 @@
-const minKnots = 20;
 const minHour = 8;
 const maxHour = 20;
 const maxDays = 6;
@@ -30,8 +29,8 @@ function mapRangeClamp(n, a, b, c, d) {
   return Math.max(Math.min(m, c), d);
 }
 
-function worthyDays(day) {
-  day.forecast = day.forecast.filter(forecast => forecast.gust.value >= minKnots && forecast.time >= minHour && forecast.time <= maxHour);
+function worthyDays(day, windThreshold) {
+  day.forecast = day.forecast.filter(forecast => forecast.gust.value >= windThreshold && forecast.time >= minHour && forecast.time <= maxHour);
   return day;
 }
 
@@ -116,7 +115,7 @@ function processSpot(spot) {
     }
   });
 
-  const days = mapToDay(combined).map(worthyDays).map(day => ({
+  const days = mapToDay(combined).map(day => ({
     ...day,
     hasWind: day.forecast.length > 0,
   })).filter(day => {
@@ -162,12 +161,14 @@ function addWind(spot, macWind, langeWind) {
   return spot;
 }
 
-export function makeReport(data, macWind, langeWind) {
-  const spots = data
-    .map(spot => processSpot(spot))
-    .map(spot => addWind(spot, macWind, langeWind))
-
-  console.log(spots);
-
-  return spots;
+export function makeReport(data, macWind, langeWind, windThreshold) {
+  const spots = data.map(spot => processSpot(spot));
+  const spotsWithWind = spots
+    .map(spot => ({
+      ...spot,
+      days: spot.days.map(day => worthyDays(day, windThreshold)).filter(day => day.forecast.length > 0)
+    }))
+    .filter(spot => spot.days.length > 0);
+  
+    return spotsWithWind.map(spot => addWind(spot, macWind, langeWind));
 }

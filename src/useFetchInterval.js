@@ -1,4 +1,4 @@
-import {onMounted, onUnmounted, ref} from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {makeReport} from "./report.js";
 
 const interval = 10000;
@@ -16,9 +16,18 @@ async function fetchAll(files) {
   return Promise.all(results.map(r => r.json()));
 }
 
-export function useFetchInterval() {
+export function useFetchInterval(windThreshold) {
   const report = ref(null);
   const error = ref(null);
+  const rawData = ref(null);
+  const rawMacWind = ref(null);
+  const rawLangeWind = ref(null);
+
+  const updateReport = () => {
+    if (rawData.value && rawMacWind.value && rawLangeWind.value) {
+      report.value = makeReport(rawData.value, rawMacWind.value, rawLangeWind.value, windThreshold.value);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -37,7 +46,10 @@ export function useFetchInterval() {
         }, 30000);
       }
 
-      report.value = makeReport(data, macWind, langeWind);
+      rawData.value = data;
+      rawMacWind.value = macWind;
+      rawLangeWind.value = langeWind;
+      updateReport();
       error.value = null;
     } catch (err) {
       error.value = err;
@@ -48,6 +60,11 @@ export function useFetchInterval() {
     fetchData(); // Initial fetch
     const intervalId = setInterval(fetchData, interval); // Set up interval
     onUnmounted(() => clearInterval(intervalId)); // Clear interval on unmount
+  });
+
+  // Watch for changes in windThreshold and only update the report
+  watch(windThreshold, () => {
+    updateReport();
   });
 
   return {report, error};

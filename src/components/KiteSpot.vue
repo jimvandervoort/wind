@@ -26,9 +26,9 @@ defineProps({
   <a class="flex flex-row flex-wrap mb-12" :href="spot.spot.url" rel="noreferrer">
     <template v-for="day in spot.days">
       <div class="flex flex-row items-end fira-code">
-        <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.hasWind">{{ day.name }}</h2>
+        <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.hasWind">{{ day.name }}</h3>
         <template v-else>
-          <h2 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h2>
+          <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h3>
           <div class="h-16"></div>
         </template>
         <div v-for="fc in day.forecast" class="mt-6">
@@ -51,7 +51,7 @@ defineProps({
 </template>
 
 <style scoped>
-h2 {
+h3 {
   transform: translateX(3px) translateY(1px) rotate(270deg);
 }
 
