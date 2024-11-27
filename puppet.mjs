@@ -42,6 +42,11 @@ const spots = [
     slug: 'witsands',
     url: 'https://www.windguru.cz/131707',
   },
+  {
+    name: 'Brandvlei 🔥️',
+    slug: 'braindvlei',
+    url: 'https://www.windguru.cz/131692',
+  },
 ];
 
 const isProd = process.env.NODE_ENV === "production";
