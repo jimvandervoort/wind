@@ -1,7 +1,7 @@
 <script setup>
 import KiteSpots from './components/KiteSpots.vue';
 import {useFetchInterval} from "./useFetchInterval.js";
-import { ref, onMounted, watch } from 'vue';
+import {ref, watch} from 'vue';
 
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
 
@@ -9,37 +9,72 @@ watch(windThreshold, (newValue) => {
   localStorage.setItem('windThreshold', newValue);
 });
 
-const { report, error } = useFetchInterval(windThreshold);
+const {report, error} = useFetchInterval(windThreshold);
 const showSettings = ref(false);
 
-const openSettings = () => {
-  showSettings.value = true;
-}
-
-const closeSettings = () => {
-  showSettings.value = false;
+const toggleSettings = () => {
+  showSettings.value = !showSettings.value;
 }
 </script>
 
 <template>
-  <div class="p-8 roboto-medium">
-    <p>Showing wind above {{ windThreshold }} knots</p>
-    <p class="font-light">
-      <a href="#" class="hover:underline" @click.prevent="openSettings">Customise</a>
-    </p>
-    <div v-if="showSettings" class="flex">
-      <label class="block text-sm font-bold mb-2" for="windThreshold">KNTS</label>
-      <input 
+  <div class="pt-8 pl-8 pr-8 roboto-medium max-w-2xl">
+    <h1 class="inline">
+      Forecast for
+      <span class="fira-code">{{ windThreshold }}</span>
+      knots and up.
+    </h1>
+    <a href="/" class="font-light hover:underline" @click.prevent="toggleSettings">
+      Customise »
+    </a>
+    <div v-if="showSettings">
+      <div class="flex mt-8 fira-code items-center">
+        <span class="text-2xl font-bold pr-3">10</span>
+        <input
           id="windThreshold"
-          type="range" 
+          type="range"
           v-model="windThreshold"
           min="10"
           max="30"
           step="1"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block"
+          class="slider"
         >
+        <span class="text-2xl font-bold pl-3">30</span>
+      </div>
+    <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
     </div>
   </div>
   <KiteSpots :spots="report"/>
-  <pre class="m-3" v-if="error">Failed to load latest wind data: {{error}}</pre>
+  <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data: {{ error }}</p>
 </template>
+
+<style>
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: .4rem;
+
+  background: none;
+  border: 2px solid #ccc;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4rem;
+  height: 4rem;
+  background: url('./assets/george.png') no-repeat center center;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 4rem;
+  height: 4rem;
+  background: url('./assets/george.png') no-repeat center center;
+  background-size: cover;
+  cursor: pointer;
+  border: none;
+}
+</style>
