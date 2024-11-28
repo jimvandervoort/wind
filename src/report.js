@@ -115,10 +115,7 @@ function processSpot(spot) {
     }
   });
 
-  const days = mapToDay(combined).map(day => ({
-    ...day,
-    hasWind: day.forecast.length > 0,
-  })).filter(day => {
+  const days = mapToDay(combined).filter(day => {
     const maxUnixTime = new Date().getTime() / 1000 + maxDays * 24 * 60 * 60;
     return day.unixTime < maxUnixTime;
   });
@@ -166,9 +163,14 @@ export function makeReport(data, macWind, langeWind, windThreshold) {
   const spotsWithWind = spots
     .map(spot => ({
       ...spot,
-      days: spot.days.map(day => worthyDays(day, windThreshold)).filter(day => day.forecast.length > 0)
+      days: spot.days.map(day => worthyDays(day, windThreshold)).map(day => {
+        return {
+          ...day,
+          hasWind: day.forecast.length > 0
+        }
+      })
     }))
     .filter(spot => spot.days.length > 0);
-  
-    return spotsWithWind.map(spot => addWind(spot, macWind, langeWind));
+
+  return spotsWithWind.map(spot => addWind(spot, macWind, langeWind));
 }
