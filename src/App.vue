@@ -1,7 +1,7 @@
 <script setup>
 import KiteSpots from './components/KiteSpots.vue';
-import {useFetchInterval} from "./useFetchInterval.js";
-import {ref, watch} from 'vue';
+import { useFetchInterval } from "./useFetchInterval.js";
+import { ref, watch } from 'vue';
 
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
 
@@ -9,7 +9,7 @@ watch(windThreshold, (newValue) => {
   localStorage.setItem('windThreshold', newValue);
 });
 
-const {report, error} = useFetchInterval(windThreshold);
+const { report, error } = useFetchInterval(windThreshold);
 const showSettings = ref(false);
 
 const toggleSettings = () => {
@@ -20,31 +20,25 @@ const toggleSettings = () => {
 <template>
   <div class="pt-8 pl-8 pr-8 roboto-medium max-w-2xl">
     <h1 class="inline">
-      Forecast for
-      <span class="fira-code">{{ windThreshold }}</span>
-      knots and up.
+      <a href="/" @click.prevent="toggleSettings">
+        Forecast for
+        <span class="fira-code">{{ windThreshold }}</span>
+        knots and up.
+        <span class="font-light hover:underline">
+          Customise&nbsp;»
+        </span>
+      </a>
     </h1>
-    <a href="/" class="font-light hover:underline" @click.prevent="toggleSettings">
-      Customise »
-    </a>
     <div v-if="showSettings">
       <div class="flex mt-8 fira-code items-center">
         <span class="text-2xl font-bold pr-3">10</span>
-        <input
-          id="windThreshold"
-          type="range"
-          v-model="windThreshold"
-          min="10"
-          max="30"
-          step="1"
-          class="slider"
-        >
+        <input id="windThreshold" type="range" v-model="windThreshold" min="10" max="30" step="1" class="slider">
         <span class="text-2xl font-bold pl-3">30</span>
       </div>
-    <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
+      <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
     </div>
   </div>
-  <KiteSpots :spots="report"/>
+  <KiteSpots :spots="report" />
   <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data: {{ error }}</p>
 </template>
 
