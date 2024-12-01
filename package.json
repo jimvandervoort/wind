@@ -13,6 +13,7 @@
     "fetch": "npm run fetch:wg && npm run fetch:mw && fetch:lang"
   },
   "dependencies": {
+    "color": "^4.2.3",
     "vue": "^3.5.12"
   },
   "devDependencies": {

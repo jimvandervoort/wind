@@ -1,3 +1,5 @@
+import Color from 'color';
+
 const minHour = 8;
 const maxHour = 20;
 const maxDays = 6;
@@ -104,13 +106,29 @@ function mapToDay(combined) {
   return result;
 }
 
+function recolorGust(gust) {
+  const factor = mapRangeClamp(gust.value, 10, 30, .4, 0)
+  const rgba = gust.style.match(/rgba\(.*\)/)[0];
+  const clr = new Color(rgba)
+    .fade(factor / 1.5)
+    .darken(factor / 4)
+    .rgb()
+    .string();
+
+
+  return {
+    ...gust,
+    style: `background-color: ${clr};`,
+  };
+}
+
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
     return {
       ...day,
       ...styleWave(spot.data.waves[i]),
       ...styleDir(spot.data.dir[i]),
-      gust: spot.data.gusts[i],
+      gust: recolorGust(spot.data.gusts[i]),
       wind: spot.data.wind[i],
     }
   });
