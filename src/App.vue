@@ -66,7 +66,6 @@ const toggleSettings = () => {
   height: 4rem;
   background: url('./assets/george.png') no-repeat center center;
   background-size: cover;
-  cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
@@ -74,7 +73,6 @@ const toggleSettings = () => {
   height: 4rem;
   background: url('./assets/george.png') no-repeat center center;
   background-size: cover;
-  cursor: pointer;
   border: none;
 }
 </style>
