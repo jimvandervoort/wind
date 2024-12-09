@@ -2,6 +2,17 @@
 
 Just an overview of my favourite kite spots
 
+```bash
+# install deps
+npm install
+
+# download wind data
+npm run fetch
+
+# run dev server
+npm run dev
+```
+
 ## MIT License
 
 Copyright (c) 2024 Jim van der Voort
