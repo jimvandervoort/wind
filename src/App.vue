@@ -40,11 +40,13 @@ const toggleSettings = () => {
   </div>
   <KiteSpots :spots="report" />
   <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data: {{ error }}</p>
+  <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="hover:underline">wind@jim.computer</a></p>
 </template>
 
 <style>
 .slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: .4rem;
 

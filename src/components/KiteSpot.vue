@@ -7,7 +7,7 @@ defineProps({
 <template>
   <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12 mt-8">
     <a :href="spot.spot.url" rel="noreferrer">
-      <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold">{{ spot.spot.name }}</h1>
+      <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold title" v-html="spot.spot.name"></h1>
     </a>
     <a v-if="spot.live" :href="spot.live.url" rel="noreferrer">
       <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
@@ -49,6 +49,16 @@ defineProps({
     </template>
   </a>
 </template>
+
+<style>
+.m {
+  transition: opacity 0.1s ease;
+}
+
+.title:hover .m {
+  opacity: 0;
+}
+</style>
 
 <style scoped>
 h3 {

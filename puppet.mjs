@@ -33,13 +33,13 @@ const spots = [
     url: 'https://www.windguru.cz/208280',
   },
   {
-    name: 'Hermanus 🐋',
+    name: 'Her<span class="m">m</span>anus 🐋',
     slug: 'hermanus',
     url: 'https://www.windguru.cz/80216',
   },
   {
-    name: 'Witsands 🏖️',
-    slug: 'witsands',
+    name: 'Witsand 🏖️',
+    slug: 'witsand',
     url: 'https://www.windguru.cz/131707',
   },
   {
