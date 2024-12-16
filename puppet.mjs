@@ -65,13 +65,13 @@ function getRandomSurferEmoji() {
 
 async function getWaves(page, len) {
   const hasWaves = !!await page.$('#tabid_0_0_HTSGW');
-  if (hasWaves) {
-    return page.$eval('#tabid_0_0_HTSGW',
-      el => Array.from(el.querySelectorAll('td')).map(td => parseFloat(td.textContent))
-    );
+  if (!hasWaves) {
+    return Array(len).fill(0);
   }
 
-  return Array(len).fill(0);
+  return page.$eval('#tabid_0_0_HTSGW',
+    el => Array.from(el.querySelectorAll('td')).map(td => parseFloat(td.textContent))
+  );
 }
 
 async function getSpotData(browser, spotUrl) {
