@@ -80,16 +80,17 @@ h3 {
 .gust::before {
   content: '';
   background-image: url('/src/assets/wave.png');
+  /* background-color: tomato; */
   background-repeat: no-repeat;
-  background-size: 130% auto;
+  background-size: 100% auto;
   overflow: hidden;
   background-position: 0 var(--wp);
   opacity: var(--wo);
   position: absolute;
-  top: -100%;
+  top: -1.5rem;
   left: 0;
-  width: 43%;
-  height: 100%;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .gust::after {
