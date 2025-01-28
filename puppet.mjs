@@ -161,7 +161,7 @@ async function run() {
     console.log(`Saving result to ${output}`);
     fs.writeFileSync(output, JSON.stringify(data));
   } catch (e) {
-    console.error(e);
+    console.error('Error loading spots', e);
     process.exitCode = 1;
   } finally {
     await browser.close();
