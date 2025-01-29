@@ -9,7 +9,7 @@ defineProps({
     <a :href="spot.spot.url" rel="noreferrer">
       <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold title" v-html="spot.spot.name"></h1>
     </a>
-    <a v-if="spot.live" :href="spot.live.url" rel="noreferrer">
+    <a v-if="spot.live" :href="spot.live.url" class="hover:underline" rel="noreferrer">
       <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
         Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
         <span class="whitespace-nowrap">
