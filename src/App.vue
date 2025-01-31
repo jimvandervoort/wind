@@ -1,15 +1,19 @@
 <script setup>
-import KiteSpots from './components/KiteSpots.vue';
-import { useFetchInterval } from "./useFetchInterval.js";
 import { ref, watch } from 'vue';
 
+import KiteSpots from './components/KiteSpots.vue';
+import { useFetchInterval } from "./useFetchInterval.js";
+import { mapRangeClamp } from './range';
+
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
+const roundedWindThreshold = ref(Math.round(windThreshold.value));
 
 watch(windThreshold, (newValue) => {
-  localStorage.setItem('windThreshold', newValue);
+  localStorage.setItem('windThreshold', Math.round(newValue));
+  roundedWindThreshold.value = Math.round(newValue);
 });
 
-const { report, error } = useFetchInterval(windThreshold);
+const { report, error } = useFetchInterval(roundedWindThreshold);
 const showSettings = ref(false);
 
 const toggleSettings = () => {
@@ -22,7 +26,7 @@ const toggleSettings = () => {
     <h1 class="inline">
       <a href="/" @click.prevent="toggleSettings">
         Forecast for
-        <span class="fira-code">{{ windThreshold }}</span>
+        <span class="fira-code">{{ roundedWindThreshold }}</span>
         knots and up.
         <span class="font-light hover:underline">
           Customise&nbsp;»
@@ -31,9 +35,9 @@ const toggleSettings = () => {
     </h1>
     <div v-if="showSettings">
       <div class="flex mt-8 fira-code items-center">
-        <span class="text-2xl font-bold pr-3">10</span>
-        <input id="windThreshold" type="range" v-model="windThreshold" min="10" max="30" step="1" class="slider">
-        <span class="text-2xl font-bold pl-3">30</span>
+        <span class="text-2xl font-bold pr-4">10</span>
+        <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 100, 250)}%`" v-model="windThreshold" min="10" max="30" step="0.0000001" class="slider">
+        <span class="text-2xl font-bold pl-4">30</span>
       </div>
       <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
     </div>
@@ -65,10 +69,12 @@ const toggleSettings = () => {
 }
 
 .slider::-moz-range-thumb {
-  width: 4rem;
-  height: 4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background: url('./assets/george.png') no-repeat center center;
   background-size: cover;
+  transform: translateX(-.5rem) scale(var(--scale));
+  background-position: left;
   border: none;
 }
 </style>

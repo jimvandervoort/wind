@@ -1,4 +1,5 @@
 import Color from 'color';
+import { mapRangeClamp } from './range';
 
 const minHour = 8;
 const maxHour = 20;
@@ -15,21 +16,6 @@ const dayNameMap = {
   'Sa': 'SAT',
   'Su': 'SUN',
 };
-
-// Takes a number "n" and maps it from the range [a, b] to the range [c, d]
-function mapRange(n, a, b, c, d) {
-  return (n - a) * (d - c) / (b - a) + c;
-}
-
-function mapRangeClamp(n, a, b, c, d) {
-  const m = mapRange(n, a, b, c, d);
-
-  if (c < d) {
-    return Math.min(Math.max(m, c), d);
-  }
-
-  return Math.max(Math.min(m, c), d);
-}
 
 function worthyDays(day, windThreshold) {
   day.forecast = day.forecast.filter(forecast => forecast.gust.value >= windThreshold && forecast.time >= minHour && forecast.time <= maxHour);
