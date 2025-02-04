@@ -36,7 +36,7 @@ const toggleSettings = () => {
     <div v-if="showSettings">
       <div class="flex mt-8 fira-code items-center">
         <span class="text-2xl font-bold pr-4">10</span>
-        <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 100, 250)}%`" v-model="windThreshold" min="10" max="30" step="0.0000001" class="slider">
+        <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 2.5, 5)}rem`" v-model="windThreshold" min="10" max="30" step="1" class="slider">
         <span class="text-2xl font-bold pl-4">30</span>
       </div>
       <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
@@ -69,11 +69,11 @@ const toggleSettings = () => {
 }
 
 .slider::-moz-range-thumb {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--scale);
+  height: var(--scale);
   background: url('./assets/george.png') no-repeat center center;
   background-size: cover;
-  transform: translateX(-.5rem) scale(var(--scale));
+  transform: translateX(-.5rem);
   background-position: left;
   border: none;
 }
