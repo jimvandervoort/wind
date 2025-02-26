@@ -16,6 +16,20 @@ async function fetchAll(files) {
   return Promise.all(results.map(r => r.json()));
 }
 
+function getRegion() {
+  const sp = new URL(window.location.href).searchParams.get('region')
+  if (sp) {
+    return sp;
+  }
+
+  const hostParts = window.location.host.split('.');
+  if (hostParts.length >= 3) {
+    return hostParts[0];
+  }
+
+  return 'capetown';
+}
+
 export function useFetchInterval(windThreshold) {
   const report = ref(null);
   const error = ref(null);
@@ -29,10 +43,12 @@ export function useFetchInterval(windThreshold) {
     }
   };
 
+  const region = getRegion();
+
   const fetchData = async () => {
     try {
       const [data, macWind, langeWind] = await fetchAll([
-        '/data.json',
+        `/${region}.json`,
         '/wind.json',
         '/langewind.json',
       ])
