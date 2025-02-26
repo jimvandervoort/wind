@@ -8,4 +8,4 @@ RUN npm install && mkdir data
 ARG VITE_WIND_VERSION
 ENV VITE_WIND_VERSION=${VITE_WIND_VERSION}
 
-COPY puppet.mjs .
+COPY puppet.mjs region.mjs .
