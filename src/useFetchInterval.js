@@ -27,7 +27,7 @@ function getRegion() {
     return hostParts[0];
   }
 
-  return 'capetown';
+  return 'wind';
 }
 
 export function useFetchInterval(windThreshold) {
