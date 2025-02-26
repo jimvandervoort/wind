@@ -67,6 +67,11 @@ const regions = [
         slug: 'estepona',
         url: 'https://www.windguru.cz/48787',
       },
+      {
+        name: 'Guincho 🇵🇹',
+        slug: 'guincho',
+        url: 'https://www.windguru.cz/31',
+      },
     ],
   },
 ];
