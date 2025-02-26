@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "fetch:wg": "node puppet.mjs",
-    "fetch:mw": "curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' > wind.json.tmp && mv wind.json.tmp public/wind.json",
+    "fetch:mw": "curl -fSs 'https://mac-wind.appspot.com/data/15min.json?offset=' > macwind.json.tmp && mv macwind.json.tmp public/macwind.json",
     "fetch:lang": "curl -fSs 'https://capekiting.co.za/wp-json/api/v1/get-wind-data/?page_id=9001&timespanhours=6' | jq '.wind_data.kiteometer[0]'> langewind.json.tmp && mv langewind.json.tmp public/langewind.json",
     "fetch": "npm run fetch:wg && npm run fetch:mw && npm run fetch:lang"
   },

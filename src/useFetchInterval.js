@@ -49,7 +49,7 @@ export function useFetchInterval(windThreshold) {
     try {
       const [data, macWind, langeWind] = await fetchAll([
         `/${region}.json`,
-        '/wind.json',
+        '/macwind.json',
         '/langewind.json',
       ])
 
