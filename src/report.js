@@ -5,8 +5,6 @@ const minHour = 8;
 const maxHour = 20;
 const maxDays = new URL(window.location).searchParams.get('days') || 6;
 
-const macWindSpots = ['khaya']
-
 const dayNameMap = {
   'Mo': 'MON',
   'Tu': 'TUE',
