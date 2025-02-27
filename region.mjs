@@ -58,6 +58,11 @@ const regions = [
         url: 'https://www.windguru.cz/43',
       },
       {
+        name: 'Playa de Valdevaqueros ⛱️',
+        slug: 'valdevaqueros',
+        url: 'https://www.windguru.cz/541946',
+      },
+      {
         name: 'Caños de Mecca 🪠',
         slug: 'canos',
         url: 'https://www.windguru.cz/5691',
@@ -66,6 +71,21 @@ const regions = [
         name: 'Estepona 🫨',
         slug: 'estepona',
         url: 'https://www.windguru.cz/48787',
+      },
+      {
+        name: 'Palmones 🌴',
+        slug: 'palmones',
+        url: 'https://www.windguru.cz/48785',
+      },
+      {
+        name: 'Los Lances 🌊',
+        slug: 'lances',
+        url: 'https://www.windguru.cz/48776',
+      },
+      {
+        name: `Getares ${getRandomSurferEmoji()}`,
+        slug: 'getares',
+        url: 'https://www.windguru.cz/48784',
       },
       {
         name: 'Guincho 🇵🇹',
