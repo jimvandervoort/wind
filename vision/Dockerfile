@@ -17,6 +17,8 @@ RUN curl -SsL https://pjreddie.com/media/files/yolov2-tiny.weights > yolov2-tiny
 
 FROM ubuntu:24.04
 
+ARG NODEJS_VERSION=23.9.0
+
 WORKDIR /darknet
 
 COPY --from=builder /yolov2-tiny.weights ./
@@ -24,6 +26,12 @@ COPY --from=builder /darknet/darknet /usr/local/bin/darknet
 COPY --from=builder /darknet/cfg ./cfg
 COPY --from=builder /darknet/data ./data
 
-RUN chmod +x /usr/local/bin/darknet
+RUN set -eux ;\
+      curl -SsL https://deb.nodesource.com/setup_${NODEJS_VERSION} | bash ;\
+      apt-get update ;\
+      apt-get install --no-install-recommends --no-install-suggests -y nodejs ffmpeg ;\
+      rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["darknet"]
+COPY vision.mjs ./vision.mjs
+
+ENTRYPOINT ["node", "vision.mjs"]
