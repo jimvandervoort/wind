@@ -1,0 +1,25 @@
+[Unit]
+Description=Wind Vision Docker Container Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+# Stop and remove any existing container named 'wind_vision'
+ExecStartPre=-/usr/bin/docker stop wind_vision
+ExecStartPre=-/usr/bin/docker rm wind_vision
+# Create a new container named 'wind_vision'
+ExecStartPre=/usr/bin/docker create \
+    --name wind_vision \
+    -e VISION_OUTPUT_FILE=/out/kitecount.json \
+    -v "/root/wind/dist/kitecount.json:/out/kitecount.json" \
+    wind_vision
+# Start the container
+ExecStart=/usr/bin/docker start -a wind_vision
+# Stop the container on service stop
+ExecStop=/usr/bin/docker stop wind_vision
+
+[Install]
+WantedBy=multi-user.target

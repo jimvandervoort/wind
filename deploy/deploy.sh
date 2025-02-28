@@ -17,6 +17,7 @@ ssh wind 'chmod +x /bin/wind-*.sh'
 rsync -av deploy/*.{service,timer} wind:/etc/systemd/system
 
 docker --context wind build --build-arg "VITE_WIND_VERSION=$VITE_WIND_VERSION" -t wind .
+docker --context wind build -t wind_vision ./vision
 
 rsync -av deploy/*.conf wind:wind/
 
@@ -24,4 +25,5 @@ ssh wind systemctl daemon-reload
 ssh wind systemctl enable --now wind-nginx
 ssh wind systemctl enable --now wind-puppet.timer
 ssh wind systemctl enable --now wind-stats.timer
+ssh wind systemctl enable --now wind-vision
 ssh wind systemctl start wind-puppet

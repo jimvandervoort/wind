@@ -1,8 +1,10 @@
 import { spawn } from "child_process";
 import fs from "fs";
 
-const COUNT_BUFFER = 10;
-const FRAME_INTERVAL = 1000;
+const COUNT_BUFFER = 5;
+const FRAME_INTERVAL = 30_000;
+
+const OUTPUT_FILE = process.env.VISION_OUTPUT_FILE || "/vision/kitecount.json";
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -60,13 +62,14 @@ class KiteCounter {
   }
 
   writeAverage() {
-    fs.writeFileSync("/vision/kitecount.json", JSON.stringify({ khaya: this.average() }));
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify({ khaya: Math.round(this.average()) }));
   }
 
   async countKites() {
     // later: ffmpeg -i https://conjure.co.za/blouberg/hls/media.m3u8 -ss 2 -frames:v 1 frame.jpg
-    await exec("sh", ["-c", "cat /vision/kites.jpg > /tmp/file"]);
-    const { stdout } = await exec("darknet", ["detect", "cfg/yolov2-tiny.cfg", "yolov2-tiny.weights", "/tmp/file"]);
+    await exec("ffmpeg", ["-i", "https://conjure.co.za/blouberg/hls/media.m3u8", "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"]);
+    const { stdout } = await exec("darknet", ["detect", "cfg/yolov2-tiny.cfg", "yolov2-tiny.weights", "/tmp/frame.jpg"]);
+    fs.unlinkSync("/tmp/frame.jpg");
     return stdout.split("\n").filter((line) => line.includes("kite")).length;
   }
 
