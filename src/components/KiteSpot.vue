@@ -2,6 +2,13 @@
 defineProps({
   spot: Object,
 })
+
+function getKiteCountText(count) {
+  if (count === 0) return "No kites on the water";
+  if (count === 1) return "1 kite on the water";
+  if (count <= 10) return `${count} kites on the water`;
+  return `10+ kites on the water`;
+}
 </script>
 
 <template>
@@ -9,19 +16,26 @@ defineProps({
     <a :href="spot.spot.url" rel="noreferrer">
       <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold title" v-html="spot.spot.name"></h1>
     </a>
-    <a v-if="spot.live" :href="spot.live.url" class="hover:underline" rel="noreferrer">
-      <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
-        Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
-        <span class="whitespace-nowrap">
-          {{ spot.live.dir }}
-          <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
-               xmlns="http://www.w3.org/2000/svg"
-               fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-          </svg>
-        </span>
-      </p>
-    </a>
+    <div class="flex flex-col items-end sm:items-start">
+      <a v-if="spot.live" :href="spot.live.url" class="hover:underline" rel="noreferrer">
+        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
+          Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
+          <span class="whitespace-nowrap">
+            {{ spot.live.dir }}
+            <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+            </svg>
+          </span>
+        </p>
+      </a>
+      <a v-if="spot.kiteCount !== null" href="https://wavehub.co.za/" class="hover:underline" rel="noreferrer">
+        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
+          {{ getKiteCountText(spot.kiteCount) }}
+        </p>
+      </a>
+    </div>
   </div>
   <a class="flex flex-row flex-wrap mb-12" :href="spot.spot.url" rel="noreferrer">
     <template v-for="day in spot.days">

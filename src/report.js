@@ -160,11 +160,12 @@ function addWind(spot, macWind, langeWind) {
   return spot;
 }
 
-export function makeReport(data, macWind, langeWind, windThreshold) {
+export function makeReport(data, macWind, langeWind, kiteCount, windThreshold) {
   const spots = data.map(spot => processSpot(spot));
   const spotsWithWind = spots
     .map(spot => ({
       ...spot,
+      kiteCount: kiteCount[spot.spot.slug] ?? null,
       days: spot.days.map(day => worthyDays(day, windThreshold)).map(day => {
         return {
           ...day,

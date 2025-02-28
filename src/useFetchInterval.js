@@ -36,10 +36,11 @@ export function useFetchInterval(windThreshold) {
   const rawData = ref(null);
   const rawMacWind = ref(null);
   const rawLangeWind = ref(null);
+  const rawKiteCount = ref(null);
 
   const updateReport = () => {
-    if (rawData.value && rawMacWind.value && rawLangeWind.value) {
-      report.value = makeReport(rawData.value, rawMacWind.value, rawLangeWind.value, windThreshold.value);
+    if (rawData.value && rawMacWind.value && rawLangeWind.value && rawKiteCount.value) {
+      report.value = makeReport(rawData.value, rawMacWind.value, rawLangeWind.value, rawKiteCount.value, windThreshold.value);
     }
   };
 
@@ -47,10 +48,11 @@ export function useFetchInterval(windThreshold) {
 
   const fetchData = async () => {
     try {
-      const [data, macWind, langeWind] = await fetchAll([
+      const [data, macWind, langeWind, kiteCount] = await fetchAll([
         `/${region}.json`,
         '/macwind.json',
         '/langewind.json',
+        '/kitecount.json',
       ])
 
       const theirVersion = data[0].version;
@@ -65,6 +67,7 @@ export function useFetchInterval(windThreshold) {
       rawData.value = data;
       rawMacWind.value = macWind;
       rawLangeWind.value = langeWind;
+      rawKiteCount.value = kiteCount;
       updateReport();
       error.value = null;
     } catch (err) {
