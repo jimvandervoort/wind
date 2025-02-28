@@ -20,6 +20,7 @@ ExecStartPre=/usr/bin/docker create \
 ExecStart=/usr/bin/docker start -a wind_vision
 # Stop the container on service stop
 ExecStop=/usr/bin/docker stop wind_vision
+ExecStop=/usr/bin/docker rm wind_vision
 
 [Install]
 WantedBy=multi-user.target

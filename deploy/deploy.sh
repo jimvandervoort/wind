@@ -25,5 +25,5 @@ ssh wind systemctl daemon-reload
 ssh wind systemctl enable --now wind-nginx
 ssh wind systemctl enable --now wind-puppet.timer
 ssh wind systemctl enable --now wind-stats.timer
-ssh wind systemctl enable --now wind-vision
+ssh wind systemctl restart wind-vision
 ssh wind systemctl start wind-puppet
