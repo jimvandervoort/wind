@@ -9,6 +9,12 @@ function getKiteCountText(count) {
   if (count <= 10) return `${count} kites on the water`;
   return `10+ kites on the water`;
 }
+
+function getWebcamUrl(slug) {
+  if (slug === "khaya") return "https://wavehub.co.za/";
+  if (slug === "langebaan") return "https://www.capetown-webcam.com/west-coast/sports-centre-webcam-langebaan";
+  if (slug === "bigbay") return "https://www.capetown-webcam.com/west-coast/eden-on-bay-webcam";
+}
 </script>
 
 <template>
@@ -30,7 +36,7 @@ function getKiteCountText(count) {
           </span>
         </p>
       </a>
-      <a v-if="spot.kiteCount !== null" href="https://wavehub.co.za/" class="hover:underline" rel="noreferrer">
+      <a v-if="spot.kiteCount !== null" :href="getWebcamUrl(spot.spot.slug)" class="hover:underline" rel="noreferrer">
         <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
           {{ getKiteCountText(spot.kiteCount) }}
         </p>

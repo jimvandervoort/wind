@@ -2,7 +2,7 @@ import { spawn } from "child_process";
 import fs from "fs";
 
 const COUNT_BUFFER = 5;
-const FRAME_INTERVAL = 30_000;
+const FRAME_INTERVAL = 20_000;
 
 const OUTPUT_FILE = process.env.VISION_OUTPUT_FILE || "/vision/kitecount.json";
 
@@ -44,8 +44,9 @@ async function exec(cmd, args) {
 }
 
 class KiteCounter {
-  constructor() {
+  constructor(url) {
     this.recentCounts = [];
+    this.url = url;
   }
 
   observe(count) {
@@ -56,18 +57,12 @@ class KiteCounter {
   }
 
   average() {
-    const avg = this.recentCounts.reduce((a, b) => a + b, 0) / this.recentCounts.length;
-    console.log("New average:", avg);
-    return avg;
-  }
-
-  writeAverage() {
-    fs.writeFileSync(OUTPUT_FILE, JSON.stringify({ khaya: Math.round(this.average()) }));
+    return this.recentCounts.reduce((a, b) => a + b, 0) / this.recentCounts.length;
   }
 
   async countKites() {
     // later: ffmpeg -i https://conjure.co.za/blouberg/hls/media.m3u8 -ss 2 -frames:v 1 frame.jpg
-    await exec("ffmpeg", ["-i", "https://conjure.co.za/blouberg/hls/media.m3u8", "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"]);
+    await exec("ffmpeg", ["-i", this.url, "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"]);
     const { stdout } = await exec("darknet", ["detect", "cfg/yolov2-tiny.cfg", "yolov2-tiny.weights", "/tmp/frame.jpg"]);
     fs.unlinkSync("/tmp/frame.jpg");
     return stdout.split("\n").filter((line) => line.includes("kite")).length;
@@ -83,14 +78,38 @@ class KiteCounter {
     }
 
     this.observe(count);
-    this.writeAverage();
   }
 }
 
 (async () => {
-  const kiteCounter = new KiteCounter();
+  const spots = [
+    {
+      slug: "khaya",
+      counter: new KiteCounter("https://conjure.co.za/blouberg/hls/media.m3u8"),
+    },
+    {
+      slug: "langebaan",
+      counter: new KiteCounter("https://s75.ipcamlive.com/streams/4bxjaol4nvopmqhtb/stream.m3u8"),
+    },
+    {
+      slug: "bigbay",
+      counter: new KiteCounter("https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8"),
+    },
+  ];
+
   while (true) {
-    await kiteCounter.run();
+    for (const spot of spots) {
+      await spot.counter.run();
+    }
+
+    const avg = {};
+    for (const spot of spots) {
+      avg[spot.slug] = spot.counter.average();
+    }
+
+    console.log(avg);
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify(avg));
+
     await sleep(FRAME_INTERVAL);
   }
 })();
