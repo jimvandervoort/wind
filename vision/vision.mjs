@@ -61,7 +61,6 @@ class KiteCounter {
   }
 
   async countKites() {
-    // later: ffmpeg -i https://conjure.co.za/blouberg/hls/media.m3u8 -ss 2 -frames:v 1 frame.jpg
     await exec("ffmpeg", ["-i", this.url, "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"]);
     const { stdout } = await exec("darknet", ["detect", "cfg/yolov2-tiny.cfg", "yolov2-tiny.weights", "/tmp/frame.jpg"]);
     fs.unlinkSync("/tmp/frame.jpg");
@@ -98,6 +97,20 @@ class KiteCounter {
   ];
 
   while (true) {
+    const now = new Date();
+    // High five webcam is closed at night
+    const isDaytime = now.getHours() >= 7 && now.getHours() <= 21;
+    if (!isDaytime) {
+      console.log("Not daytime, skipping");
+      fs.writeFileSync(OUTPUT_FILE, JSON.stringify({
+        "khaya": null,
+        "langebaan": null,
+        "bigbay": null,
+      }));
+      await sleep(FRAME_INTERVAL);
+      continue;
+    }
+
     for (const spot of spots) {
       await spot.counter.run();
     }
