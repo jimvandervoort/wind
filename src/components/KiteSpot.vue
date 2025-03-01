@@ -4,9 +4,10 @@ defineProps({
 })
 
 function getKiteCountText(count) {
-  if (count === 0) return "No kites on the water";
-  if (count === 1) return "1 kite on the water";
-  if (count <= 10) return `${count} kites on the water`;
+  const c = Math.round(count);
+  if (c === 0) return "No kites on the water";
+  if (c === 1) return "1 kite on the water";
+  if (c <= 10) return `${c} kites on the water`;
   return `10+ kites on the water`;
 }
 
