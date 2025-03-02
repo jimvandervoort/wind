@@ -92,10 +92,10 @@ def main():
             "slug": "khaya",
             "counter": KiteCounter("https://conjure.co.za/blouberg/hls/media.m3u8")
         },
-        {
-            "slug": "langebaan",
-            "counter": KiteCounter("https://www.youtube.com/watch?v=Hhc6vesmrNk")
-        },
+        # {
+        #     "slug": "langebaan",
+        #     "counter": KiteCounter("https://www.youtube.com/watch?v=Hhc6vesmrNk")
+        # },
         {
             "slug": "bigbay",
             "counter": KiteCounter("https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8")
