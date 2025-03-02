@@ -123,6 +123,10 @@ class KiteCounter {
     console.log(avg);
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(avg));
 
+    if (process.env.NODE_ENV !== "production") {
+      break;
+    }
+
     await sleep(FRAME_INTERVAL);
   }
 })();

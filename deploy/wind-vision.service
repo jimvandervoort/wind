@@ -13,6 +13,7 @@ ExecStartPre=-/usr/bin/docker rm wind_vision
 # Create a new container named 'wind_vision'
 ExecStartPre=/usr/bin/docker create \
     --name wind_vision \
+    -e NODE_ENV=production \
     -e VISION_OUTPUT_FILE=/out/kitecount.json \
     -v "/root/wind/dist/kitecount.json:/out/kitecount.json" \
     wind_vision

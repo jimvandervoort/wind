@@ -58,7 +58,7 @@ const regions = [
         url: 'https://www.windguru.cz/43',
       },
       {
-        name: 'Playa de Valdevaqueros ⛱️',
+        name: 'Valdevaqueros ⛱️',
         slug: 'valdevaqueros',
         url: 'https://www.windguru.cz/541946',
       },
