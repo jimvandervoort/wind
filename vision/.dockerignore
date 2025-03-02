@@ -1,3 +1,4 @@
 *
 .*
-!vision.mjs
+!*.py
+!*.pt
