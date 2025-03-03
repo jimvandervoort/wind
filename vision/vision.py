@@ -11,10 +11,10 @@ from yt_dlp import YoutubeDL
 
 COUNT_BUFFER = 3
 FETCH_SLEEP_SECS = 10
-VISION_DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
+DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
 LOG_FILE = os.environ.get('VISION_LOG_FILE', 'detection_log.txt')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', 'kitecount.json')
-VISION_LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
+LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
 
 model = YOLO('yolo11x.pt')
 
@@ -34,7 +34,7 @@ def count_kites(image_path):
     print(detections)
     kite_count = sum(1 for box in detections if box.cls == 33)
 
-    if not VISION_DEBUG:
+    if not DEBUG:
         return kite_count, None
 
     annotated_img = results[0].plot()
@@ -140,7 +140,7 @@ def main():
         with open(OUTPUT_FILE, 'w') as f:
             json.dump(avg, f)
 
-        if VISION_LOOP != 'true':
+        if LOOP != 'true':
             break
 
         time.sleep(FETCH_SLEEP_SECS)
