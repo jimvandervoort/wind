@@ -123,6 +123,9 @@ def main():
         with open(OUTPUT_FILE, 'w') as f:
             json.dump(avg, f)
 
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"{now}: [avg]: {json.dumps(avg)}\n")
+
         if not LOOP:
             break
 
