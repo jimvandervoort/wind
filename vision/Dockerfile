@@ -9,6 +9,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     pip install yt-dlp
 
-COPY ./vision.py ./yolo11x.pt ./
+RUN curl -SsfL https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x.pt -o yolo11x.pt
+
+COPY ./vision.py ./
 
 ENTRYPOINT ["python", "vision.py"]
