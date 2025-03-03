@@ -9,10 +9,10 @@ import sys
 from ultralytics import YOLO
 from yt_dlp import YoutubeDL
 
-COUNT_BUFFER = 3
-FETCH_SLEEP_SECS = 10
+COUNT_BUFFER_LEN = 4
+FETCH_SLEEP_SECS = 20
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
-LOG_FILE = os.environ.get('VISION_LOG_FILE', 'detection_log.txt')
+LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', 'kitecount.json')
 LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
 
@@ -28,11 +28,17 @@ def get_stream_url(url):
 
     return url
 
-def count_kites(image_path):
-    results = model(image_path)
+def count_kites(url):
+    CLS_KITE = 33
+
+    subprocess.run(["ffmpeg", "-i", url, "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"],
+                check=True, capture_output=True)
+    results = model("/tmp/frame.jpg")
+    os.remove("/tmp/frame.jpg")
     detections = results[0].boxes
     print(detections)
-    kite_count = sum(1 for box in detections if box.cls == 33)
+
+    kite_count = sum(1 for box in detections if box.cls == CLS_KITE)
 
     if not DEBUG:
         return kite_count, None
@@ -47,58 +53,37 @@ def count_kites(image_path):
     return kite_count, result_path
 
 
-class KiteCounter:
-    def __init__(self, url):
-        self.recent_counts = []
-        self.url = get_stream_url(url)
+class CountBuffer:
+    def __init__(self):
+        self.counts = []
 
     def observe(self, count):
-        self.recent_counts.append(count)
-        if len(self.recent_counts) > COUNT_BUFFER:
-            self.recent_counts.pop(0)
+        self.counts.append(count)
+        if len(self.counts) > COUNT_BUFFER_LEN:
+            self.counts.pop(0)
 
     def average(self):
-        if not self.recent_counts:
+        if not self.counts:
             return 0
-        return sum(self.recent_counts) / len(self.recent_counts)
-
-    def count_kites(self):
-        subprocess.run(["ffmpeg", "-i", self.url, "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"],
-                      check=True, capture_output=True)
-
-        kite_count, _ = count_kites("/tmp/frame.jpg")
-        with open(LOG_FILE, "a") as f:
-            f.write(f"{datetime.datetime.now()}: [{self.url}] detected {kite_count} kites\n")
-
-        if os.path.exists("/tmp/frame.jpg"):
-            os.remove("/tmp/frame.jpg")
-
-        return kite_count
-
-    async def run(self):
-        count = 0
-
-        try:
-            count = await self.count_kites()
-        except Exception as e:
-            print(f"Failed to count kites: {e}")
-
-        self.observe(count)
+        return sum(self.counts) / len(self.counts)
 
 
 def main():
     SPOTS = [
         {
             "slug": "khaya",
-            "counter": KiteCounter("https://conjure.co.za/blouberg/hls/media.m3u8")
+            "url": "https://conjure.co.za/blouberg/hls/media.m3u8",
+            "counter": CountBuffer()
         },
         # {
         #     "slug": "langebaan",
         #     "counter": KiteCounter("https://www.youtube.com/watch?v=Hhc6vesmrNk")
+        #     "counter": KiteCounter("https://s75.ipcamlive.com/streams/4bxjaol4nvopmqhtb/stream.m3u8")
         # },
         {
             "slug": "bigbay",
-            "counter": KiteCounter("https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8")
+            "url": "https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8",
+            "counter": CountBuffer()
         }
     ]
 
@@ -121,16 +106,14 @@ def main():
             # Run synchronously
             count = 0
             try:
-                subprocess.run(["ffmpeg", "-i", spot["counter"].url, "-ss", "2", "-frames:v", "1", "/tmp/frame.jpg"],
-                              check=True, capture_output=True)
-                kite_count, _ = count_kites("/tmp/frame.jpg")
-                if os.path.exists("/tmp/frame.jpg"):
-                    os.remove("/tmp/frame.jpg")
+                kite_count, _ = count_kites(get_stream_url(spot["url"]))
                 count = kite_count
             except Exception as e:
-                print(f"Failed to count kites: {e}")
+                print(f"Error counting kites: {e}")
 
             spot["counter"].observe(count)
+            with open(LOG_FILE, 'a') as f:
+                f.write(f"{now}: [{spot['slug']}]: {count}\n")
 
         avg = {}
         for spot in SPOTS:
@@ -140,7 +123,7 @@ def main():
         with open(OUTPUT_FILE, 'w') as f:
             json.dump(avg, f)
 
-        if LOOP != 'true':
+        if not LOOP:
             break
 
         time.sleep(FETCH_SLEEP_SECS)

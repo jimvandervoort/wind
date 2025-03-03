@@ -1,7 +1,7 @@
 kitecount.json
 vision/vision_debug/
 *.pt
-vision/detection_log.txt
+vision/vision_log.txt
 vision/frame*.jpg
 
 # Logs
