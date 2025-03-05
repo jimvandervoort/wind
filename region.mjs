@@ -53,9 +53,9 @@ const regions = [
     name: 'tarifa',
     spots: [
       {
-        name: `Tarifa ${'💃' + randSkinTone()}`,
-        slug: 'tarifa',
-        url: 'https://www.windguru.cz/43',
+        name: 'Los Lances 🛶',
+        slug: 'lances',
+        url: 'https://www.windguru.cz/48776',
       },
       {
         name: 'Valdevaqueros ⛱️',
@@ -63,24 +63,24 @@ const regions = [
         url: 'https://www.windguru.cz/541946',
       },
       {
-        name: 'Caños de Mecca 🪠',
+        name: 'Caños de Mecca 🌊',
         slug: 'canos',
         url: 'https://www.windguru.cz/5691',
       },
       {
-        name: 'Estepona 🫨',
+        name: 'Balneario 💀',
+        slug: 'balneario',
+        url: 'https://www.windguru.cz/48780',
+      },
+      {
+        name: 'Estepona 🌴',
         slug: 'estepona',
         url: 'https://www.windguru.cz/48787',
       },
       {
-        name: 'Palmones 🌴',
+        name: 'Palmones 🏗️',
         slug: 'palmones',
         url: 'https://www.windguru.cz/48785',
-      },
-      {
-        name: 'Los Lances 🌊',
-        slug: 'lances',
-        url: 'https://www.windguru.cz/48776',
       },
       {
         name: `Getares ${'🏄' + randSkinTone() + randGender()}`,
