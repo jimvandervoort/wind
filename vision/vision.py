@@ -5,6 +5,7 @@ import time
 import datetime
 import subprocess
 import sys
+import shutil
 
 from ultralytics import YOLO
 from yt_dlp import YoutubeDL
@@ -30,23 +31,27 @@ def get_stream_url(url):
 
 def count_kites(url, extra_args=[]):
     CLS_KITE = 33
+
+    if os.path.exists("/tmp/frame.jpg"):
+        os.remove("/tmp/frame.jpg")
+
     subprocess.run(["ffmpeg", "-i", url, "-ss", "2", *extra_args, "-frames:v", "1", "/tmp/frame.jpg"],
                 check=True, capture_output=True)
     results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
     detections = results[0].boxes
     kite_count = sum(1 for box in detections if box.cls == CLS_KITE)
 
-    if kite_count > 0:
+    if kite_count > 0 or DEBUG:
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        print(f"Saving debug images for {timestamp}")
         debug_dir = 'vision_debug/'
         os.makedirs(debug_dir, exist_ok=True)
-        os.rename("/tmp/frame.jpg", f"{debug_dir}input_{timestamp}_{kite_count}.jpg")
+        shutil.copy("/tmp/frame.jpg", f"{debug_dir}input_{timestamp}_{kite_count}.jpg")
         annotated_img = results[0].plot()
         result_path = f"{debug_dir}result_{timestamp}_{kite_count}.jpg"
         cv2.imwrite(result_path, annotated_img)
         return kite_count, result_path
 
-    os.remove("/tmp/frame.jpg")
     return kite_count, None
 
 
@@ -82,7 +87,7 @@ def main():
             "slug": "khaya",
             "url": "https://conjure.co.za/blouberg/hls/media.m3u8",
             # Block out windsock that gets mistaken for a kite sometimes
-            "ffmpeg_extra_args": ["-vf", "drawbox=x=175:y=1015:w=200:h=100:color=black:t=fill"],
+            "ffmpeg_extra_args": ["-vf", "drawbox=x=225:y=1015:w=200:h=100:color=black:t=fill"],
             "counter": CountBuffer()
         },
         {
