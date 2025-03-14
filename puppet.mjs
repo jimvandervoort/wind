@@ -5,6 +5,8 @@ import regions from './region.mjs';
 
 const isProd = process.env.NODE_ENV === "production";
 const version = process.env.VITE_WIND_VERSION || 'local';
+const headless = (process.env.WIND_HEADLESS || 'true') === 'true';
+const optimizeLoad = (process.env.WIND_OPTIMIZE_LOAD || 'true') === 'true';
 
 async function getWaves(page, len) {
   const hasWaves = !!await page.$('#tabid_0_0_HTSGW');
@@ -17,10 +19,23 @@ async function getWaves(page, len) {
   );
 }
 
-async function getSpotData(browser, spotUrl) {
+function shouldLoad(request) {
+  if (!optimizeLoad) {
+    return true;
+  }
+
+  const resourceType = request.resourceType();
+  if (resourceType === 'stylesheet' || resourceType === 'image') {
+    return false;
+  }
+
+  const { hostname } = new URL(request.url());
+  return hostname === 'www.windguru.cz' || hostname === 'www.windguru.net' || hostname === 'unpkg.com';
+}
+
+async function getSpotData(page, spotUrl) {
   console.log('Loading url:', spotUrl);
 
-  const page = await browser.newPage();
   await page.goto(spotUrl);
   await Promise.all([
     page.waitForSelector('#tabid_0_0_dates'),
@@ -64,9 +79,7 @@ async function getSpotData(browser, spotUrl) {
 
   const waves = await getWaves(page, gusts.length);
 
-  await page.close();
-
-  console.log('Processed spot complete');
+  console.log('Processing spot complete');
 
   return {
     wind,
@@ -78,24 +91,31 @@ async function getSpotData(browser, spotUrl) {
 }
 
 async function loadSpots(browser, spots) {
+  const page = await browser.newPage();
+  page.on('request', (request) => shouldLoad(request) ? request.continue() : request.abort());
+  await page.setRequestInterception(true);
+
   const datas = [];
   for (const spot of spots) {
     console.log('Processing:', spot.slug);
-    const data = await getSpotData(browser, spot.url);
+    const data = await getSpotData(page, spot.url);
     datas.push({
       version,
       ...spot,
       data
     });
   }
+
+  await page.close();
+
   return datas;
 }
 
 async function loadRegion(spots, name) {
   console.log(`Launching browser for ${name}`);
   const browser = await puppeteer.launch({
-    headless: true,
-    args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
+    headless,
+    args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-features=ServiceWorker'] : [],
   });
 
   try {
