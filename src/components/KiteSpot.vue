@@ -6,9 +6,9 @@ defineProps({
 function getKiteCountText(count) {
   const c = Math.round(count);
   if (c === 0) return "No kites on the water";
-  if (c >= 1 && c < 5) return "A few kites out";
-  if (c >= 5 && c < 10) return "Plenty of kites out";
-  if (c >= 10) return "Looks very crowded";
+  if (c >= 1 && c < 4) return "A few kites out";
+  if (c >= 4 && c < 8) return "Plenty of kites out";
+  return "Looks very crowded";
 }
 
 function getWebcamUrl(slug) {
