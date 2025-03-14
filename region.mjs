@@ -94,6 +94,111 @@ const regions = [
       },
     ],
   },
+  {
+    name: 'holland',
+    spots: [
+      {
+        name: 'Kijkduin 👀',
+        slug: 'kijkduin',
+        url: 'https://www.windguru.cz/48305',
+      },
+      {
+        name: 'De Slufter 🏝️',
+        slug: 'deslufter',
+        url: 'https://www.windguru.cz/48309',
+      },
+      {
+        name: 'Rockanje ⚓️',
+        slug: 'rockanje',
+        url: 'https://www.windguru.cz/500879',
+      },
+      {
+        name: 'Ouddorp 🏛️',
+        slug: 'ouddorp',
+        url: 'https://www.windguru.cz/181964',
+      },
+      {
+        name: 'Brouwersdam 🦑',
+        slug: 'brouwersdam',
+        url: 'https://www.windguru.cz/97',
+      },
+      {
+        name: 'Vrouwenpolder 💅',
+        slug: 'vrouwenpolder',
+        url: 'https://www.windguru.cz/48323',
+      },
+      {
+        name: 'Cadzand Bad 🇧🇪',
+        slug: 'cadzandbad',
+        url: 'https://www.windguru.cz/48328',
+      },
+      {
+        name: 'Grevelingendam 🌬️',
+        slug: 'grevelingendam',
+        url: 'https://www.windguru.cz/147',
+      },
+      {
+        name: 'Noordwijk aan Zee 🏄',
+        slug: 'noordwijk',
+        url: 'https://www.windguru.cz/575',
+      },
+      {
+        name: 'Wijk aan Zee 🌊',
+        slug: 'wijkaanzee',
+        url: 'https://www.windguru.cz/1120682',
+      },
+      {
+        name: 'Texel 🏝️',
+        slug: 'texel',
+        url: 'https://www.windguru.cz/48262',
+      },
+      {
+        name: 'Vlieland 🏝️',
+        slug: 'vlieland',
+        url: 'https://www.windguru.cz/48261',
+      },
+      {
+        name: 'Terschelling, West aan Zee 🏝️',
+        slug: 'terschelling',
+        url: 'https://www.windguru.cz/48260',
+      },
+      {
+        name: 'Ameland, Noordzeestrand 🏝️',
+        slug: 'ameland',
+        url: 'https://www.windguru.cz/48255',
+      },
+      {
+        name: 'Schiermonnikoog West End 🏝️',
+        slug: 'schiermonnikoog',
+        url: 'https://www.windguru.cz/500856',
+      },
+      {
+        name: 'Kornwerderzand 🌉',
+        slug: 'kornwerderzand',
+        url: 'https://www.windguru.cz/500867',
+      },
+      {
+        name: 'Workum 🚣',
+        slug: 'workum',
+        url: 'https://www.windguru.cz/48267',
+      },
+      {
+        name: 'Mirns 🚣',
+        slug: 'mirns',
+        url: 'https://www.windguru.cz/3642',
+      },
+      {
+        name: 'Medemblik ⛵',
+        slug: 'medemblik',
+        url: 'https://www.windguru.cz/48274',
+      },
+      {
+        name: 'Enkhuizen ⛵',
+        slug: 'enkhuizen',
+        url: 'https://www.windguru.cz/46944',
+      },
+    ],
+  },
 ];
 
 function randSkinTone() {
