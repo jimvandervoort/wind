@@ -2,7 +2,7 @@
 Description=Scrape windguru
 
 [Timer]
-OnCalendar=*:0/4
+OnUnitActiveSec=4min
 Persistent=true
 
 [Install]
