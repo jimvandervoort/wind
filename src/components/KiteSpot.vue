@@ -54,7 +54,7 @@ function getWebcamUrl(slug) {
         </template>
         <div v-for="fc in day.forecast" class="mt-6">
           <div class="gust w-12 flex flex-col justify-end pl-1"
-               :style="`${fc.gust.style}; --wo: ${fc.waveOpacity}; --wave: '${fc.waveStr}'; --wp: ${fc.wavePos}`">
+               :style="`${fc.gust.style}; --wave: '${fc.waveStr}'; --wp: ${fc.wavePos}`">
             <div class="dir opacity-90" :style="`--deg: ${fc.deg}`">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4"
                    stroke="currentColor" class="size-4">
@@ -106,7 +106,6 @@ h3 {
   background-size: 100% auto;
   overflow: hidden;
   background-position: 0 var(--wp);
-  opacity: var(--wo);
   position: absolute;
   top: -1.5rem;
   left: 0;
