@@ -20,7 +20,7 @@ const prev = () => {
 <template>
   <div class="flex flex-row justify-between pl-8 pr-8 max-w-lg">
     <button class="btn relative flex-1 mr-2 pt-1 pb-1" :class="`dir ${dir === 'prev' ? 'active' : ''}`" @click="prev">
-      <div class="select-marker" :class="dir"></div>
+      <div @click.stop.prevent class="select-marker" :class="dir"></div>
       This week
     </button>
     <button class="btn relative flex-1 ml-2" :class="`dir ${dir === 'next' ? 'active' : ''}`" @click="next">
@@ -45,6 +45,7 @@ const prev = () => {
 .btn {
   border: 2px solid #ccc;
   border-radius: .3rem;
+  transition: transform .3s ease;
 }
 
 .btn::before {
@@ -59,7 +60,6 @@ const prev = () => {
   width: .9rem;
   height: .9rem;
 
-  /* border: 2px solid #cccccc5b; */
   background: #cccccc5b;
   border-radius: 50%;
 }
@@ -68,7 +68,7 @@ const prev = () => {
   display: block;
   position: absolute;
   z-index: 1;
-  transition: all .3s ease;
+  transition: transform .3s ease;
   width: 100%;
   height: 3rem;
   background: url('../assets/george.png') no-repeat -3px center;
@@ -95,7 +95,7 @@ const prev = () => {
 .slide-leave-active,
 .slide-reverse-enter-active,
 .slide-reverse-leave-active {
-  transition: all .3s ease;
+  transition: transform .3s ease;
 }
 
 .slide-enter-from,

@@ -2,7 +2,7 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: #0c1215;
   color: #e2e8f0;
-  cursor: url('/src/assets/fish.png') 4 12, auto;
+  cursor: url('/src/assets/fish.png') 0 0, auto;
 }
 
 .roboto {
@@ -14,19 +14,23 @@ body {
 }
 
 a {
-  cursor: url('/src/assets/fish.png') 4 12, pointer;
+  cursor: url('/src/assets/fish.png') 0 0, pointer;
 }
 
 input {
-  cursor: url('/src/assets/fish.png') 4 12, pointer;
+  cursor: url('/src/assets/fish.png') 0 0, pointer;
 }
 
 input::-webkit-slider-thumb {
-  cursor: url('/src/assets/fish.png') 4 12, pointer;
+  cursor: url('/src/assets/fish.png') 0 0, pointer;
 }
 
 input::-moz-range-thumb {
-  cursor: url('/src/assets/fish.png') 4 12, pointer;
+  cursor: url('/src/assets/fish.png') 0 0, pointer;
+}
+
+button {
+  cursor: url('/src/assets/fish.png') 0 0, pointer !important;
 }
 
 .fira-code {
