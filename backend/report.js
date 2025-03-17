@@ -81,7 +81,7 @@ function recolorGust(gust) {
   };
 }
 
-function processSpot(spot, maxDays) {
+function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
     return {
       ...day,
@@ -92,10 +92,7 @@ function processSpot(spot, maxDays) {
     }
   });
 
-  const days = mapToDay(combined).filter(day => {
-    const maxUnixTime = new Date().getTime() / 1000 + maxDays * 24 * 60 * 60;
-    return day.unixTime < maxUnixTime;
-  });
+  const days = mapToDay(combined);
 
   delete spot.data;
   return {
@@ -114,15 +111,14 @@ function addWind(spot, liveWind) {
   }
 }
 
-export function makeReport(data, liveWind, kiteCount, windThreshold, maxDays = 6) {
-  const spots = data.map(spot => processSpot(spot, maxDays));
+export function makeReport(data, liveWind, kiteCount, windThreshold) {
+  const spots = data.map(spot => processSpot(spot));
   const spotsWithWind = spots
     .map(spot => ({
       ...spot,
       kiteCount: kiteCount[spot.spot.slug] ?? null,
       days: spot.days.map(day => worthyDays(day, windThreshold))
     }))
-    .filter(spot => spot.days.length > 0); // TODO does this filter do anything?
 
   return spotsWithWind.map(spot => addWind(spot, liveWind));
 }

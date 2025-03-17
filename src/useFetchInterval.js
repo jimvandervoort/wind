@@ -1,19 +1,8 @@
 import {onMounted, onUnmounted, ref, watch} from 'vue';
 
 const interval = 10_000;
-const myVersion = import.meta.env.VITE_WIND_VERSION || 'local';
-
-async function fetchAll(files) {
-  const results = await Promise.all(files.map(f => fetch(f)));
-
-  for (const r of results) {
-    if (!r.ok) {
-      throw new Error('Network response was not ok');
-    }
-  }
-
-  return Promise.all(results.map(r => r.json()));
-}
+const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
+const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
 function getRegion() {
   const sp = new URL(window.location.href).searchParams.get('region')
@@ -35,14 +24,13 @@ export function useFetchInterval(windThreshold) {
   const region = getRegion();
 
   const filterDays = (report, windThreshold) => {
-    report = report.map(spot => {
-      spot.days.map(day => {
+    report.forEach(spot => {
+      spot.days = spot.days.slice(0, maxDays);
+      spot.days.forEach(day => {
         day.forecast.forEach(f => {
           f.visible = f.gust.value >= windThreshold;
         });
-        return day;
       })
-      return spot;
     });
 
     return report;
@@ -51,13 +39,18 @@ export function useFetchInterval(windThreshold) {
   // Add a watch on windThreshold to refilter existing data
   watch(windThreshold, (newValue) => {
     if (report.value) {
-      report.value = filterDays(report.value, newValue);
+      filterDays(report.value, newValue);
     }
   });
 
   const fetchData = async () => {
     try {
-      const [{report: fetchedReport, version: theirVersion}] = await fetchAll([`/report.${region}.json`]);
+      const res = await fetch(`/report.${region}.json`);
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const {report: fetchedReport, version: theirVersion} = await res.json();
 
       if (myVersion !== theirVersion) {
         console.info('Server updated, reloading in 30s');
