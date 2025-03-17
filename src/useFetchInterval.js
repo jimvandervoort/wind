@@ -1,7 +1,6 @@
 import {onMounted, onUnmounted, ref, watch} from 'vue';
-import {makeReport} from "./report.js";
 
-const interval = 10000;
+const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION || 'local';
 
 async function fetchAll(files) {
@@ -33,30 +32,33 @@ function getRegion() {
 export function useFetchInterval(windThreshold) {
   const report = ref(null);
   const error = ref(null);
-  const rawData = ref(null);
-  const rawMacWind = ref(null);
-  const rawLangeWind = ref(null);
-  const rawKiteCount = ref(null);
-
-  const updateReport = () => {
-    if (rawData.value && rawMacWind.value && rawLangeWind.value && rawKiteCount.value) {
-      report.value = makeReport(rawData.value, rawMacWind.value, rawLangeWind.value, rawKiteCount.value, windThreshold.value);
-    }
-  };
-
   const region = getRegion();
+
+  const filterDays = (report, windThreshold) => {
+    report = report.map(spot => {
+      spot.days.map(day => {
+        day.forecast.forEach(f => {
+          f.visible = f.gust.value >= windThreshold;
+        });
+        return day;
+      })
+      return spot;
+    });
+
+    return report;
+  }
+
+  // Add a watch on windThreshold to refilter existing data
+  watch(windThreshold, (newValue) => {
+    if (report.value) {
+      report.value = filterDays(report.value, newValue);
+    }
+  });
 
   const fetchData = async () => {
     try {
-      const [data, macWind, langeWind, kiteCount] = await fetchAll([
-        `/${region}.json`,
-        '/macwind.json',
-        '/langewind.json',
-        '/kitecount.json',
-      ])
+      const [{report: fetchedReport, version: theirVersion}] = await fetchAll([`/report.${region}.json`]);
 
-      const theirVersion = data[0].version;
-      console.log({theirVersion, myVersion});
       if (myVersion !== theirVersion) {
         console.info('Server updated, reloading in 30s');
         setTimeout(() => {
@@ -64,11 +66,7 @@ export function useFetchInterval(windThreshold) {
         }, 30000);
       }
 
-      rawData.value = data;
-      rawMacWind.value = macWind;
-      rawLangeWind.value = langeWind;
-      rawKiteCount.value = kiteCount;
-      updateReport();
+      report.value = filterDays(fetchedReport, windThreshold.value);
       error.value = null;
     } catch (err) {
       error.value = err;
@@ -79,11 +77,6 @@ export function useFetchInterval(windThreshold) {
     fetchData(); // Initial fetch
     const intervalId = setInterval(fetchData, interval); // Set up interval
     onUnmounted(() => clearInterval(intervalId)); // Clear interval on unmount
-  });
-
-  // Watch for changes in windThreshold and only update the report
-  watch(windThreshold, () => {
-    updateReport();
   });
 
   return {report, error};

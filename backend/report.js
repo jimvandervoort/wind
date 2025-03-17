@@ -1,9 +1,8 @@
 import Color from 'color';
-import { mapRangeClamp } from './range';
+import { mapRangeClamp } from '../src/range.js';
 
 const minHour = 8;
 const maxHour = 20;
-const maxDays = new URL(window.location).searchParams.get('days') || 6;
 
 const dayNameMap = {
   'Mo': 'MON',
@@ -105,7 +104,7 @@ function recolorGust(gust) {
   };
 }
 
-function processSpot(spot) {
+function processSpot(spot, maxDays) {
   const combined = spot.data.dates.map((day, i) => {
     return {
       ...day,
@@ -121,9 +120,10 @@ function processSpot(spot) {
     return day.unixTime < maxUnixTime;
   });
 
+  delete spot.data;
   return {
     spot,
-    days: days,
+    days,
   };
 }
 
@@ -159,20 +159,15 @@ function addWind(spot, macWind, langeWind) {
   return spot;
 }
 
-export function makeReport(data, macWind, langeWind, kiteCount, windThreshold) {
-  const spots = data.map(spot => processSpot(spot));
+export function makeReport(data, macWind, langeWind, kiteCount, windThreshold, maxDays = 6) {
+  const spots = data.map(spot => processSpot(spot, maxDays));
   const spotsWithWind = spots
     .map(spot => ({
       ...spot,
       kiteCount: kiteCount[spot.spot.slug] ?? null,
-      days: spot.days.map(day => worthyDays(day, windThreshold)).map(day => {
-        return {
-          ...day,
-          hasWind: day.forecast.length > 0
-        }
-      })
+      days: spot.days.map(day => worthyDays(day, windThreshold))
     }))
-    .filter(spot => spot.days.length > 0);
+    .filter(spot => spot.days.length > 0); // TODO does this filter do anything?
 
   return spotsWithWind.map(spot => addWind(spot, macWind, langeWind));
 }

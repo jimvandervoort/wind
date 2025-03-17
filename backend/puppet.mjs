@@ -1,10 +1,8 @@
 import puppeteer from 'puppeteer';
-import fs from 'fs';
 
 import regions from './region.mjs';
 
 const isProd = process.env.NODE_ENV === "production";
-const version = process.env.VITE_WIND_VERSION || 'local';
 const headless = (process.env.WIND_HEADLESS || 'true') === 'true';
 const optimizeLoad = (process.env.WIND_OPTIMIZE_LOAD || 'true') === 'true';
 
@@ -91,6 +89,7 @@ async function getSpotData(page, spotUrl) {
 }
 
 async function loadSpots(browser, spots) {
+  console.log('Loading spots');
   const page = await browser.newPage();
   page.on('request', (request) => shouldLoad(request) ? request.continue() : request.abort());
   await page.setRequestInterception(true);
@@ -100,7 +99,6 @@ async function loadSpots(browser, spots) {
     console.log('Processing:', spot.slug);
     const data = await getSpotData(page, spot.url);
     datas.push({
-      version,
       ...spot,
       data
     });
@@ -115,28 +113,30 @@ async function loadRegion(spots, name) {
   console.log(`Launching browser for ${name}`);
   const browser = await puppeteer.launch({
     headless,
-    args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-features=ServiceWorker'] : [],
+    args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-features=ServiceWorker'] : ['--disable-features=ServiceWorker'],
   });
 
+  let result;
   try {
-    const data = await loadSpots(browser, spots);
-    const output = isProd ? `dist/${name}.json` : `public/${name}.json`;
-    console.log(`Saving result to ${output}`);
-    fs.writeFileSync(output, JSON.stringify(data));
+    result = await loadSpots(browser, spots);
   } catch (e) {
     console.error('Error loading spots', e);
     process.exitCode = 1;
   } finally {
     await browser.close();
   }
+
+  return result;
 }
 
-async function run() {
+export async function loadRegions() {
+  const results = [];
   for (const region of regions) {
-    await loadRegion(region.spots, region.name);
+    results.push({
+      name: region.name,
+      spots: await loadRegion(region.spots, region.name),
+    });
   }
 
-  console.log('Have a nice day!')
+  return results;
 }
-
-await run();

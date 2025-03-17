@@ -1,4 +1,4 @@
-const regions = [
+let regions = [
   {
     name: 'wind',
     spots: [
@@ -209,6 +209,11 @@ function randSkinTone() {
 function randGender() {
   const genders = ['\u{200D}\u{2640}\u{FE0F}', '\u{200D}\u{2642}\u{FE0F}']; // Female and Male modifiers
   return genders[Math.floor(Math.random() * genders.length)];
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  regions = regions.filter(region => region.name === 'wind');
+  regions[0].spots = regions[0].spots.filter(spot => spot.slug === 'khaya');
 }
 
 export default regions;
