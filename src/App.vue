@@ -39,7 +39,6 @@ const toggleSettings = () => {
         <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 2.5, 5)}rem`" v-model="windThreshold" min="10" max="30" step="1" class="slider">
         <span class="text-2xl font-bold pl-4">30</span>
       </div>
-      <p class="pt-8">Wind threshold will be saved for next visit 🤙</p>
     </div>
   </div>
   <KiteSpots :spots="report" />
