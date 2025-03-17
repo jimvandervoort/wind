@@ -61,8 +61,8 @@ const toggleSettings = () => {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 4rem;
-  height: 4rem;
+  width: var(--scale);
+  height: var(--scale);
   background: url('./assets/george.png') no-repeat center center;
   background-size: cover;
 }
