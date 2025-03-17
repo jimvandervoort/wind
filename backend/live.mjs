@@ -11,6 +11,11 @@ function metersToKnots(meters) {
   return meters * 1.94384;
 }
 
+function translateWindDirection(str) {
+  // from dutch to english
+  return str.replaceAll('O', 'E').replaceAll('Z', 'S');
+}
+
 function mapWindDirection(str) {
   const dirs = {
     N: 0,
@@ -63,7 +68,7 @@ async function fetchLangeWind() {
   return {
     high: windData.windMax,
     low: windData.windMin,
-    dir: windData.compassDir,
+    dir: translateWindDirection(windData.compassDir),
     deg: windData.windDir,
     url: 'https://capekiting.co.za/langebaan/',
   }

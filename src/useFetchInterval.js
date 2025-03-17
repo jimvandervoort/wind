@@ -25,8 +25,8 @@ export function useFetchInterval(windThreshold) {
 
   const filterDays = (report, windThreshold) => {
     report.forEach(spot => {
-      spot.days = spot.days.slice(0, maxDays);
-      spot.days.forEach(day => {
+      spot.days.forEach((day, i) => {
+        day.batch = Math.floor(i / maxDays) + 1;
         day.forecast.forEach(f => {
           f.visible = f.gust.value >= windThreshold;
         });

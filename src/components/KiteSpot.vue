@@ -1,7 +1,8 @@
 <script setup>
 defineProps({
   spot: Object,
-})
+  batch: Number,
+});
 
 function getKiteCountText(count) {
   const c = Math.round(count);
@@ -19,7 +20,7 @@ function getWebcamUrl(slug) {
 </script>
 
 <template>
-  <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12 mt-8">
+  <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12">
     <a :href="spot.spot.url" rel="noreferrer">
       <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold title" v-html="spot.spot.name"></h1>
     </a>
@@ -44,9 +45,9 @@ function getWebcamUrl(slug) {
       </a>
     </div>
   </div>
-  <a class="flex flex-row flex-wrap mb-12" :href="spot.spot.url" rel="noreferrer">
+  <a class="flex flex-row flex-wrap mb-8" :href="spot.spot.url" rel="noreferrer">
     <template v-for="day in spot.days">
-      <div class="flex flex-row items-end fira-code">
+      <div v-if="day.batch === batch" class="flex flex-row items-end fira-code">
         <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.forecast.some(f => f.visible)">{{ day.name }}</h3>
         <template v-else>
           <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h3>
@@ -54,10 +55,10 @@ function getWebcamUrl(slug) {
         </template>
         <div v-for="f in day.forecast.filter(f => f.visible)" class="mt-6">
           <div class="gust w-12 flex flex-col justify-end pl-1"
-               :style="`${f.gust.style}; --wave: '${f.waveStr}'; --wp: ${f.wavePos}`">
+              :style="`${f.gust.style}; --wave: '${f.waveStr}'; --wp: ${f.wavePos}`">
             <div class="dir opacity-90" :style="`--deg: ${f.deg}`">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4"
-                   stroke="currentColor" class="size-4">
+                  stroke="currentColor" class="size-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
               </svg>
             </div>
