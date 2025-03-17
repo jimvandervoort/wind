@@ -211,7 +211,7 @@ function randGender() {
   return genders[Math.floor(Math.random() * genders.length)];
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.WIND_MINI === 'true') {
   regions = regions.filter(region => region.name === 'wind');
   regions[0].spots = regions[0].spots.filter(spot => spot.slug === 'khaya');
 }

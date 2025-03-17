@@ -19,29 +19,6 @@ function worthyDays(day, windThreshold) {
   return day;
 }
 
-function mapWindDirection(str) {
-  const dirs = {
-    N: 0,
-    NNE: 22.5,
-    NE: 45,
-    ENE: 67.5,
-    E: 90,
-    ESE: 112.5,
-    SE: 135,
-    SSE: 157.5,
-    S: 180,
-    SSW: 202.5,
-    SW: 225,
-    WSW: 247.5,
-    W: 270,
-    WNW: 292.5,
-    NW: 315,
-    NNW: 337.5,
-  };
-
-  return dirs[str] - 180;
-}
-
 function styleWave(w) {
   return {
     wave: w > 0 ? w : '',
@@ -127,39 +104,17 @@ function processSpot(spot, maxDays) {
   };
 }
 
-function addWind(spot, macWind, langeWind) {
-  const macLast = macWind[0];
-  const deg = mapWindDirection(macLast.dir);
+function addWind(spot, liveWind) {
+  const wind = liveWind[spot.spot.slug];
+  if (!wind) return spot;
 
-  if (spot.spot.slug === "khaya") {
-    return {
-      ...spot,
-      live: {
-        ...macLast,
-        deg,
-        url: 'https://mac-wind.appspot.com/?show=15min',
-      }
-    }
+  return {
+    ...spot,
+    live: wind,
   }
-
-  if (spot.spot.slug === "langebaan") {
-    const langeLive = {
-      low: langeWind.windMin,
-      high: langeWind.windMax,
-      dir: langeWind.compassDir,
-      deg: mapWindDirection(langeWind.compassDir),
-      url: 'https://capekiting.co.za/langebaan/',
-    }
-    return {
-      ...spot,
-      live: langeLive,
-    }
-  }
-
-  return spot;
 }
 
-export function makeReport(data, macWind, langeWind, kiteCount, windThreshold, maxDays = 6) {
+export function makeReport(data, liveWind, kiteCount, windThreshold, maxDays = 6) {
   const spots = data.map(spot => processSpot(spot, maxDays));
   const spotsWithWind = spots
     .map(spot => ({
@@ -169,5 +124,5 @@ export function makeReport(data, macWind, langeWind, kiteCount, windThreshold, m
     }))
     .filter(spot => spot.days.length > 0); // TODO does this filter do anything?
 
-  return spotsWithWind.map(spot => addWind(spot, macWind, langeWind));
+  return spotsWithWind.map(spot => addWind(spot, liveWind));
 }
