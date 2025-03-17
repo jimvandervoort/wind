@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import KiteSpot from "./KiteSpot.vue";
 
 defineProps({
@@ -7,6 +7,13 @@ defineProps({
 });
 
 const dir = ref("prev");
+const touchStartX = ref(0);
+const touchEndX = ref(0);
+const containerPosition = ref(0);
+
+const translateX = computed(() => {
+  return dir.value === "prev" ? 0 : -100;
+});
 
 const next = () => {
   dir.value = "next";
@@ -14,6 +21,37 @@ const next = () => {
 
 const prev = () => {
   dir.value = "prev";
+};
+
+const handleTouchStart = (e) => {
+  touchStartX.value = e.touches[0].clientX;
+};
+
+const handleTouchMove = (e) => {
+  touchEndX.value = e.touches[0].clientX;
+  const diff = touchEndX.value - touchStartX.value;
+
+  // Limit the swipe to only move within the bounds
+  if ((dir.value === "prev" && diff < 0) || (dir.value === "next" && diff > 0)) {
+    const movePercent = (diff / window.innerWidth) * 100;
+    containerPosition.value = dir.value === "prev" ? movePercent : -100 + movePercent;
+  }
+};
+
+const handleTouchEnd = () => {
+  const diff = touchEndX.value - touchStartX.value;
+  const threshold = window.innerWidth * 0.2; // 20% of screen width
+
+  if (diff < -threshold && dir.value === "prev") {
+    dir.value = "next";
+  } else if (diff > threshold && dir.value === "next") {
+    dir.value = "prev";
+  }
+
+  // Reset position
+  containerPosition.value = 0;
+  touchStartX.value = 0;
+  touchEndX.value = 0;
 };
 </script>
 
@@ -27,17 +65,19 @@ const prev = () => {
       Next week
     </button>
   </div>
-  <div class="relative">
-    <transition name="slide">
-      <div class="pt-8" v-if="dir === 'prev'">
+  <div class="swipe-container"
+       @touchstart="handleTouchStart"
+       @touchmove="handleTouchMove"
+       @touchend="handleTouchEnd">
+    <div class="swipe-wrapper"
+         :style="{transform: `translateX(${(containerPosition || translateX) / 2}%)`, transition: containerPosition ? 'none' : 'transform 0.3s ease'}">
+      <div class="swipe-page">
         <KiteSpot v-for="spot in report" :spot="spot" :batch="1"/>
       </div>
-    </transition>
-    <transition name="slide-reverse">
-      <div class="pt-8" v-if="dir === 'next'">
+      <div class="swipe-page">
         <KiteSpot v-for="spot in report" :spot="spot" :batch="2"/>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -85,26 +125,21 @@ const prev = () => {
   transform: translateX(calc(100% + 20px));
 }
 
-.slide-reverse-enter-active,
-.slide-enter-active {
-  position: absolute;
-  top: 0;
+.swipe-container {
+  overflow: hidden;
+  width: 100vw;
+  position: relative;
 }
 
-.slide-enter-active,
-.slide-leave-active,
-.slide-reverse-enter-active,
-.slide-reverse-leave-active {
-  transition: transform .3s ease;
+.swipe-wrapper {
+  display: flex;
+  width: 200vw;
+  position: relative;
 }
 
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateX(-100vw);
-}
-
-.slide-reverse-enter-from,
-.slide-reverse-leave-to {
-  transform: translateX(100vw);
+.swipe-page {
+  width: 100vw;
+  flex-shrink: 0;
+  padding-top: 2rem;
 }
 </style>
