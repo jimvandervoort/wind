@@ -93,6 +93,12 @@ export async function fetchLiveWind() {
     khaya: await saveExec(fetchMacWind),
     langebaan: await saveExec(fetchLangeWind),
     kijkduin: await saveExec(actueleWindStation, actueleWind, '9984'),
+    wijkaanzee: await saveExec(actueleWindStation, actueleWind, '6225'),
+    cadzandbad: await saveExec(actueleWindStation, actueleWind, '6308'),
+    terschelling: await saveExec(actueleWindStation, actueleWind, '6251'),
+    vlieland: await saveExec(actueleWindStation, actueleWind, '6242'),
+    mirns: await saveExec(actueleWindStation, actueleWind, '9985'),
+    schiermonnikoog: await saveExec(actueleWindStation, actueleWind, '6285'),
   }
 }
 

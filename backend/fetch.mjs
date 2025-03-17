@@ -3,9 +3,10 @@ import { makeReport } from './report.js';
 import { loadRegions } from './puppet.mjs';
 import { fetchLiveWind } from './live.mjs';
 
-const makeDump = process.env.WIND_MAKE_DUMP === 'true';
+const isProd = process.env.NODE_ENV === 'production';
+const makeDump = !isProd;
+const indentLevel = isProd ? 0 : 2;
 const useDump = process.env.WIND_USE_DUMP === 'true';
-const indentLevel = process.env.NODE_ENV === 'production' ? 2 : 0;
 const outputDir = process.env.WIND_OUTPUT_DIR || './public';
 
 const kiteCount = JSON.parse(fs.readFileSync(`${outputDir}/kitecount.json`, 'utf8'));
