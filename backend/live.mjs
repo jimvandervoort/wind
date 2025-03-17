@@ -68,7 +68,7 @@ async function fetchLangeWind() {
   return {
     high: windData.windMax,
     low: windData.windMin,
-    dir: translateWindDirection(windData.compassDir),
+    dir: windData.compassDir,
     deg: windData.windDir,
     url: 'https://capekiting.co.za/langebaan/',
   }
@@ -84,7 +84,7 @@ function actueleWindStation(actueleWind, sid) {
   return {
     low: metersToKnots(windData.windsnelheidMS),
     high: metersToKnots(windData.windstotenMS),
-    dir: windData.windrichting,
+    dir: translateWindDirection(windData.windrichting),
     deg: windData.windrichtingGR,
     url: `https://actuelewind.nl/?stationcode=${sid}#SpotPage`,
   }
