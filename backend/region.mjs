@@ -108,6 +108,11 @@ let regions = [
         url: 'https://www.windguru.cz/48309',
       },
       {
+        name: 'Hoek van Holland 🚢',
+        slug: 'hoekvanholland',
+        url: 'https://www.windguru.cz/48307',
+      },
+      {
         name: 'Rockanje ⚓️',
         slug: 'rockanje',
         url: 'https://www.windguru.cz/500879',
