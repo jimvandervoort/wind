@@ -6,7 +6,7 @@ defineProps({
   report: Array,
 });
 
-const touch = new URLSearchParams(window.location.search).get('touch') === 'true';
+const touch = new URLSearchParams(window.location.search).get('touch') !== 'false';
 
 let lastDiff = 0;
 const dir = ref("prev");
@@ -16,19 +16,19 @@ const containerPosition = ref(0);
 const translateYPrev = ref(0);
 const translateYNext = ref(0);
 const kiteloop = ref(false);
+const animationLock = ref(false);
+
 const translateX = computed(() => {
   return dir.value === "prev" ? 0 : -100;
 });
 
-const next = () => {
-  kiteloop.value = Math.random() > 0.5;
-  dir.value = "next";
+const move = (to) => {
+  kiteloop.value = Math.random() > 0.8;
+  dir.value = to;
 };
 
-const prev = () => {
-  kiteloop.value = Math.random() > 0.5;
-  dir.value = "prev";
-};
+const next = () => move("next");
+const prev = () => move("prev");
 
 const handleKeyDown = (e) => {
   if (e.key === 'ArrowLeft') {
@@ -48,6 +48,7 @@ onUnmounted(() => {
 
 const handleTouchStart = (e) => {
   if (!touch) return;
+  if (animationLock.value) return;
 
   touchStartX.value = e.touches[0].clientX;
   const newPage = document.querySelector(`.page-${dir.value === 'prev' ? 'next' : 'prev'}`);
@@ -70,12 +71,14 @@ const handleTouchStart = (e) => {
 
 const handleTouchMove = (e) => {
   if (!touch) return;
+  if (animationLock.value) return;
 
   touchEndX.value = e.touches[0].clientX;
   const diff = touchEndX.value - touchStartX.value;
 
   // Limit the swipe to only move within the bounds
   if ((dir.value === "prev" && diff < 0) || (dir.value === "next" && diff > 0)) {
+    e.preventDefault(); // prevent scrolling on Y axis
     const movePercent = (diff / window.innerWidth) * 100;
     containerPosition.value = dir.value === "prev" ? movePercent : -100 + movePercent;
   }
@@ -83,6 +86,7 @@ const handleTouchMove = (e) => {
 
 const handleTouchEnd = () => {
   if (!touch) return;
+  animationLock.value = true;
 
   const diff = touchEndX.value - touchStartX.value;
   const threshold = window.innerWidth * 0.2; // 20% of screen width
@@ -95,11 +99,13 @@ const handleTouchEnd = () => {
       requestAnimationFrame(() => {
         translateYPrev.value = 0;
         translateYNext.value = 0;
+        animationLock.value = false;
       });
     }, 300);
   } else {
     translateYPrev.value = 0;
     translateYNext.value = 0;
+    animationLock.value = false;
   }
 
   if (willMoveNext) {
@@ -180,10 +186,6 @@ const handleTouchEnd = () => {
   background-size: contain;
   left: 0;
   top: -9px;
-}
-
-.select-marker.kiteloop {
-  transition: transform .5s ease;
 }
 
 .select-marker:not(.kiteloop).next {
