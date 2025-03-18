@@ -78,7 +78,7 @@ const handleTouchMove = (e) => {
 
   // Limit the swipe to only move within the bounds
   if ((dir.value === "prev" && diff < 0) || (dir.value === "next" && diff > 0)) {
-    e.preventDefault(); // prevent scrolling on Y axis
+    // e.preventDefault(); // prevent scrolling on Y axis
     const movePercent = (diff / window.innerWidth) * 100;
     containerPosition.value = dir.value === "prev" ? movePercent : -100 + movePercent;
   }
