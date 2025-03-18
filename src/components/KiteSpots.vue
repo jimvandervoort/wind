@@ -1,33 +1,76 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import KiteSpot from "./KiteSpot.vue";
 
 defineProps({
   report: Array,
 });
 
+const touch = new URLSearchParams(window.location.search).get('touch') === 'true';
+
+let lastDiff = 0;
 const dir = ref("prev");
 const touchStartX = ref(0);
 const touchEndX = ref(0);
 const containerPosition = ref(0);
-
+const translateYPrev = ref(0);
+const translateYNext = ref(0);
+const kiteloop = ref(false);
 const translateX = computed(() => {
   return dir.value === "prev" ? 0 : -100;
 });
 
 const next = () => {
+  kiteloop.value = Math.random() > 0.5;
   dir.value = "next";
 };
 
 const prev = () => {
+  kiteloop.value = Math.random() > 0.5;
   dir.value = "prev";
 };
 
+const handleKeyDown = (e) => {
+  if (e.key === 'ArrowLeft') {
+    prev();
+  } else if (e.key === 'ArrowRight') {
+    next();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
+
 const handleTouchStart = (e) => {
+  if (!touch) return;
+
   touchStartX.value = e.touches[0].clientX;
+  const newPage = document.querySelector(`.page-${dir.value === 'prev' ? 'next' : 'prev'}`);
+  const prevPage = document.querySelector(`.page-${dir.value}`);
+  const firstH = Array.from(prevPage.querySelectorAll('h1')).find(h => h.getBoundingClientRect().top > 0);
+  const cls = Array.from(firstH.classList).find(c => c.startsWith('slug_'));
+  const peer = newPage.querySelector(`.${cls}`);
+  console.log(firstH.innerText, peer.innerText);
+  if (!peer) return;
+
+  const peerRect = peer.getBoundingClientRect();
+  const myRect = firstH.getBoundingClientRect();
+  lastDiff = peerRect.top * -1 + myRect.top;
+  if (dir.value === 'next') {
+    translateYPrev.value = lastDiff;
+  } else {
+    translateYNext.value = lastDiff;
+  }
 };
 
 const handleTouchMove = (e) => {
+  if (!touch) return;
+
   touchEndX.value = e.touches[0].clientX;
   const diff = touchEndX.value - touchStartX.value;
 
@@ -39,13 +82,34 @@ const handleTouchMove = (e) => {
 };
 
 const handleTouchEnd = () => {
+  if (!touch) return;
+
   const diff = touchEndX.value - touchStartX.value;
   const threshold = window.innerWidth * 0.2; // 20% of screen width
+  const willMoveNext = diff < -threshold && dir.value === "prev";
+  const willMovePrev = diff > threshold && dir.value === "next";
 
-  if (diff < -threshold && dir.value === "prev") {
+  if (willMoveNext || willMovePrev) {
+    window.scrollTo(window.scrollX, window.scrollY + lastDiff * -1);
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        translateYPrev.value = 0;
+        translateYNext.value = 0;
+      });
+    }, 300);
+  } else {
+    translateYPrev.value = 0;
+    translateYNext.value = 0;
+  }
+
+  if (willMoveNext) {
     dir.value = "next";
-  } else if (diff > threshold && dir.value === "next") {
+    translateYNext.value = 0;
+    translateYPrev.value = lastDiff * -1;
+  } else if (willMovePrev) {
     dir.value = "prev";
+    translateYPrev.value = 0;
+    translateYNext.value = lastDiff * -1;
   }
 
   // Reset position
@@ -58,7 +122,7 @@ const handleTouchEnd = () => {
 <template>
   <div class="flex flex-row justify-between pl-8 pr-8 max-w-lg">
     <button class="btn relative flex-1 mr-2 pt-1 pb-1" :class="`dir ${dir === 'prev' ? 'active' : ''}`" @click="prev">
-      <div @click.stop.prevent class="select-marker" :class="dir"></div>
+      <div @click.stop.prevent class="select-marker" :class="{'kiteloop': kiteloop, [dir]: true}"></div>
       This week
     </button>
     <button class="btn relative flex-1 ml-2" :class="`dir ${dir === 'next' ? 'active' : ''}`" @click="next">
@@ -71,10 +135,10 @@ const handleTouchEnd = () => {
        @touchend="handleTouchEnd">
     <div class="swipe-wrapper"
          :style="{transform: `translateX(${(containerPosition || translateX) / 2}%)`, transition: containerPosition ? 'none' : 'transform 0.3s ease'}">
-      <div class="swipe-page">
+      <div class="swipe-page page-prev" :style="{transform: `translateY(${translateYPrev}px)`}">
         <KiteSpot v-for="spot in report" :spot="spot" :batch="1"/>
       </div>
-      <div class="swipe-page">
+      <div class="swipe-page page-next" :style="{transform: `translateY(${translateYNext}px)`}">
         <KiteSpot v-for="spot in report" :spot="spot" :batch="2"/>
       </div>
     </div>
@@ -109,6 +173,7 @@ const handleTouchEnd = () => {
   position: absolute;
   z-index: 1;
   transition: transform .3s ease;
+  transform: translateX(0);
   width: 100%;
   height: 3rem;
   background: url('../assets/george.png') no-repeat -3px center;
@@ -117,12 +182,16 @@ const handleTouchEnd = () => {
   top: -9px;
 }
 
-.select-marker.prev {
-  transform: translateX(0);
+.select-marker.kiteloop {
+  transition: transform .5s ease;
 }
 
-.select-marker.next {
+.select-marker:not(.kiteloop).next {
   transform: translateX(calc(100% + 20px));
+}
+
+.select-marker.kiteloop.next {
+  transform: translateX(calc(100% + 20px)) rotate(360deg);
 }
 
 .swipe-container {

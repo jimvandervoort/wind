@@ -22,7 +22,7 @@ function getWebcamUrl(slug) {
 <template>
   <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12">
     <a :href="spot.spot.url" rel="noreferrer">
-      <h1 :id="spot.spot.slug" class="mb-1 text-lg sm:text-2xl font-semibold title" v-html="spot.spot.name"></h1>
+      <h1 class="mb-1 text-lg sm:text-2xl font-semibold title" :class="`slug_${spot.spot.slug}`" v-html="spot.spot.name"></h1>
     </a>
     <div class="flex flex-col items-end sm:items-start">
       <a v-if="spot.live" :href="spot.live.url" class="hover:underline" rel="noreferrer">
