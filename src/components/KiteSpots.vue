@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import KiteSpot from "./KiteSpot.vue";
 
 defineProps({
@@ -12,6 +12,8 @@ let lastDiff = 0;
 const dir = ref("prev");
 const touchStartX = ref(0);
 const touchEndX = ref(0);
+const touchStartY = ref(0);
+const travelAxis = ref("none");
 const containerPosition = ref(0);
 const translateYPrev = ref(0);
 const translateYNext = ref(0);
@@ -51,12 +53,14 @@ const handleTouchStart = (e) => {
   if (animationLock.value) return;
 
   touchStartX.value = e.touches[0].clientX;
+  touchStartY.value = e.touches[0].clientY;
+
   const newPage = document.querySelector(`.page-${dir.value === 'prev' ? 'next' : 'prev'}`);
-  const prevPage = document.querySelector(`.page-${dir.value}`);
-  const firstH = Array.from(prevPage.querySelectorAll('h1')).find(h => h.getBoundingClientRect().top > 0);
+  const oldPage = document.querySelector(`.page-${dir.value}`);
+  const firstH = Array.from(oldPage.querySelectorAll('h1')).find(h => h.getBoundingClientRect().top > 0);
   const cls = Array.from(firstH.classList).find(c => c.startsWith('slug_'));
   const peer = newPage.querySelector(`.${cls}`);
-  console.log(firstH.innerText, peer.innerText);
+
   if (!peer) return;
 
   const peerRect = peer.getBoundingClientRect();
@@ -75,18 +79,42 @@ const handleTouchMove = (e) => {
 
   touchEndX.value = e.touches[0].clientX;
   const diff = touchEndX.value - touchStartX.value;
+  const diffY = e.touches[0].clientY - touchStartY.value;
+  const thresholdX = 5;
+  const thresholdY = 3;
+
+  if (travelAxis.value === "none") {
+    if (Math.abs(diff) > thresholdX) {
+      travelAxis.value = "x-axis"
+      e.preventDefault();
+      touchStartX.value = touchEndX.value;
+    } else if (Math.abs(diffY) > thresholdY) {
+      travelAxis.value = "y-axis"
+    }
+
+    return;
+  }
+
+  if (travelAxis.value === "x-axis") {
+    e.preventDefault();
+  } else if (travelAxis.value === "y-axis") {
+    return;
+  }
 
   // Limit the swipe to only move within the bounds
   if ((dir.value === "prev" && diff < 0) || (dir.value === "next" && diff > 0)) {
-    // e.preventDefault(); // prevent scrolling on Y axis
     const movePercent = (diff / window.innerWidth) * 100;
     containerPosition.value = dir.value === "prev" ? movePercent : -100 + movePercent;
   }
 };
 
-const handleTouchEnd = () => {
+const handleTouchEnd = (e) => {
   if (!touch) return;
   animationLock.value = true;
+
+  const wasY = travelAxis.value === "y-axis";
+  travelAxis.value = "none";
+  if (wasY) return;
 
   const diff = touchEndX.value - touchStartX.value;
   const threshold = window.innerWidth * 0.2; // 20% of screen width
@@ -99,7 +127,9 @@ const handleTouchEnd = () => {
       requestAnimationFrame(() => {
         translateYPrev.value = 0;
         translateYNext.value = 0;
-        animationLock.value = false;
+        requestAnimationFrame(() => {
+          animationLock.value = false;
+        });
       });
     }, 300);
   } else {
