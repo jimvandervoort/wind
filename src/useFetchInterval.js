@@ -62,6 +62,7 @@ export function useFetchInterval(windThreshold) {
       report.value = filterDays(fetchedReport, windThreshold.value);
       error.value = null;
     } catch (err) {
+      console.error(err);
       error.value = err;
     }
   };

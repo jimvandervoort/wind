@@ -42,7 +42,7 @@ const toggleSettings = () => {
     </div>
   </div>
   <KiteSpots :report="report" />
-  <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data: {{ error }}</p>
+  <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
   <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="hover:underline">wind@jim.computer</a></p>
 </template>
 

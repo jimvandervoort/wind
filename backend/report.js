@@ -23,7 +23,7 @@ function styleWave(w) {
   return {
     wave: w > 0 ? w : '',
     waveStr: w > 0 ? w.toFixed(1) : '',
-    wavePos: `${mapRangeClamp(w, 0, 4, 1, .4)}rem`,
+    wavePos: w > 0 ? `${mapRangeClamp(w, 0, 4, 1, .4)}rem` : `4rem`,
   }
 }
 
