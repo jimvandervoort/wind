@@ -113,13 +113,15 @@ const handleTouchEnd = (e) => {
   animationLock.value = true;
 
   const wasY = travelAxis.value === "y-axis";
+  const wasX = travelAxis.value === "x-axis";
   travelAxis.value = "none";
   if (wasY) return;
 
   const diff = touchEndX.value - touchStartX.value;
   const threshold = window.innerWidth * 0.2; // 20% of screen width
-  const willMoveNext = diff < -threshold && dir.value === "prev";
-  const willMovePrev = diff > threshold && dir.value === "next";
+  const willMoveNext = (diff < -threshold && dir.value === "prev") && wasX;
+  const willMovePrev = (diff > threshold && dir.value === "next") && wasX;
+  console.log({willMoveNext, willMovePrev, travelAxis: travelAxis.value});
 
   if (willMoveNext || willMovePrev) {
     window.scrollTo(window.scrollX, window.scrollY + lastDiff * -1);
@@ -139,11 +141,11 @@ const handleTouchEnd = (e) => {
   }
 
   if (willMoveNext) {
-    dir.value = "next";
+    next();
     translateYNext.value = 0;
     translateYPrev.value = lastDiff * -1;
   } else if (willMovePrev) {
-    dir.value = "prev";
+    prev();
     translateYPrev.value = 0;
     translateYNext.value = lastDiff * -1;
   }
@@ -156,6 +158,7 @@ const handleTouchEnd = (e) => {
 </script>
 
 <template>
+  <!-- <h1 class="sticky top-0 text-2xl p-4 z-20 bg-black">travel: {{ travelAxis }}</h1> -->
   <div class="flex flex-row justify-between pl-8 pr-8 max-w-lg">
     <button class="btn relative flex-1 mr-2 pt-1 pb-1" :class="`dir ${dir === 'prev' ? 'active' : ''}`" @click="prev">
       <div @click.stop.prevent class="select-marker" :class="{'kiteloop': kiteloop, [dir]: true}"></div>
