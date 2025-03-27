@@ -9,6 +9,6 @@ ARG VITE_WIND_VERSION
 ENV VITE_WIND_VERSION=${VITE_WIND_VERSION}
 
 COPY src src/
-COPY backend backend/
+COPY fetch fetch/
 
-CMD ["node", "backend/fetch.mjs"]
+CMD ["node", "fetch/fetch.mjs"]

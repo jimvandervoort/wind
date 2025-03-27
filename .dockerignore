@@ -2,5 +2,5 @@
 .*
 !package.json
 !package-lock.json
-!backend/*
+!fetch/*
 !src/range.js
