@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "color": "^4.2.3",
-    "puppeteer": "^23.7.1"
+    "puppeteer": "^23.7.1",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@supabase/auth-js": "^2.69.1",
