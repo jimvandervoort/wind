@@ -32,3 +32,6 @@ dist-ssr
 # Data
 public/*.json
 dump.*.json
+
+# Local config
+.env

@@ -4,6 +4,9 @@ import { ref, watch } from 'vue';
 import KiteSpots from './components/KiteSpots.vue';
 import { useFetchInterval } from "./useFetchInterval.js";
 import { mapRangeClamp } from './range';
+import { AuthClient } from '@supabase/auth-js'
+
+const GOTRUE_URL = 'http://localhost:1227';
 
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
@@ -19,9 +22,32 @@ const showSettings = ref(false);
 const toggleSettings = () => {
   showSettings.value = !showSettings.value;
 }
+
+const auth = new AuthClient({ url: GOTRUE_URL })
+const login = () => {
+  auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'http://localhost:5173',
+    }
+  });
+}
+
+const logout = () => {
+  auth.signOut()
+}
+
+const getSession = async () => {
+  const { data, error } = await auth.getSession()
+  console.log(data, error)
+}
 </script>
 
 <template>
+  <button class="hover:underline" @click="login()">Login</button>
+  <button class="hover:underline" @click="logout()">Logout</button>
+  <button class="hover:underline" @click="getSession()">Get Session</button>
+
   <div class="pt-8 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
     <h1 class="inline">
       <a href="/" @click.prevent="toggleSettings">
