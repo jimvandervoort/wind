@@ -56,8 +56,9 @@ export function useFetchInterval(windThreshold) {
         console.info('Server updated, reloading in 30s');
         setTimeout(() => {
           window.location.reload();
-        }, 30000);
+        }, 30_000);
       }
+
 
       report.value = filterDays(fetchedReport, windThreshold.value);
       error.value = null;
