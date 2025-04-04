@@ -3,6 +3,7 @@ vision/vision_debug/
 *.pt
 vision/vision_log.txt
 vision/frame*.jpg
+.vite/
 
 # Logs
 logs
