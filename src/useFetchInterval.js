@@ -5,24 +5,12 @@ const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
 const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
-function getRegion() {
-  const route = useRoute();
-  if (route.params.region) {
-    return route.params.region;
-  }
-
-  const hostParts = window.location.host.split('.');
-  if (hostParts.length >= 3) {
-    return hostParts[0];
-  }
-
-  return 'wind';
-}
-
 export function useFetchInterval(windThreshold) {
   const report = ref(null);
   const error = ref(null);
-  const region = getRegion();
+  const route = useRoute();
+  const region = ref(route.params.region);
+  let intervalId;
 
   const filterDays = (report, windThreshold) => {
     report.forEach(spot => {
@@ -44,9 +32,20 @@ export function useFetchInterval(windThreshold) {
     }
   });
 
+  watch(() => route.params.region, (newValue) => {
+    region.value = newValue;
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+
+    fetchData();
+    intervalId = setInterval(fetchData, interval);
+  });
+
   const fetchData = async () => {
     try {
-      const res = await fetch(`/report.${region}.json`);
+      const res = await fetch(`/report.${region.value}.json`);
       if (!res.ok) {
         throw new Error('Network response was not ok');
       }
@@ -71,8 +70,13 @@ export function useFetchInterval(windThreshold) {
 
   onMounted(() => {
     fetchData(); // Initial fetch
-    const intervalId = setInterval(fetchData, interval); // Set up interval
-    onUnmounted(() => clearInterval(intervalId)); // Clear interval on unmount
+    intervalId = setInterval(fetchData, interval);
+  });
+
+  onUnmounted(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
   });
 
   return {report, error};
