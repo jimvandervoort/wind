@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import KiteSpots from '../components/KiteSpots.vue';
+import RegionSelect from '../components/RegionSelect.vue';
 import { useFetchInterval } from "../useFetchInterval.js";
 import { mapRangeClamp } from '../range';
 
@@ -18,7 +19,6 @@ watch(() => props.region, (newRegion) => {
     localStorage.setItem('lastRegion', newRegion);
   }
 }, { immediate: true });
-
 
 const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
@@ -86,25 +86,7 @@ const toggleSettings = () => {
     <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
   </template>
 
-  <div v-else class="p-8 flex flex-col items-center justify-center max-w-lg mx-auto">
-    <h1 class="text-md fira-code font-semibold mb-4">Where do you like to shred? 🤙</h1>
-    <div class="flex flex-col gap-5 w-full">
-      <router-link
-        v-for="region in availableRegions"
-        :key="region.id"
-        :to="`/${region.id}`"
-        class="p-8 flex flex-col items-center justify-center gap-1 w-full h-full rounded-lg transition-transform hover:scale-105"
-        :class="{
-          'bg-gradient-to-br from-rose-500 to-orange-500': region.id === 'tarifa',
-          'bg-gradient-to-br from-emerald-500 to-teal-500': region.id === 'capetown',
-          'bg-gradient-to-br from-blue-400 to-indigo-400': region.id === 'holland',
-        }"
-      >
-        <span class="text-6xl">{{ region.emoji }}</span>
-        <span class="text-2xl font-mono text-white font-bold fira-code">{{ region.name }}</span>
-      </router-link>
-    </div>
-  </div>
+  <RegionSelect v-else />
 </template>
 
 <style>
