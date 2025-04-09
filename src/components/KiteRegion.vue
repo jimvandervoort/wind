@@ -27,7 +27,7 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
 </script>
 
 <template>
-  <div class="pt-8 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
+  <div class="pt-4 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
     <h1 class="inline">
       <a href="/" @click.prevent="toggleSettings">
         Forecast for

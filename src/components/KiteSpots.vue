@@ -121,7 +121,6 @@ const handleTouchEnd = (e) => {
   const threshold = window.innerWidth * 0.2; // 20% of screen width
   const willMoveNext = (diff < -threshold && dir.value === "prev") && wasX;
   const willMovePrev = (diff > threshold && dir.value === "next") && wasX;
-  console.log({willMoveNext, willMovePrev, travelAxis: travelAxis.value});
 
   if (willMoveNext || willMovePrev) {
     window.scrollTo(window.scrollX, window.scrollY + lastDiff * -1);

@@ -3,7 +3,7 @@ import {  watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import RegionSelect from '../components/RegionSelect.vue';
 import KiteRegion from '../components/KiteRegion.vue';
-import { useFetchInterval } from "../useFetchInterval.js";
+import RegionSelectMenu from '../components/RegionSelectMenu.vue';
 
 const router = useRouter();
 const props = defineProps({
@@ -26,9 +26,7 @@ const availableRegions = [
 ];
 
 onMounted(() => {
-  console.log(props.region);
   if (props.region) {
-    console.log('setting last region', props.region);
     localStorage.setItem('lastRegion', props.region);
     return;
   }
@@ -41,9 +39,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <div class="p-8">
-    <router-link to="/login" class="hover:underline">Login</router-link>
-  </div> -->
+  <RegionSelectMenu v-if="region" :region="region" />
   <KiteRegion v-if="region" :region="region" />
   <RegionSelect v-else />
 </template>
