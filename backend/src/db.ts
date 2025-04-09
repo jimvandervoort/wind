@@ -1,59 +1,64 @@
 import { Pool } from 'pg';
-import type { JwtPayload } from './types/jwt';
 
-export class User {
-  private id: string;
-  private email: string;
-  private fullname: string;
+interface Spotlist {
+  id: string;
+  userId: string;
+  spots: string[];
+}
 
-  constructor({
-    id,
-    email,
-    fullname,
-  }: {
-    id: string;
-    email: string;
-    fullname: string;
-  }) {
-    this.id = id;
-    this.email = email;
-    this.fullname = fullname;
+export class SpotlistRepository {
+  private db: Db;
+
+  constructor(db: Db) {
+    this.db = db;
+  }
+
+  async create(userId: string, spots: string[], name: string): Promise<Spotlist> {
+    return this.db.queryOne('INSERT INTO spotlists (user_id, spots, name) VALUES ($1, $2, $3) RETURNING *', [
+      userId,
+      spots,
+      name,
+    ]);
+  }
+
+  async update(userId: string, id: string, spots: string[], name: string): Promise<Spotlist> {
+    return this.db.queryOne('UPDATE spotlists SET spots = $1, name = $2 WHERE user_id = $3 AND id = $4 RETURNING *', [
+      spots,
+      name,
+      userId,
+      id,
+    ]);
+  }
+
+  async findByUserId(userId: string): Promise<Spotlist | null> {
+    const spotlist = await this.db.queryOne('SELECT * FROM spotlists WHERE user_id = $1', [userId]);
+    return spotlist ? new Spotlist(spotlist) : null;
   }
 }
 
 export class Db {
-  public pool: Pool;
+  private pool: Pool;
+  public spotlistRepository: SpotlistRepository;
 
   constructor() {
     this.pool = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
     });
+
+    this.spotlistRepository = new SpotlistRepository(this);
   }
 
-  async query(sql: string, params: any[]) {
+  async query(sql: string, params: any[] = []) {
     const rows = await this.pool.query(sql, params);
     return rows.rows;
   }
 
   async queryOne(sql: string, params: any[]) {
     const rows = await this.query(sql, params);
-    return rows[0];
-  }
-
-  async registerUser(jwt: JwtPayload) {
-    await this.query('INSERT INTO users (id) VALUES ($1)', [jwt.sub]);
-  }
-
-  async userFromJwt(jwt: JwtPayload) {
-    const row = await this.queryOne('SELECT * FROM users WHERE id = $1', [jwt.sub]);
-    if (!row) {
-      await this.registerUser(jwt);
+    if (rows.length > 1) {
+      throw new Error('Expected 1 row from queryOne, got ' + rows.length);
     }
 
-    return new User({
-      id: row.id,
-      email: row.email,
-      fullname: row.fullname,
-    });
+    return rows[0];
   }
 }
