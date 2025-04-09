@@ -1,19 +1,55 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import KiteSpots from '../components/KiteSpots.vue';
 import { useFetchInterval } from "../useFetchInterval.js";
 import { mapRangeClamp } from '../range';
 
+const router = useRouter();
+const props = defineProps({
+  region: {
+    type: String,
+    default: null
+  }
+});
+
+watch(() => props.region, (newRegion) => {
+  if (newRegion) {
+    localStorage.setItem('lastRegion', newRegion);
+  }
+}, { immediate: true });
+
+
+const availableRegions = [
+  { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
+  { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
+  { id: 'holland', name: 'Holland', emoji: '🇳🇱' }
+];
+
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
+const showSettings = ref(false);
 
 watch(windThreshold, (newValue) => {
   localStorage.setItem('windThreshold', Math.round(newValue));
   roundedWindThreshold.value = Math.round(newValue);
 });
 
+onMounted(() => {
+  console.log(props.region);
+  if (props.region) {
+    console.log('setting last region', props.region);
+    localStorage.setItem('lastRegion', props.region);
+    return;
+  }
+
+  const lastRegion = localStorage.getItem('lastRegion');
+  if (lastRegion && availableRegions.some(r => r.id === lastRegion)) {
+    router.push(`/${lastRegion}`);
+  }
+});
+
 const { report, error } = useFetchInterval(roundedWindThreshold);
-const showSettings = ref(false);
 
 const toggleSettings = () => {
   showSettings.value = !showSettings.value;
@@ -25,28 +61,50 @@ const toggleSettings = () => {
     <router-link to="/login" class="hover:underline">Login</router-link>
   </div>
 
-  <div class="pt-8 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
-    <h1 class="inline">
-      <a href="/" @click.prevent="toggleSettings">
-        Forecast for
-        <span class="fira-code">{{ roundedWindThreshold }}</span>
-        knots and up.
-        <span class="font-light hover:underline">
-          Customise&nbsp;»
-        </span>
-      </a>
-    </h1>
-    <div v-if="showSettings">
-      <div class="flex mt-8 mb-8 fira-code items-center">
-        <span class="text-2xl font-bold pr-4">10</span>
-        <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 2.5, 5)}rem`" v-model="windThreshold" min="10" max="30" step="1" class="slider">
-        <span class="text-2xl font-bold pl-4">30</span>
+  <template v-if="region">
+    <div class="pt-8 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
+      <h1 class="inline">
+        <a href="/" @click.prevent="toggleSettings">
+          Forecast for
+          <span class="fira-code">{{ roundedWindThreshold }}</span>
+          knots and up.
+          <span class="font-light hover:underline">
+            Customise&nbsp;»
+          </span>
+        </a>
+      </h1>
+      <div v-if="showSettings">
+        <div class="flex mt-8 mb-8 fira-code items-center">
+          <span class="text-2xl font-bold pr-4">10</span>
+          <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 2.5, 5)}rem`" v-model="windThreshold" min="10" max="30" step="1" class="slider">
+          <span class="text-2xl font-bold pl-4">30</span>
+        </div>
       </div>
     </div>
+    <KiteSpots :report="report" />
+    <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
+    <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+  </template>
+
+  <div v-else class="p-8 flex flex-col items-center justify-center max-w-lg mx-auto">
+    <h1 class="text-md fira-code font-semibold mb-4">Where do you like to shred? 🤙</h1>
+    <div class="flex flex-col gap-5 w-full">
+      <router-link
+        v-for="region in availableRegions"
+        :key="region.id"
+        :to="`/${region.id}`"
+        class="p-8 flex flex-col items-center justify-center gap-1 w-full h-full rounded-lg transition-transform hover:scale-105"
+        :class="{
+          'bg-gradient-to-br from-rose-500 to-orange-500': region.id === 'tarifa',
+          'bg-gradient-to-br from-emerald-500 to-teal-500': region.id === 'capetown',
+          'bg-gradient-to-br from-blue-400 to-indigo-400': region.id === 'holland',
+        }"
+      >
+        <span class="text-6xl">{{ region.emoji }}</span>
+        <span class="text-2xl font-mono text-white font-bold fira-code">{{ region.name }}</span>
+      </router-link>
+    </div>
   </div>
-  <KiteSpots :report="report" />
-  <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
-  <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
 </template>
 
 <style>

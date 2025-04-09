@@ -1,0 +1,40 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Early returns and avoid nested ifs
+
+Prefer checks early in a function and throw or return if conditions not matched.
+
+Avoid nested if statements prever `return` if/else branching when possible.
+
+Especially avoid `if(!negation) { } else { }` prefer positive case first.
+
+## Example
+
+Instead of
+```js
+if (!props.region) {
+  const lastRegion = localStorage.getItem('lastRegion');
+  if (lastRegion) {
+    router.push(`/${lastRegion}`);
+  }
+} else {
+  localStorage.setItem('lastRegion', props.region);
+}
+```
+
+Write
+```js
+if (props.region) {
+  localStorage.setItem('lastRegion', props.region);
+  return;
+}
+
+const lastRegion = localStorage.getItem('lastRegion');
+if (!lastRegion) return;
+
+router.push(`/${lastRegion}`);
+```

@@ -4,9 +4,10 @@ import Login from '../views/Login.vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/:region?',
     name: 'Home',
-    component: Home
+    component: Home,
+    props: true
   },
   {
     path: '/login',

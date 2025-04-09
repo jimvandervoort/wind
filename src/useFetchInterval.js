@@ -1,13 +1,14 @@
 import {onMounted, onUnmounted, ref, watch} from 'vue';
+import { useRoute } from 'vue-router';
 
 const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
 const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
 function getRegion() {
-  const sp = new URL(window.location.href).searchParams.get('region')
-  if (sp) {
-    return sp;
+  const route = useRoute();
+  if (route.params.region) {
+    return route.params.region;
   }
 
   const hostParts = window.location.host.split('.');
