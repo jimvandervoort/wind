@@ -1,6 +1,6 @@
 let regions = [
   {
-    name: 'wind',
+    name: 'capetown',
     spots: [
       {
         name: 'Khaya Beach 🐕',
