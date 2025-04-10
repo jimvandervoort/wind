@@ -24,7 +24,7 @@ const selectedRegion = computed(() => {
   <div class="flex-col items-end justify-center w-full">
     <Menu as="div" class="relative">
       <div class="flex justify-end">
-        <MenuButton class="px-4 py-2 text-left rounded-b-lg border-2 border-t-0 border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+        <MenuButton class="px-4 py-2 text-left rounded-b-lg border-2 border-t-0 border-gray-300 shadow-sm hover:bg-teal-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
           <span class="flex items-center gap-2">
             <span class="text-sm">{{ selectedRegion.emoji }}</span>
             <span class="text sm fira-code font-mono font-bold">{{ selectedRegion.name }}</span>
