@@ -43,7 +43,7 @@ services:
 
       GOTRUE_JWT_SECRET: "not-so-secret-dev-secret"
       GOTRUE_COOKIE_SECRET: "not-so-secret-dev-cookies"
-      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_EXP: "315360000"
 
       GOTRUE_SMTP_HOST: "maildev"
       GOTRUE_SMTP_PORT: "1025"
