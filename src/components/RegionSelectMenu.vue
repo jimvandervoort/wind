@@ -43,8 +43,8 @@ const selectedRegion = computed(() => {
         <MenuItems class="absolute z-10 mt-2 w-full origin-top-right rounded-lg shadow-lg overflow-hidden flex justify-end">
           <div class="flex flex-col w-full max-w-md">
             <MenuItem v-for="region in availableRegions" :key="region.id" v-slot="{ active, close }">
-              <button
-                type="button"
+              <a
+                :href="`/${region.id}`"
                 :class="[
                   active ? 'scale-[1.02]' : '',
                   'p-4 flex items-center gap-3 w-full transition-transform',
@@ -52,11 +52,11 @@ const selectedRegion = computed(() => {
                   region.id === 'capetown' ? 'bg-gradient-to-br from-emerald-500 to-teal-500' : '',
                   region.id === 'holland' ? 'bg-gradient-to-br from-blue-400 to-indigo-400' : ''
                 ]"
-                @click="() => { close(); $router.push(`/${region.id}`); }"
+                @click.prevent="() => { close(); $router.push(`/${region.id}`); }"
               >
                 <span class="text-3xl">{{ region.emoji }}</span>
                 <span class="text-lg font-mono text-white font-bold">{{ region.name }}</span>
-            </button>
+            </a>
             </MenuItem>
           </div>
         </MenuItems>
