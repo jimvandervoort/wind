@@ -1,5 +1,5 @@
-import {onMounted, onUnmounted, ref, watch} from 'vue';
-import { useRoute } from 'vue-router';
+import {onMounted, onUnmounted, ref, watch, inject} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
@@ -9,7 +9,9 @@ export function useFetchInterval(windThreshold) {
   const report = ref(null);
   const error = ref(null);
   const route = useRoute();
+  const router = useRouter();
   const region = ref(route.params.region);
+  const api = inject('api');
   let intervalId;
 
   const filterDays = (report, windThreshold) => {
@@ -45,9 +47,17 @@ export function useFetchInterval(windThreshold) {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`/report.${region.value}.json`);
+      const res = route.params.region === 'myspots' ? await api.get('/myspots') : await fetch(`/report.${region.value}.json`);
       if (!res.ok) {
-        throw new Error('Network response was not ok');
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        } else if (res.status === 404) {
+          router.push('/myspots/add');
+          return;
+        } else {
+          throw new Error('Network response was not ok');
+        }
       }
 
       const {report: fetchedReport, version: theirVersion} = await res.json();

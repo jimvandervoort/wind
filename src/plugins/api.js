@@ -18,16 +18,10 @@ function makeApiClient(auth) {
         headers["Authorization"] = `Bearer ${session.access_token}`;
       }
 
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      return await fetch(`${API_URL}${endpoint}`, {
         ...options,
         headers,
       });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`);
-      }
-
-      return response.json();
     },
 
     get(endpoint) {

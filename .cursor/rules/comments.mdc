@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Comments
+
+When writing code comments, avoid duplicating variables in the comments as they are likely to change. For example:
+
+```js
+// dont:
+// sleep for 100ms
+sleep(100);
+
+// do:
+// timeout to let user contribute 
+sleep(100)
+```
+
+```conf
+# dont:
+# SPA route support for /capetown, /tarifa, and /holland
+location ~ ^/(capetown|tarifa|holland|myspots)$ {
+  root   /usr/share/nginx/html;
+  try_files $uri $uri/ /index.html;
+}
+
+# do:
+# SPA route support
+location ~ ^/(capetown|tarifa|holland|myspots)$ {
+  root   /usr/share/nginx/html;
+  try_files $uri $uri/ /index.html;
+}
+```

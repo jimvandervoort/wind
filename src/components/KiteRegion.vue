@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import KiteSpots from './KiteSpots.vue';
 import { mapRangeClamp } from '../range';
 import { useFetchInterval } from '../useFetchInterval';
+
 const props = defineProps({
   region: {
     type: String,
@@ -10,6 +11,7 @@ const props = defineProps({
   },
 });
 
+const isCustomisable = computed(() => props.region === 'myspots');
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
 const showSettings = ref(false);
@@ -46,9 +48,19 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
       </div>
     </div>
   </div>
+
   <KiteSpots :report="report" />
-  <p class="p-8 pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
-  <p class="p-8 pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+
+  <div class="flex flex-col p-8 gap-4" v-if="isCustomisable">
+    <div class="flex flex-col max-w-md">
+      <a href="/myspots/add" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-white fira-code">
+        <span class="text-xl font-bold">+</span>
+        <span>Add Spot</span>
+      </a>
+    </div>
+    <p class="pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
+    <p class="pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+  </div>
 </template>
 
 <style>

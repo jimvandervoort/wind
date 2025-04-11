@@ -8,7 +8,7 @@ const availableRegions = [
 
 <template>
   <div class="p-8 flex flex-col items-center justify-center max-w-lg mx-auto">
-    <h1 class="text-md fira-code font-semibold mb-4">Where do you like to shred? 🤙</h1>
+    <h1 class="text-2xl font-semibold mb-4">Where do you shred? 🤙</h1>
     <div class="flex flex-col gap-5 w-full">
       <router-link
         v-for="region in availableRegions"

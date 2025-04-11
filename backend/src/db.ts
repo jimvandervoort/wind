@@ -1,51 +1,46 @@
 import { Pool } from 'pg';
 
-interface Spotlist {
-  id: string;
-  userId: string;
-  spots: string[];
+interface MySpots {
+  user_id: string;
+  slugs: string[];
+  created_at: Date;
+  updated_at: Date;
 }
 
-export class SpotlistRepository {
+export class MySpotsRepository {
   private db: Db;
 
   constructor(db: Db) {
     this.db = db;
   }
 
-  async create(userId: string, spots: string[], name: string): Promise<Spotlist> {
-    return this.db.queryOne('INSERT INTO spotlists (user_id, spots, name) VALUES ($1, $2, $3) RETURNING *', [
-      userId,
-      spots,
-      name,
-    ]);
+  async updateOrCreate(userId: string, slugs: string[]): Promise<MySpots | null> {
+    return this.db.queryOne(`
+      INSERT INTO myspots (user_id, slugs) VALUES ($1, $2)
+      ON CONFLICT (user_id) DO UPDATE
+      SET slugs = (
+        SELECT array_agg(DISTINCT x)
+        FROM unnest(array_cat(myspots.slugs, $2)) x
+      ),
+      updated_at = CURRENT_TIMESTAMP;
+    `, [userId, slugs]);
   }
 
-  async update(userId: string, id: string, spots: string[], name: string): Promise<Spotlist> {
-    return this.db.queryOne('UPDATE spotlists SET spots = $1, name = $2 WHERE user_id = $3 AND id = $4 RETURNING *', [
-      spots,
-      name,
-      userId,
-      id,
-    ]);
-  }
-
-  async findByUserId(userId: string): Promise<Spotlist | null> {
-    const spotlist = await this.db.queryOne('SELECT * FROM spotlists WHERE user_id = $1', [userId]);
-    return spotlist ? new Spotlist(spotlist) : null;
+  async findByUserId(userId: string): Promise<MySpots | null> {
+    return await this.db.queryOne('SELECT * FROM myspots WHERE user_id = $1', [userId]);
   }
 }
 
 export class Db {
   private pool: Pool;
-  public spotlistRepository: SpotlistRepository;
+  public myspotsRepository: MySpotsRepository;
 
   constructor() {
     this.pool = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
     });
 
-    this.spotlistRepository = new SpotlistRepository(this);
+    this.myspotsRepository = new MySpotsRepository(this);
   }
 
   async query(sql: string, params: any[] = []) {
@@ -59,6 +54,6 @@ export class Db {
       throw new Error('Expected 1 row from queryOne, got ' + rows.length);
     }
 
-    return rows[0];
+    return rows[0] || null;
   }
 }

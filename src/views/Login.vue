@@ -23,9 +23,9 @@ const getSession = async () => {
   console.log(data, error)
 }
 
-const getProtectedData = async () => {
+const whoami = async () => {
   try {
-    const response = await api.get('/protected')
+    const response = (await api.get('/whoami')).json()
     apiResponse.value = response
   } catch (error) {
     apiResponse.value = error
@@ -40,7 +40,7 @@ const getProtectedData = async () => {
       <button class="hover:underline" @click="login()">Login with Google</button>
       <button class="hover:underline" @click="logout()">Logout</button>
       <button class="hover:underline" @click="getSession()">Get Session</button>
-      <button class="hover:underline" @click="getProtectedData()">Get Test</button>
+      <button class="hover:underline" @click="whoami()">Who am I?</button>
       <pre class="mt-4">{{ JSON.stringify(apiResponse, null, 2) }}</pre>
     </div>
   </div>

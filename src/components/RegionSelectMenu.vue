@@ -11,8 +11,9 @@ const props = defineProps({
 
 const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
+  { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
-  { id: 'holland', name: 'Holland', emoji: '🇳🇱' }
+  { id: 'myspots', name: 'My Spots', emoji: '🤩' },
 ];
 
 const selectedRegion = computed(() => {
@@ -50,7 +51,8 @@ const selectedRegion = computed(() => {
                   'p-4 flex items-center gap-3 w-full transition-transform',
                   region.id === 'tarifa' ? 'bg-gradient-to-br from-rose-500 to-orange-500' : '',
                   region.id === 'capetown' ? 'bg-gradient-to-br from-emerald-500 to-teal-500' : '',
-                  region.id === 'holland' ? 'bg-gradient-to-br from-blue-400 to-indigo-400' : ''
+                  region.id === 'holland' ? 'bg-gradient-to-br from-blue-400 to-indigo-400' : '',
+                  region.id === 'myspots' ? 'bg-gradient-to-br from-amber-500 to-yellow-500' : '',
                 ]"
                 @click.prevent="() => { close(); $router.push(`/${region.id}`); }"
               >
