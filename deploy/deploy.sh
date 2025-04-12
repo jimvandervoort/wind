@@ -41,6 +41,7 @@ docker --context wind volume create wind_pg_data || true
 
 docker --context wind build --build-arg "VITE_WIND_VERSION=$VITE_WIND_VERSION" -t wind .
 docker --context wind build -t wind_vision ./vision
+docker --context wind build -t wind_backend ./backend
 
 rsync -av deploy/*.conf wind:wind/
 
@@ -49,5 +50,9 @@ ssh wind systemctl enable --now wind-postgres
 ssh wind systemctl enable --now wind-gotrue
 ssh wind systemctl enable --now wind-nginx
 ssh wind systemctl enable --now wind-puppet.timer
-# ssh wind systemctl restart wind-vision
-# ssh wind systemctl start wind-puppet
+ssh wind systemctl enable --now wind-backend
+
+ssh wind systemctl restart wind-backend
+ssh wind docker exec -i wind-backend bun migrate.ts
+ssh wind systemctl restart wind-vision
+ssh wind systemctl start wind-puppet

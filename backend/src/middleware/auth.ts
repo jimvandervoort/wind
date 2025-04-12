@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import type { JwtPayload } from '../types/jwt';
-const JWT_SECRET = process.env.JWT_SECRET || 'not-so-secret-dev-secret';
+const JWT_SECRET = process.env.GOTRUE_JWT_SECRET || 'not-so-secret-dev-secret';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];

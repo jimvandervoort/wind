@@ -1,0 +1,30 @@
+[Unit]
+Description=Wind Backend Docker Container Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+# Stop and remove any existing container named 'wind-backend'
+ExecStartPre=-/usr/bin/docker stop wind-backend
+ExecStartPre=-/usr/bin/docker rm wind-backend
+# Create a new container named 'wind-backend'
+ExecStartPre=/usr/bin/docker create \
+    --name wind-backend \
+    --network wind_default \
+    -e VITE_WIND_VERSION=${VITE_WIND_VERSION} \
+    -e WIND_REPORT_DIR=/app/dist \
+    -e GOTRUE_JWT_SECRET=${GOTRUE_JWT_SECRET} \
+    -e WIND_DB_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@wind-postgres:5432/${POSTGRES_DB} \
+    -e NODE_ENV=production \
+    -v /root/wind/dist:/app/dist \
+    wind_backend
+# Start the container
+ExecStart=/usr/bin/docker start -a wind-backend
+# Stop the container on service stop
+ExecStop=/usr/bin/docker stop wind-backend
+
+[Install]
+WantedBy=multi-user.target

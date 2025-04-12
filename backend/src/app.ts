@@ -7,7 +7,7 @@ import type { AuthenticatedRequest } from './types/authenticatedRequest';
 import type { User } from './types/user';
 import type { Db } from './db';
 
-const REPORT_DIR = process.env.REPORT_DIR ?? '../public';
+const REPORT_DIR = process.env.WIND_REPORT_DIR ?? '../public';
 const VERSION = process.env.VITE_WIND_VERSION ?? 'local';
 
 const loadSpotsFromReport = (report: string) => {

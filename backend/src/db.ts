@@ -33,7 +33,7 @@ export class Db {
 
   constructor() {
     this.pool = new Pool({
-      connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
+      connectionString: process.env.WIND_DB_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
     });
 
     this.myspotsRepository = new MySpotsRepository(this);

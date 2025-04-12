@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import Region from '../views/Region.vue'
+import RegionSelect from '../views/RegionSelect.vue'
 import Login from '../views/Login.vue'
 import EditSpots from '../views/EditSpots.vue'
 import { inject } from 'vue'
@@ -17,11 +18,25 @@ const requireAuth = (to, from, next) => {
 
 const routes = [
   {
+    path: '/',
+    name: 'RegionSelect',
+    component: RegionSelect,
+    beforeEnter: (to, from, next) => {
+      const lastRegion = localStorage.getItem('lastRegion');
+      if (lastRegion) {
+        next(`/${lastRegion}`);
+      } else {
+        next();
+      }
+    }
+  },
+  {
     path: '/:region?',
-    name: 'Home',
-    component: Home,
+    name: 'Region',
+    component: Region,
     props: true,
     beforeEnter: (to, from, next) => {
+      ['capetown', 'tarifa', 'holland'].includes(to.params.region) && localStorage.setItem('lastRegion', to.params.region);
       if (to.params.region === 'myspots') {
         requireAuth(to, from, next);
       } else {

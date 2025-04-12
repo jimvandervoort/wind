@@ -16,6 +16,8 @@ const availableRegions = [
   { id: 'myspots', name: 'My Spots', emoji: '🤩' },
 ];
 
+const listedRegions = availableRegions.filter(r => r.id !== 'myspots');
+
 const selectedRegion = computed(() => {
   return availableRegions.find(r => r.id === props.region)
 });
@@ -43,7 +45,7 @@ const selectedRegion = computed(() => {
       >
         <MenuItems class="absolute z-10 mt-2 w-full origin-top-right rounded-lg shadow-lg overflow-hidden flex justify-end">
           <div class="flex flex-col w-full max-w-md">
-            <MenuItem v-for="region in availableRegions" :key="region.id" v-slot="{ active, close }">
+            <MenuItem v-for="region in listedRegions" :key="region.id" v-slot="{ active, close }">
               <a
                 :href="`/${region.id}`"
                 :class="[

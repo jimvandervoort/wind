@@ -21,7 +21,7 @@ ExecStartPre=/usr/bin/docker create \
     -e GOTRUE_SITE_URL="https://jimwind.com" \
     -e GOTRUE_URI_ALLOW_LIST="https://jimwind.com" \
     -e GOTRUE_DB_DRIVER="postgres" \
-    -e DATABASE_URL="postgres://supabase_auth_admin:${SUPABASE_POSTGRES_PASSWORD}@wind_postgres:5432/${POSTGRES_DB}?sslmode=disable" \
+    -e DATABASE_URL="postgres://supabase_auth_admin:${SUPABASE_POSTGRES_PASSWORD}@wind-postgres:5432/${POSTGRES_DB}?sslmode=disable" \
     -e DB_NAMESPACE="auth" \
     -e GOTRUE_JWT_SECRET="${GOTRUE_JWT_SECRET}" \
     -e GOTRUE_COOKIE_SECRET="${GOTRUE_COOKIE_SECRET}" \

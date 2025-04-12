@@ -80,6 +80,12 @@ const loadUserSpots = async () => {
         region: spot.spot.region
       }));
       isLoading.value = false;
+      return
+    }
+
+    if (response.status === 404) {
+      userSpots.value = [];
+      isLoading.value = false;
     }
   } catch (error) {
     console.error('Failed to load user spots:', error);

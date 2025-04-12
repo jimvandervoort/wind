@@ -65,7 +65,7 @@ export function useFetchInterval(windThreshold) {
       if (myVersion !== theirVersion) {
         console.info('Server updated, reloading in 30s');
         setTimeout(() => {
-          window.location.reload();
+          // window.location.reload();
         }, 30_000);
       }
 

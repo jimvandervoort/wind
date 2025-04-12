@@ -7,12 +7,12 @@ After=docker.service
 Restart=always
 StandardOutput=journal
 StandardError=journal
-# Stop and remove any existing container named 'wind_postgres'
-ExecStartPre=-/usr/bin/docker stop wind_postgres
-ExecStartPre=-/usr/bin/docker rm wind_postgres
-# Create a new container named 'wind_postgres'
+# Stop and remove any existing container named 'wind-postgres'
+ExecStartPre=-/usr/bin/docker stop wind-postgres
+ExecStartPre=-/usr/bin/docker rm wind-postgres
+# Create a new container named 'wind-postgres'
 ExecStartPre=/usr/bin/docker create \
-    --name wind_postgres \
+    --name wind-postgres \
     --network wind_default \
     -e POSTGRES_USER=${POSTGRES_USER} \
     -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
@@ -24,9 +24,9 @@ ExecStartPre=/usr/bin/docker create \
     -v /root/wind/init-postgres.sh:/docker-entrypoint-initdb.d/init.sh:ro \
     postgres:17.4
 # Start the container
-ExecStart=/usr/bin/docker start -a wind_postgres
+ExecStart=/usr/bin/docker start -a wind-postgres
 # Stop the container on service stop
-ExecStop=/usr/bin/docker stop wind_postgres
+ExecStop=/usr/bin/docker stop wind-postgres
 
 [Install]
 WantedBy=multi-user.target
