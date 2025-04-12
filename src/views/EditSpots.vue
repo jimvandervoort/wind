@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import spots from 'virtual:spotlist';
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import Sortable from 'sortablejs';
+import { RequestQueue } from '../requestqueue';
 
 const emailTemplate = encodeURIComponent(`Hey Jim
 
@@ -26,6 +27,8 @@ const spotList = ref(spots);
 const userSpots = ref(null);
 const router = useRouter();
 const isLoading = ref(true);
+
+const requestQueue = new RequestQueue();
 
 const userSpotsContainer = ref(null);
 const availableSpotsContainer = ref(null);
@@ -83,10 +86,10 @@ const loadUserSpots = async () => {
   }
 };
 
-watch(userSpots, async () => {
-  api.put('/myspots', {
+watch(userSpots, () => {
+  requestQueue.add(() => api.put('/myspots', {
     slugs: userSpots.value.map(s => s.slug),
-  });
+  }));
 });
 
 onMounted(async () => {
