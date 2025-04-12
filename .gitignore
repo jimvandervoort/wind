@@ -4,6 +4,7 @@ vision/vision_debug/
 vision/vision_log.txt
 vision/frame*.jpg
 .vite/
+.secrets
 
 # Logs
 logs

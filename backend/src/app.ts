@@ -22,9 +22,7 @@ const loadSpotsFromReports = async (slugs: string[]) => {
     ...loadSpotsFromReport('report.holland.json'),
     ...loadSpotsFromReport('report.tarifa.json'),
   ]
-  return spots
-    .filter((spot) => slugs.includes(spot.spot.slug))
-    .sort((a, b) => a.spot.slug.localeCompare(b.spot.slug));
+  return slugs.map(slug => spots.find(spot => spot.spot.slug === slug));
 }
 
 declare global {

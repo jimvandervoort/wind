@@ -19,6 +19,7 @@ watch(() => props.region, (newRegion) => {
   }
 }, { immediate: true });
 
+const existingRegions = ['capetown', 'tarifa', 'holland', 'myspots'];
 const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
@@ -32,7 +33,7 @@ onMounted(() => {
   }
 
   const lastRegion = localStorage.getItem('lastRegion');
-  if (lastRegion && availableRegions.some(r => r.id === lastRegion)) {
+  if (lastRegion && existingRegions.includes(lastRegion)) {
     router.push(`/${lastRegion}`);
   }
 });

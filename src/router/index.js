@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
-import AddSpot from '../views/AddSpot.vue'
+import EditSpots from '../views/EditSpots.vue'
 
 const routes = [
   {
@@ -16,9 +16,9 @@ const routes = [
     component: Login
   },
   {
-    path: '/myspots/add',
-    name: 'AddSpot',
-    component: AddSpot
+    path: '/myspots/edit',
+    name: 'EditSpots',
+    component: EditSpots
   }
 ]
 

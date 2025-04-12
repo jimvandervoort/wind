@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue';
 import KiteSpots from './KiteSpots.vue';
 import { mapRangeClamp } from '../range';
 import { useFetchInterval } from '../useFetchInterval';
+import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
   region: {
@@ -29,7 +30,7 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
 </script>
 
 <template>
-  <div class="pt-4 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
+  <div v-if="report && report.length > 0" class="pt-4 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
     <h1 class="inline">
       <a href="/" @click.prevent="toggleSettings">
         Forecast for
@@ -49,17 +50,29 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
     </div>
   </div>
 
-  <KiteSpots :report="report" />
+  <KiteSpots v-if="report && report.length > 0" :report="report" />
+
+  <div v-if="report && report.length === 0" class="text-center p-8 pb-0 flex flex-col gap-1">
+    <!-- <h1 class="pt-8 text-2xl font-bold">New!<br/>You can now add your own spots! 🤩</h1> -->
+    <h1 class="text-xl font-bold max-w-md mx-auto">
+      Looking pretty empty here!
+    </h1>
+    <p class="text-xl max-w-md mx-auto">
+      Add your first spots 👇
+    </p>
+  </div>
 
   <div class="flex flex-col p-8 gap-4" v-if="isCustomisable">
     <div class="flex flex-col max-w-md">
-      <a href="/myspots/add" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-white fira-code">
-        <span class="text-xl font-bold">+</span>
-        <span>Add Spot</span>
-      </a>
+      <router-link to="/myspots/edit" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg fira-code" :class="{ 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white': report && report.length === 0, 'border-2 border-white': report && report.length > 0 }">
+        <span v-if="report && report.length === 0" class="font-semibold text-2xl">+</span>
+        <PencilIcon v-else class="h-5 w-5" />
+        <span v-if="report && report.length === 0">Add Spots</span>
+        <span v-else>Edit Spots</span>
+      </router-link>
     </div>
     <p class="pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
-    <p class="pt-0 fira-code" v-if="report">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+    <p class="pt-0 fira-code" v-if="report && report.length > 0">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
   </div>
 </template>
 

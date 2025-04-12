@@ -15,14 +15,10 @@ export class MySpotsRepository {
   }
 
   async updateOrCreate(userId: string, slugs: string[]): Promise<MySpots | null> {
+    console.log({slugs})
     return this.db.queryOne(`
       INSERT INTO myspots (user_id, slugs) VALUES ($1, $2)
-      ON CONFLICT (user_id) DO UPDATE
-      SET slugs = (
-        SELECT array_agg(DISTINCT x)
-        FROM unnest(array_cat(myspots.slugs, $2)) x
-      ),
-      updated_at = CURRENT_TIMESTAMP;
+      ON CONFLICT (user_id) DO UPDATE SET slugs = $2, updated_at = CURRENT_TIMESTAMP;
     `, [userId, slugs]);
   }
 

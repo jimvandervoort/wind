@@ -53,7 +53,7 @@ export function useFetchInterval(windThreshold) {
           router.push('/login');
           return;
         } else if (res.status === 404) {
-          router.push('/myspots/add');
+          router.push('/myspots/edit');
           return;
         } else {
           throw new Error('Network response was not ok');
