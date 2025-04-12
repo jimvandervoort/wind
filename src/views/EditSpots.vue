@@ -155,8 +155,8 @@ onMounted(async () => {
     </p>
 
     <!-- User's Spots Section -->
-    <div v-if="userSpots && userSpots.length > 0" class="mb-8">
-      <h2 class="text-lg font-bold text-white mb-4">Your Spots<span class="text-white/50 font-normal pl-2">&mdash; Drag change order</span></h2>
+    <div class="mb-8">
+      <h2 class="text-lg font-bold text-white mb-4">Your Spots<span class="text-white/50 font-normal pl-2">&mdash; Drag to change order</span></h2>
       <div ref="userSpotsContainer" class="grid gap-4">
         <div
           v-for="spot in userSpots"
