@@ -20,11 +20,6 @@ watch(() => props.region, (newRegion) => {
 }, { immediate: true });
 
 const existingRegions = ['capetown', 'tarifa', 'holland', 'myspots'];
-const availableRegions = [
-  { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
-  { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
-  { id: 'holland', name: 'Holland', emoji: '🇳🇱' }
-];
 
 onMounted(() => {
   if (props.region) {

@@ -13,6 +13,7 @@ ExecStartPre=-/usr/bin/docker rm wind_nginx
 # Create a new container named 'wind_nginx'
 ExecStartPre=/usr/bin/docker create \
     --name wind_nginx \
+    --network wind_default \
     -p 80:80 \
     -v /root/wind/dist:/usr/share/nginx/html:ro \
     -v /root/wind/nginx.conf:/etc/nginx/nginx.conf:ro \

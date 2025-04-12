@@ -1,0 +1,43 @@
+[Unit]
+Description=Wind GoTrue Docker Container Service
+Requires=docker.service wind-postgres.service
+After=docker.service wind-postgres.service
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+# Stop and remove any existing container named 'wind-gotrue'
+ExecStartPre=-/usr/bin/docker stop wind-gotrue
+ExecStartPre=-/usr/bin/docker rm wind-gotrue
+# Create a new container named 'wind-gotrue'
+ExecStartPre=/usr/bin/docker create \
+    --name wind-gotrue \
+    --network wind_default \
+    -e LOG_LEVEL="debug" \
+    -e GOTRUE_API_HOST="0.0.0.0" \
+    -e PORT="1227" \
+    -e API_EXTERNAL_URL="https://jimwind.com" \
+    -e GOTRUE_SITE_URL="https://jimwind.com" \
+    -e GOTRUE_URI_ALLOW_LIST="https://jimwind.com" \
+    -e GOTRUE_DB_DRIVER="postgres" \
+    -e DATABASE_URL="postgres://supabase_auth_admin:${SUPABASE_POSTGRES_PASSWORD}@wind_postgres:5432/${POSTGRES_DB}?sslmode=disable" \
+    -e DB_NAMESPACE="auth" \
+    -e GOTRUE_JWT_SECRET="${GOTRUE_JWT_SECRET}" \
+    -e GOTRUE_COOKIE_SECRET="${GOTRUE_COOKIE_SECRET}" \
+    -e GOTRUE_JWT_EXP="315360000" \
+    -e GOTRUE_SMTP_HOST="maildev" \
+    -e GOTRUE_SMTP_PORT="1025" \
+    -e GOTRUE_SMTP_ADMIN_EMAIL="wind@jim.computer" \
+    -e GOTRUE_EXTERNAL_GOOGLE_ENABLED="true" \
+    -e GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID="${GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID}" \
+    -e GOTRUE_EXTERNAL_GOOGLE_SECRET="${GOTRUE_EXTERNAL_GOOGLE_SECRET}" \
+    -e GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI="https://jimwind.com/callback" \
+    supabase/gotrue:v2.169.0
+# Start the container
+ExecStart=/usr/bin/docker start -a wind-gotrue
+# Stop the container on service stop
+ExecStop=/usr/bin/docker stop wind-gotrue
+
+[Install]
+WantedBy=multi-user.target

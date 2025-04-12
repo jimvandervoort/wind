@@ -2,7 +2,7 @@
 import { inject, ref } from 'vue'
 
 const auth = inject('auth');
-const redirectTo = import.meta.env.VITE_LOGIN_REDIRECT_URL || 'http://localhost:5173';
+const redirectTo = import.meta.env.VITE_WIND_REDIRECT_URL || 'http://localhost:5173';
 
 const login = () => {
   auth.signInWithOAuth({

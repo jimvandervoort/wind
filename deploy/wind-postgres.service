@@ -1,0 +1,32 @@
+[Unit]
+Description=Wind PostgreSQL Docker Container Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+# Stop and remove any existing container named 'wind_postgres'
+ExecStartPre=-/usr/bin/docker stop wind_postgres
+ExecStartPre=-/usr/bin/docker rm wind_postgres
+# Create a new container named 'wind_postgres'
+ExecStartPre=/usr/bin/docker create \
+    --name wind_postgres \
+    --network wind_default \
+    -e POSTGRES_USER=${POSTGRES_USER} \
+    -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+    -e POSTGRES_DB=${POSTGRES_DB} \
+    -e SUPABASE_POSTGRES_PASSWORD=${SUPABASE_POSTGRES_PASSWORD} \
+    -e DB_NAMESPACE=auth \
+    -p 127.0.0.1:5432:5432 \
+    -v wind_pg_data:/var/lib/postgresql/data \
+    -v /root/wind/init-postgres.sh:/docker-entrypoint-initdb.d/init.sh:ro \
+    postgres:17.4
+# Start the container
+ExecStart=/usr/bin/docker start -a wind_postgres
+# Stop the container on service stop
+ExecStop=/usr/bin/docker stop wind_postgres
+
+[Install]
+WantedBy=multi-user.target

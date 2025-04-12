@@ -8,7 +8,7 @@ import router from "./router";
 import makeAuthPlugin from "./plugins/auth";
 import makeApiPlugin from "./plugins/api";
 
-const GOTRUE_URL = 'http://localhost:1227'
+const GOTRUE_URL = import.meta.env.VITE_WIND_GOTRUE_URL || 'http://localhost:1227'
 const auth = new AuthClient({ url: GOTRUE_URL })
 const app = createApp(App)
 
