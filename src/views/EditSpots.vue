@@ -23,11 +23,12 @@ const emailSubject = encodeURIComponent('Add this spot');
 const api = inject('api');
 const searchQuery = ref('');
 const spotList = ref(spots);
-const userSpots = ref([]);
+const userSpots = ref(null);
 const router = useRouter();
 const isLoading = ref(true);
 
 const userSpotsContainer = ref(null);
+const availableSpotsContainer = ref(null);
 
 const filteredSpots = computed(() => {
   if (!searchQuery.value) {
@@ -83,7 +84,6 @@ const loadUserSpots = async () => {
 };
 
 watch(userSpots, async () => {
-  console.log('User spots changed:', userSpots.value);
   api.put('/myspots', {
     slugs: userSpots.value.map(s => s.slug),
   });
@@ -97,11 +97,28 @@ onMounted(async () => {
     new Sortable(userSpotsContainer.value, {
       animation: 150,
       ghostClass: 'opacity-50',
+      group: 'spots',
       onEnd: (evt) => {
         const spots = [...userSpots.value];
         const [movedSpot] = spots.splice(evt.oldIndex, 1);
         spots.splice(evt.newIndex, 0, movedSpot);
         userSpots.value = spots;
+      }
+    });
+  }
+
+  if (availableSpotsContainer.value) {
+    new Sortable(availableSpotsContainer.value, {
+      animation: 150,
+      ghostClass: 'opacity-50',
+      group: 'spots',
+      onEnd: (evt) => {
+        if (evt.to === userSpotsContainer.value) {
+          const spot = filteredSpots.value[evt.oldIndex];
+          const newSpots = [...userSpots.value];
+          newSpots.splice(evt.newIndex, 0, spot);
+          userSpots.value = newSpots;
+        }
       }
     });
   }
@@ -135,7 +152,7 @@ onMounted(async () => {
     </p>
 
     <!-- User's Spots Section -->
-    <div v-if="userSpots.length > 0" class="mb-8">
+    <div v-if="userSpots && userSpots.length > 0" class="mb-8">
       <h2 class="text-lg font-bold text-white mb-4">Your Spots<span class="text-white/50 font-normal pl-2">&mdash; Drag change order</span></h2>
       <div ref="userSpotsContainer" class="grid gap-4">
         <div
@@ -161,21 +178,23 @@ onMounted(async () => {
     </div>
 
     <!-- Available Spots Section -->
-    <div>
+    <div v-if="userSpots">
       <h2 class="text-lg font-bold text-white mb-4">Available Spots</h2>
-      <div class="grid gap-4">
+      <div ref="availableSpotsContainer" class="grid gap-4">
         <button
           v-for="spot in filteredSpots"
-          @click="addSpot(spot)"
           :key="spot.slug"
-          class="p-4 rounded-lg text-left shadow-sm transition-transform hover:scale-[1.02]"
+          @click="addSpot(spot)"
+          class="p-4 rounded-lg text-left shadow-sm transition-transform hover:scale-[1.02] cursor-move"
           :class="getRegionColor(spot.region)"
         >
           <h3 class="flex flex-row justify-between items-center text-lg font-mono text-white font-bold py-1">
             <span v-html="spot.name"></span>
             <div class="flex items-center gap-2">
               <div class="h-6 w-px bg-white/50"></div>
-              <PlusIcon class="h-6 w-6 text-white" />
+              <div class="p-1 rounded-full hover:bg-white/10 transition-colors">
+                <PlusIcon class="h-6 w-6 text-white" />
+              </div>
             </div>
           </h3>
         </button>
