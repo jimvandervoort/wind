@@ -9,33 +9,35 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
-const settingsOpen = ref(false);
+
+const isSettingsOpen = ref(false);
 const input = ref(null);
 const puff = ref(null);
-const rangeBubbleOpen = ref(false);
+const rangePuff = ref(null);
+const isRangePuffOpen = ref(false);
 
 const toggleGustSettings = () => {
-  settingsOpen.value = !settingsOpen.value;
+  isSettingsOpen.value = !isSettingsOpen.value;
 };
 
-const startRangeBubble = () => {
-  rangeBubbleOpen.value = true;
+const startRangPuff = () => {
+  isRangePuffOpen.value = true;
 };
 
-const endRangeBubble = () => {
-  rangeBubbleOpen.value = false;
+const endRangePuff = () => {
+  isRangePuffOpen.value = false;
 };
 
 const rangeTranslateX = computed(() => {
   if (!input.value) return '0';
-  const puffWidth = puff.value.getBoundingClientRect().width;
-  const rangeWidth = input.value.getBoundingClientRect().width - (puffWidth / 2);
+  const puffWidth = rangePuff.value.getBoundingClientRect().width;
+  const inputRect = input.value.getBoundingClientRect();
+  const rangeWidth = inputRect.width - puffWidth / 2;
   const min = parseFloat(input.value.min);
   const max = parseFloat(input.value.max);
-  const progress = (props.modelValue - 10) / 20;
-  console.log(progress)
-  const translateX = progress * rangeWidth;
-  if (rangeBubbleOpen.value) {
+  const progress = (props.modelValue - min) / (max - min);
+  const translateX = progress * rangeWidth + inputRect.left - puffWidth / 4;
+  if (isRangePuffOpen.value) {
     return `${translateX}px`;
   }
   return `${translateX * 2}px`;
@@ -43,31 +45,44 @@ const rangeTranslateX = computed(() => {
 </script>
 
 <template>
-  <div class="blowboy" :class="{ 'suprised': modelValue >= 30, 'side': settingsOpen }" @click="toggleGustSettings"></div>
-  <div ref="puff" class="puff fira-code text-[#2d455d] pt-[.7rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': settingsOpen, 'israngebubble': rangeBubbleOpen }" style="letter-spacing: 0; text-align: center;">
+  <div class="blowboy" :class="{ 'suprised': modelValue >= 30, 'side': isSettingsOpen }" @click="toggleGustSettings"></div>
+  <div ref="puff" @click="toggleGustSettings" class="puff btnpuff fira-code text-[#2d455d] pt-[.7rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen}">
     <span class="text-xl">{{ modelValue }}</span>
     <span class="font-bold text-xs mt-[-.4rem]">KNTS</span>
   </div>
-  <div class="gustsettings bg-slate-800 pl-[8rem] pr-8 flex flex-col max-w-lg" :class="{ 'hidden': !settingsOpen }">
-    <p class="mt-[.7rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
-    <input
-      @touchstart="startRangeBubble"
-      @touchend="endRangeBubble"
-      ref="input"
-      class="mt-[.7rem]"
-      type="range"
-      min="10"
-      max="30"
-      :value="modelValue"
-      @input="e => emit('update:modelValue', parseInt(e.target.value))"
-    />
+  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.7rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isRangePuffOpen }">
+    <span class="text-xl">{{ modelValue }}</span>
+    <span class="font-bold text-xs mt-[-.4rem]">KNTS</span>
   </div>
+  <transition
+    enter-active-class="transition duration-[0.3s] ease-in"
+    enter-from-class="transform opacity-0"
+    enter-to-class="transform opacity-100"
+    leave-active-class="transition duration-[0.3s] ease-in"
+    leave-from-class="transform opacity-100"
+    leave-to-class="transform opacity-0"
+  >
+    <div v-if="isSettingsOpen" class="gustsettings bg-slate-900 border-t-[#2d455d] border-t-2 pl-[8rem] pr-8 flex flex-col max-w-lg">
+      <p class="mt-[.7rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
+      <input
+        @touchstart="startRangPuff"
+        @touchend="endRangePuff"
+        ref="input"
+        class="mt-[.7rem]"
+        type="range"
+        min="10"
+        max="30"
+        :value="modelValue"
+        @input="e => emit('update:modelValue', parseInt(e.target.value))"
+      />
+    </div>
+  </transition>
 </template>
 
 <style scoped>
 .blowboy {
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   background-image: url('../assets/blowboy.png');
   background-size: cover;
   background-position: center;
@@ -110,31 +125,37 @@ const rangeTranslateX = computed(() => {
 }
 
 .puff {
-  transition: all .3s ease;
+  letter-spacing: 0;
   position: fixed;
   height: 4rem;
   width: 4rem;
   background-image: url('../assets/puff3.png');
   background-size: cover;
   background-position: center;
-  bottom: -.3rem;
+}
+
+.puff.btnpuff {
+  transition: all .5s ease;
+  bottom: -0.3rem;
   left: 1.3rem;
-  z-index: 1;
 }
 
-.puff.isopen {
-  left: 7rem;
-  bottom: -.2rem;
-  opacity: 1;
-  transition: none;
+.puff.btnpuff.isopen {
+  opacity: 0;
+  transform: translateX(-1rem);
+}
+
+.puff.rangepuff {
   display: none;
-  transform: scale(.5) translateX(v-bind('rangeTranslateX'));
+  bottom: 4.5rem;
+  left: 0;
+  z-index: 3;
 }
 
-.puff.israngebubble {
+.puff.israngepuffopen {
   display: flex;
   transition: none;
-  transform: scale(1) translateY(-6rem) translateX(v-bind('rangeTranslateX'));
+  transform: translateX(v-bind('rangeTranslateX'));
 }
 
 input[type="range"] {

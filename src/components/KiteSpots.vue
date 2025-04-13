@@ -158,7 +158,7 @@ const handleTouchEnd = (e) => {
 
 <template>
   <!-- <h1 class="sticky top-0 text-2xl p-4 z-20 bg-black">travel: {{ travelAxis }}</h1> -->
-  <div class="flex flex-row justify-between pl-8 pr-8 max-w-lg">
+  <div class="flex flex-row justify-between pt-8 pl-8 pr-8 max-w-lg">
     <button class="btn relative flex-1 mr-2 pt-1 pb-1" :class="`dir ${dir === 'prev' ? 'active' : ''}`" @click="prev">
       <div @click.stop.prevent class="select-marker" :class="{'kiteloop': kiteloop, [dir]: true}"></div>
       This week

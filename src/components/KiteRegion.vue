@@ -4,7 +4,7 @@ import KiteSpots from './KiteSpots.vue';
 import { mapRangeClamp } from '../range';
 import { useFetchInterval } from '../useFetchInterval';
 import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline';
-
+import WindSpeedControls from './WindSpeedControls.vue';
 const props = defineProps({
   region: {
     type: String,
@@ -30,26 +30,6 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
 </script>
 
 <template>
-  <div v-if="report && report.length > 0" class="pt-4 pb-5 pl-8 pr-8 roboto-medium max-w-2xl">
-    <h1 class="inline">
-      <a href="/" @click.prevent="toggleSettings">
-        Forecast for
-        <span class="fira-code">{{ roundedWindThreshold }}</span>
-        knots and up.
-        <span class="font-light hover:underline">
-          Customise&nbsp;»
-        </span>
-      </a>
-    </h1>
-    <div v-if="showSettings">
-      <div class="flex mt-8 mb-8 fira-code items-center">
-        <span class="text-2xl font-bold pr-4">10</span>
-        <input id="windThreshold" type="range" :style="`--scale: ${mapRangeClamp(windThreshold, 10, 30, 2.5, 5)}rem`" v-model="windThreshold" min="10" max="30" step="1" class="slider">
-        <span class="text-2xl font-bold pl-4">30</span>
-      </div>
-    </div>
-  </div>
-
   <KiteSpots v-if="report && report.length > 0" :report="report" />
 
   <div v-if="report && report.length === 0" class="text-center p-8 pb-0 flex flex-col gap-1">
@@ -71,9 +51,13 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
         <span v-else>Edit Spots</span>
       </router-link>
     </div>
-    <p class="pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
-    <p class="pt-0 fira-code" v-if="report && report.length > 0">Let me know what you think 😊 <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
   </div>
+
+  <div class="flex flex-col p-8 pl-[6.66rem] pr-2 gap-4">
+    <p class="pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
+    <p class="pt-0 fira-code" v-if="report && report.length > 0">For feedback, compliments and suggestions, email: <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+  </div>
+  <WindSpeedControls v-if="report && report.length > 0" v-model="windThreshold" />
 </template>
 
 <style>
