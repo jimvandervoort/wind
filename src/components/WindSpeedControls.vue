@@ -10,7 +10,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const isSettingsOpen = ref(false);
+const didInteract = localStorage.getItem('didInteractWithWindControls') === 'true';
+const closeTimer = ref(null);
+
+const isSettingsOpen = ref(!didInteract);
 const input = ref(null);
 const puff = ref(null);
 const rangePuff = ref(null);
@@ -18,14 +21,34 @@ const isRangePuffOpen = ref(false);
 
 const toggleGustSettings = () => {
   isSettingsOpen.value = !isSettingsOpen.value;
+  unsetCloseTimer();
 };
 
 const startRangPuff = () => {
   isRangePuffOpen.value = true;
+  unsetCloseTimer();
 };
 
 const endRangePuff = () => {
   isRangePuffOpen.value = false;
+  setCloseTimer();
+};
+
+const unsetCloseTimer = () => {
+  if (closeTimer.value) {
+    clearTimeout(closeTimer.value);
+  }
+};
+
+const setCloseTimer = () => {
+  closeTimer.value = setTimeout(() => {
+    localStorage.setItem('didInteractWithWindControls', 'true');
+    isSettingsOpen.value = false;
+  }, 300);
+};
+
+const handleRangeInput = (e) => {
+  emit('update:modelValue', parseInt(e.target.value));
 };
 
 const rangeTranslateX = computed(() => {
@@ -66,14 +89,16 @@ const rangeTranslateX = computed(() => {
       <p class="mt-[.7rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
       <input
         @touchstart="startRangPuff"
+        @mousedown="startRangPuff"
         @touchend="endRangePuff"
+        @mouseup="endRangePuff"
         ref="input"
         class="mt-[.7rem]"
         type="range"
         min="10"
         max="30"
         :value="modelValue"
-        @input="e => emit('update:modelValue', parseInt(e.target.value))"
+        @input="handleRangeInput"
       />
     </div>
   </transition>
@@ -83,7 +108,7 @@ const rangeTranslateX = computed(() => {
 .blowboy {
   position: relative;
   transition: all 0.4s ease;
-  background-image: url('../assets/blowboy.png');
+  background-image: url('../assets/blowboy.webp');
   background-size: cover;
   background-position: center;
   position: fixed;
