@@ -127,7 +127,7 @@ const rangeTranslateX = computed(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/blowboy_suprised.png');
+  background-image: url('../assets/blowboy_suprised.webp');
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -154,7 +154,7 @@ const rangeTranslateX = computed(() => {
   position: fixed;
   height: 4rem;
   width: 4rem;
-  background-image: url('../assets/puff3.png');
+  background-image: url('../assets/puff3.webp');
   background-size: cover;
   background-position: center;
 }
@@ -200,7 +200,7 @@ input[type="range"]::-webkit-slider-thumb {
   border: none;
   width: 2rem;
   height: 2rem;
-  background: url('../assets/puff3.png') no-repeat center center;
+  background: url('../assets/puff3.webp') no-repeat center center;
   background-size: cover;
 }
 
@@ -209,7 +209,7 @@ input[type="range"]::-moz-range-thumb {
   border: none;
   width: 2rem;
   height: 2rem;
-  background: url('../assets/puff3.png') no-repeat center center;
+  background: url('../assets/puff3.webp') no-repeat center center;
   background-size: cover;
 }
 </style>
