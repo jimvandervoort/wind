@@ -14,8 +14,8 @@ const dayNameMap = {
   'Su': 'SUN',
 };
 
-function worthyDays(day, windThreshold) {
-  day.forecast = day.forecast.filter(forecast => forecast.gust.value >= windThreshold && forecast.time >= minHour && forecast.time <= maxHour);
+function worthyDays(day, windThreshold, from, to) {
+  day.forecast = day.forecast.filter(forecast => forecast.gust.value >= windThreshold && forecast.time >= from && forecast.time <= to);
   return day;
 }
 
@@ -111,13 +111,13 @@ function addWind(spot, liveWind) {
   }
 }
 
-export function makeReport(data, liveWind, kiteCount, windThreshold) {
-  const spots = data.map(spot => processSpot(spot));
+export function makeReport(region, liveWind, kiteCount, windThreshold) {
+  const spots = region.spots.map(spot => processSpot(spot));
   const spotsWithWind = spots
     .map(spot => ({
       ...spot,
       kiteCount: kiteCount[spot.spot.slug] ?? null,
-      days: spot.days.map(day => worthyDays(day, windThreshold))
+      days: spot.days.map(day => worthyDays(day, windThreshold, region.from, region.to))
     }))
 
   return spotsWithWind.map(spot => addWind(spot, liveWind));

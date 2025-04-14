@@ -14,12 +14,12 @@ const liveWind = useDump ? JSON.parse(fs.readFileSync(`${outputDir}/dump.live.js
 const regions = useDump ? JSON.parse(fs.readFileSync(`${outputDir}/dump.regions.json`, 'utf8')) : await loadRegions();
 
 if (makeDump) {
-  fs.writeFileSync('./dump.regions.json', JSON.stringify(regions, null, 2), 'utf8');
-  fs.writeFileSync('./dump.live.json', JSON.stringify(liveWind, null, 2), 'utf8');
+  fs.writeFileSync(`${outputDir}/dump.regions.json`, JSON.stringify(regions, null, 2), 'utf8');
+  fs.writeFileSync(`${outputDir}/dump.live.json`, JSON.stringify(liveWind, null, 2), 'utf8');
 }
 
 for (const region of regions) {
-  const report = makeReport(region.spots, liveWind, kiteCount, 10);
+  const report = makeReport(region, liveWind, kiteCount, 10);
   const version = process.env.VITE_WIND_VERSION || 'local';
   fs.writeFileSync(`${outputDir}/report.${region.name}.json`, JSON.stringify({
     version,

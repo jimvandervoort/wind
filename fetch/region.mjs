@@ -1,6 +1,8 @@
 let regions = [
   {
     name: 'capetown',
+    from: 8,
+    to: 20,
     spots: [
       {
         name: 'Khaya Beach 🐕',
@@ -51,6 +53,8 @@ let regions = [
   },
   {
     name: 'tarifa',
+    from: 8,
+    to: 21,
     spots: [
       {
         name: 'Los Lances 🛶',
@@ -96,6 +100,8 @@ let regions = [
   },
   {
     name: 'holland',
+    from: 8,
+    to: 21,
     spots: [
       {
         name: 'Kijkduin 👀',
@@ -217,8 +223,8 @@ function randGender() {
 }
 
 if (process.env.WIND_MINI === 'true') {
-  regions = regions.filter(region => region.name === 'wind');
-  regions[0].spots = regions[0].spots.filter(spot => spot.slug === 'khaya');
+  regions = regions.filter(region => region.name === 'tarifa');
+  regions[0].spots = regions[0].spots.filter(spot => spot.slug === 'lances');
 }
 
 export default regions;

@@ -133,7 +133,7 @@ export async function loadRegions() {
   const results = [];
   for (const region of regions) {
     results.push({
-      name: region.name,
+      ...region,
       spots: await loadRegion(region.spots, region.name),
     });
   }
