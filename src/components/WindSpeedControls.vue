@@ -44,7 +44,7 @@ const setCloseTimer = () => {
   closeTimer.value = setTimeout(() => {
     localStorage.setItem('didInteractWithWindControls', 'true');
     isSettingsOpen.value = false;
-  }, 300);
+  }, 600);
 };
 
 const handleRangeInput = (e) => {
@@ -69,13 +69,13 @@ const rangeTranslateX = computed(() => {
 
 <template>
   <div class="blowboy" :class="{ 'suprised': modelValue >= 30, 'side': isSettingsOpen }" @click="toggleGustSettings"></div>
-  <div ref="puff" @click="toggleGustSettings" class="puff btnpuff fira-code text-[#2d455d] pt-[.7rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen}">
-    <span class="text-xl">{{ modelValue }}</span>
-    <span class="font-bold text-xs mt-[-.4rem]">KNTS</span>
+  <div ref="puff" @click="toggleGustSettings" class="puff btnpuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen}">
+    <span class="text-xl">{{ modelValue }}+</span>
+    <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
-  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.7rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isRangePuffOpen }">
-    <span class="text-xl">{{ modelValue }}</span>
-    <span class="font-bold text-xs mt-[-.4rem]">KNTS</span>
+  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isRangePuffOpen }">
+    <span class="text-xl">{{ modelValue }}+</span>
+    <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
   <transition
     enter-active-class="transition duration-[0.3s] ease-in"
@@ -154,7 +154,7 @@ const rangeTranslateX = computed(() => {
   position: fixed;
   height: 4rem;
   width: 4rem;
-  background-image: url('../assets/puff3.webp');
+  background-image: url('../assets/puff.webp');
   background-size: cover;
   background-position: center;
 }
@@ -162,7 +162,7 @@ const rangeTranslateX = computed(() => {
 .puff.btnpuff {
   transition: all .5s ease;
   bottom: -0.3rem;
-  left: 1.3rem;
+  left: 1.6rem;
 }
 
 .puff.btnpuff.isopen {
@@ -200,7 +200,7 @@ input[type="range"]::-webkit-slider-thumb {
   border: none;
   width: 2rem;
   height: 2rem;
-  background: url('../assets/puff3.webp') no-repeat center center;
+  background: url('../assets/puff.webp') no-repeat center center;
   background-size: cover;
 }
 
@@ -209,7 +209,7 @@ input[type="range"]::-moz-range-thumb {
   border: none;
   width: 2rem;
   height: 2rem;
-  background: url('../assets/puff3.webp') no-repeat center center;
+  background: url('../assets/puff.webp') no-repeat center center;
   background-size: cover;
 }
 </style>
