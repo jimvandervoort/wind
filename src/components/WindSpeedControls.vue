@@ -73,7 +73,7 @@ const rangeTranslateX = computed(() => {
     <span class="text-xl">{{ modelValue }}+</span>
     <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
-  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isRangePuffOpen }">
+  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isSettingsOpen && isRangePuffOpen }">
     <span class="text-xl">{{ modelValue }}+</span>
     <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
