@@ -13,7 +13,8 @@ const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
-  { id: 'myspots', name: 'My Spots', emoji: '🤩' },
+  // { id: 'myspots', name: 'My Spots', emoji: '🤩' },
+  // { id: 'account', name: 'Manage Account', emoji: '💅' },
 ];
 
 const listedRegions = availableRegions.filter(r => r.id !== 'myspots');
@@ -55,6 +56,8 @@ const selectedRegion = computed(() => {
                   region.id === 'capetown' ? 'bg-gradient-to-br from-emerald-500 to-teal-500' : '',
                   region.id === 'holland' ? 'bg-gradient-to-br from-blue-400 to-indigo-400' : '',
                   region.id === 'myspots' ? 'bg-gradient-to-br from-amber-500 to-yellow-500' : '',
+                  // region.id === 'account' ? 'bg-gradient-to-br from-purple-400 to-fuchsia-400' : '',
+                  // region.id === 'account' ? 'bg-gradient-to-br from-pink-500 to-rose-500' : '',
                 ]"
                 @click.prevent="() => { close(); $router.push(`/${region.id}`); }"
               >
