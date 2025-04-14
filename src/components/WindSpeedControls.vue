@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   modelValue: {
@@ -10,7 +10,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const didInteract = localStorage.getItem('didInteractWithWindControls') === 'true';
+let didInteract = localStorage.getItem('didInteractWithWindControls') === 'true';
 const closeTimer = ref(null);
 
 const isSettingsOpen = ref(!didInteract);
@@ -42,6 +42,7 @@ const unsetCloseTimer = () => {
 
 const setCloseTimer = () => {
   closeTimer.value = setTimeout(() => {
+    didInteract = true;
     localStorage.setItem('didInteractWithWindControls', 'true');
     isSettingsOpen.value = false;
   }, 600);
@@ -50,6 +51,22 @@ const setCloseTimer = () => {
 const handleRangeInput = (e) => {
   emit('update:modelValue', parseInt(e.target.value));
 };
+
+const handleScroll = () => {
+  if (!didInteract) return;
+  if (isRangePuffOpen.value) return;
+  if (!isSettingsOpen.value) return;
+  isSettingsOpen.value = false;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
 
 const rangeTranslateX = computed(() => {
   if (!input.value) return '0';
