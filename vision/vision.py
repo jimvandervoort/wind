@@ -14,7 +14,7 @@ COUNT_BUFFER_LEN = 4
 FETCH_SLEEP_SECS = 20
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
 LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
-OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', 'kitecount.json')
+OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', '../public/kitecount.json')
 LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
 
 model = YOLO('yolo11x.pt')
@@ -93,6 +93,18 @@ def main():
         {
             "slug": "bigbay",
             "url": "https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8",
+            "ffmpeg_extra_args": [],
+            "counter": CountBuffer()
+        },
+        {
+            "slug": "canos",
+            "url": "https://flus.spotfav.com:443/canos-de-meca/index.m3u8",
+            "ffmpeg_extra_args": [],
+            "counter": CountBuffer()
+        },
+        {
+            "slug": "lances",
+            "url": "https://flus.spotfav.com/hurricane-tarifa-spotfav/index.m3u8",
             "ffmpeg_extra_args": [],
             "counter": CountBuffer()
         }

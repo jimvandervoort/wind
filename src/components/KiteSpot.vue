@@ -16,6 +16,8 @@ function getWebcamUrl(slug) {
   if (slug === "khaya") return "https://wavehub.co.za/";
   if (slug === "langebaan") return "https://www.capetown-webcam.com/west-coast/sports-centre-webcam-langebaan";
   if (slug === "bigbay") return "https://www.capetown-webcam.com/west-coast/eden-on-bay-webcam";
+  if (slug === "canos") return "https://www.spotfav.com/dashboard/spots/los-canos-de-meca";
+  if (slug === "lances") return "https://www.spotfav.com/dashboard/spots/los-lances-norte";
 }
 </script>
 
