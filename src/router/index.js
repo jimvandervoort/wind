@@ -13,6 +13,9 @@ const requireAuth = (to, from, next) => {
     } else {
       next('/login');
     }
+  }).catch((error) => {
+    console.error('Auth check failed:', error);
+    next('/login');
   });
 };
 
@@ -36,7 +39,7 @@ const routes = [
     component: Region,
     props: true,
     beforeEnter: (to, from, next) => {
-      ['capetown', 'tarifa', 'holland'].includes(to.params.region) && localStorage.setItem('lastRegion', to.params.region);
+      ['capetown', 'tarifa', 'holland', 'myspots'].includes(to.params.region) && localStorage.setItem('lastRegion', to.params.region);
       if (to.params.region === 'myspots') {
         requireAuth(to, from, next);
       } else {

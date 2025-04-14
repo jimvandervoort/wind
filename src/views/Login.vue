@@ -1,6 +1,6 @@
 <script setup>
-import { inject, ref } from 'vue'
-
+import { inject } from 'vue'
+import RegionSelectMenu from '../components/RegionSelectMenu.vue'
 const auth = inject('auth');
 const redirectTo = import.meta.env.VITE_WIND_REDIRECT_URL || 'http://localhost:5173';
 
@@ -15,6 +15,7 @@ const login = () => {
 </script>
 
 <template>
+  <RegionSelectMenu region="login" />
   <div class="p-8">
     <h1 class="text-xl pt-4 font-bold text-center text-white">Log in to add your own spots! 🤩</h1>
     <div class="flex flex-col py-8 items-center justify-center gap-4 w-full max-w-xs mx-auto">

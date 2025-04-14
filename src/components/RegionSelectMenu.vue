@@ -13,14 +13,16 @@ const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
-  // { id: 'myspots', name: 'My Spots', emoji: '🤩' },
+  { id: 'myspots', name: 'My Spots', emoji: '🤩' },
   // { id: 'account', name: 'Manage Account', emoji: '💅' },
 ];
 
-const listedRegions = availableRegions.filter(r => r.id !== 'myspots');
+const listedRegions = availableRegions;
 
 const selectedRegion = computed(() => {
-  return availableRegions.find(r => r.id === props.region)
+  const region = availableRegions.find(r => r.id === props.region)
+  if (region) return region;
+  return { id: 'menu', name: 'Go to', emoji: '👉' }
 });
 </script>
 

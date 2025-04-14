@@ -25,6 +25,7 @@ const toggleGustSettings = () => {
 };
 
 const startRangPuff = () => {
+  isSettingsOpen.value = true;
   isRangePuffOpen.value = true;
   unsetCloseTimer();
 };
