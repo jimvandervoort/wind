@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 const isCustomisable = computed(() => props.region === 'myspots');
-const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 20);
+const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 10);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
 const showSettings = ref(false);
 
