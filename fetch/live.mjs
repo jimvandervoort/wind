@@ -148,7 +148,7 @@ async function fetchKwind() {
           low: json.data.lastWindData.windspeedAdjusted,
           high: json.data.lastWindData.windspeedHighAdjusted,
           dir: degToDir(json.data.lastWindData.direction),
-          deg: json.data.lastWindData.direction,
+          deg: json.data.lastWindData.direction - 180,
           url: 'https://kwind.app/station/64177a9fdb592ea709c59792',
         });
         ws.close();
