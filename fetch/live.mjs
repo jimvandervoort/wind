@@ -1,3 +1,5 @@
+import { WebSocket } from 'ws';
+
 /**
  * This module fetches live wind data from several sources.
  * Returned format should be an object with keys:
@@ -6,6 +8,54 @@
  * - dir: the compass direction string
  * - url: the URL of the source website for the user
  */
+
+const dirs = {
+  N: 0,
+  NNE: 22.5,
+  NE: 45,
+  ENE: 67.5,
+  E: 90,
+  ESE: 112.5,
+  SE: 135,
+  SSE: 157.5,
+  S: 180,
+  SSW: 202.5,
+  SW: 225,
+  WSW: 247.5,
+  W: 270,
+  WNW: 292.5,
+  NW: 315,
+  NNW: 337.5,
+};
+
+// Convert direction string to degrees
+function dirToDeg(str) {
+  return dirs[str];
+}
+
+// Convert degrees to direction string
+function degToDir(deg) {
+  // Normalize the degree to 0-360 range
+  deg = ((deg % 360) + 360) % 360;
+
+  // Find the closest direction
+  let closest = null;
+  let minDiff = Infinity;
+
+  for (const [dir, dirDeg] of Object.entries(dirs)) {
+    const diff = Math.abs(dirDeg - deg);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = dir;
+    }
+  }
+
+  return closest;
+}
+
+function mapWindDirection(str) {
+  return dirToDeg(str) - 180;
+}
 
 function metersToKnots(meters) {
   return meters * 1.94384;
@@ -16,32 +66,25 @@ function translateWindDirection(str) {
   return str.replaceAll('O', 'E').replaceAll('Z', 'S');
 }
 
-function mapWindDirection(str) {
-  const dirs = {
-    N: 0,
-    NNE: 22.5,
-    NE: 45,
-    ENE: 67.5,
-    E: 90,
-    ESE: 112.5,
-    SE: 135,
-    SSE: 157.5,
-    S: 180,
-    SSW: 202.5,
-    SW: 225,
-    WSW: 247.5,
-    W: 270,
-    WNW: 292.5,
-    NW: 315,
-    NNW: 337.5,
-  };
+async function runWithTimeout(func, timeout) {
+  let timeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`Timeout of ${timeout}ms reached`)), timeout);
+  });
 
-  return dirs[str] - 180;
+  try {
+    return await Promise.race([
+      func(),
+      timeoutPromise
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 async function saveExec(func, ...args) {
   try {
-    return await func(...args);
+    return await runWithTimeout(() => func(...args), 30000);
   } catch (err) {
     console.error(err);
     return null;
@@ -90,6 +133,34 @@ function actueleWindStation(actueleWind, sid) {
   }
 }
 
+async function fetchKwind() {
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket('wss://api.kwind.app');
+
+    ws.on('open', () => {
+      ws.send(JSON.stringify({ action: 'subscribe', channel: { name: 'station', params: { where: { _id: '64177a9fdb592ea709c59792' }, interval: 3600000 } } }));
+    });
+
+    ws.on('message', (data) => {
+      const json = JSON.parse(data.toString());
+      if (json.data?.lastWindData) {
+        resolve({
+          low: json.data.lastWindData.windspeedAdjusted,
+          high: json.data.lastWindData.windspeedHighAdjusted,
+          dir: degToDir(json.data.lastWindData.direction),
+          deg: json.data.lastWindData.direction,
+          url: 'https://kwind.app/station/64177a9fdb592ea709c59792',
+        });
+        ws.close();
+      };
+    });
+
+    ws.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
 export async function fetchLiveWind() {
   console.log('Feching live wind data');
 
@@ -104,6 +175,7 @@ export async function fetchLiveWind() {
     vlieland: await saveExec(actueleWindStation, actueleWind, '6242'),
     mirns: await saveExec(actueleWindStation, actueleWind, '9985'),
     schiermonnikoog: await saveExec(actueleWindStation, actueleWind, '6285'),
+    lances: await saveExec(fetchKwind),
   }
 }
 
