@@ -133,23 +133,23 @@ function actueleWindStation(actueleWind, sid) {
   }
 }
 
-async function fetchKwind() {
+async function fetchKwind(stationId) {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket('wss://api.kwind.app');
 
     ws.on('open', () => {
-      ws.send(JSON.stringify({ action: 'subscribe', channel: { name: 'station', params: { where: { _id: '64177a9fdb592ea709c59792' }, interval: 3600000 } } }));
+      ws.send(JSON.stringify({ action: 'subscribe', channel: { name: 'station', params: { where: { _id: stationId }, interval: 3600000 } } }));
     });
 
     ws.on('message', (data) => {
       const json = JSON.parse(data.toString());
       if (json.data?.lastWindData) {
         resolve({
-          low: json.data.lastWindData.windspeedAdjusted,
-          high: json.data.lastWindData.windspeedHighAdjusted,
+          low: json.data.lastWindData.windspeedAdjusted || json.data.lastWindData.windspeed,
+          high: json.data.lastWindData.windspeedHighAdjusted || json.data.lastWindData.windspeedHigh,
           dir: degToDir(json.data.lastWindData.direction),
           deg: json.data.lastWindData.direction - 180,
-          url: 'https://kwind.app/station/64177a9fdb592ea709c59792',
+          url: `https://kwind.app/station/${stationId}`,
         });
         ws.close();
       };
@@ -175,7 +175,8 @@ export async function fetchLiveWind() {
     vlieland: await saveExec(actueleWindStation, actueleWind, '6242'),
     mirns: await saveExec(actueleWindStation, actueleWind, '9985'),
     schiermonnikoog: await saveExec(actueleWindStation, actueleWind, '6285'),
-    lances: await saveExec(fetchKwind),
+    lances: await saveExec(fetchKwind, '64177a9fdb592ea709c59792'),
+    valdevaqueros: await saveExec(fetchKwind, '647de689181cad75ef6778b1'),
   }
 }
 
