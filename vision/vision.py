@@ -96,18 +96,18 @@ def main():
             "ffmpeg_extra_args": [],
             "counter": CountBuffer()
         },
-        {
-            "slug": "canos",
-            "url": "https://flus.spotfav.com:443/canos-de-meca/index.m3u8",
-            "ffmpeg_extra_args": [],
-            "counter": CountBuffer()
-        },
-        {
-            "slug": "lances",
-            "url": "https://flus.spotfav.com/hurricane-tarifa-spotfav/index.m3u8",
-            "ffmpeg_extra_args": [],
-            "counter": CountBuffer()
-        }
+        # {
+        #     "slug": "canos",
+        #     "url": "https://flus.spotfav.com:443/canos-de-meca/index.m3u8",
+        #     "ffmpeg_extra_args": [],
+        #     "counter": CountBuffer()
+        # },
+        # {
+        #     "slug": "lances",
+        #     "url": "https://flus.spotfav.com/hurricane-tarifa-spotfav/index.m3u8",
+        #     "ffmpeg_extra_args": [],
+        #     "counter": CountBuffer()
+        # }
     ]
 
     while True:
