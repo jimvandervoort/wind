@@ -92,6 +92,11 @@ let regions = [
         url: 'https://www.windguru.cz/48784',
       },
       {
+        name: 'Cabopino ⛰️',
+        slug: 'cabopino',
+        url: 'https://www.windguru.cz/48790',
+      },
+      {
         name: 'Guincho 🇵🇹',
         slug: 'guincho',
         url: 'https://www.windguru.cz/31',
