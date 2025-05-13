@@ -210,6 +210,18 @@ let regions = [
       },
     ],
   },
+  {
+    name: 'restofworld',
+    from: 8,
+    to: 21,
+    spots: [
+      {
+        name: 'Le Morne 🇲🇺',
+        slug: 'lemorne',
+        url: 'https://www.windguru.cz/118',
+      },
+    ],
+  }
 ];
 
 function randSkinTone() {
