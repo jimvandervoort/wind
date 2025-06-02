@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently 'docker compose up -d && vite $VITE_ARGS' 'cd backend && bun --hot src/server.js'",
+    "dev:ce": "WIND_BUILD_MODE=ce npm run dev:fe",
     "dev:fe": "vite",
     "build": "vite build",
+    "build:ce": "WIND_BUILD_MODE=ce vite build",
     "preview": "vite preview",
     "fetch": "node fetch/fetch.mjs"
   },
