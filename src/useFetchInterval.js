@@ -65,7 +65,7 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
 
       const {report: fetchedReport, version: theirVersion} = await res.json();
 
-      if (isCE && myVersion !== theirVersion) {
+      if (!isCE && myVersion !== theirVersion) {
         console.info('Server updated, reloading soon');
         setTimeout(() => {
           window.location.reload();
