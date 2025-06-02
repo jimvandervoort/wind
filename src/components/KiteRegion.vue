@@ -1,4 +1,5 @@
 <script setup>
+import "../style.css";
 import { ref, computed, watch } from 'vue';
 import KiteSpots from './KiteSpots.vue';
 import { mapRangeClamp } from '../range';
@@ -8,7 +9,7 @@ import WindSpeedControls from './WindSpeedControls.vue';
 const props = defineProps({
   region: {
     type: String,
-    required: true
+    default: 'tarifa'
   },
 });
 
@@ -40,19 +41,6 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
     <p class="text-xl max-w-md mx-auto">
       Add your first spots 👇
     </p>
-  </div>
-
-  <div class="flex flex-col p-8 gap-4" v-if="isCustomisable">
-    <div class="flex flex-col max-w-md">
-      <router-link v-if="report && report.length === 0" to="/myspots/edit" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg fira-code bg-gradient-to-br from-emerald-500 to-teal-500 text-white">
-        <span class="font-semibold text-2xl">+</span>
-        <span>Add Spots</span>
-      </router-link>
-      <router-link v-else-if="report && report.length > 0" to="/myspots/edit" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg fira-code border-2 border-white">
-        <PencilIcon class="h-5 w-5" />
-        <span>Edit Spots</span>
-      </router-link>
-    </div>
   </div>
 
   <div class="flex flex-col p-8 pl-[6.66rem] pr-2 gap-4">

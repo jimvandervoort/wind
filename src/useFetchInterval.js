@@ -10,7 +10,7 @@ export function useFetchInterval(windThreshold) {
   const error = ref(null);
   const route = useRoute();
   const router = useRouter();
-  const region = ref(route.params.region);
+  const region = ref(route?.params?.region ?? 'tarifa');
   const api = inject('api');
   let intervalId;
 
@@ -34,20 +34,23 @@ export function useFetchInterval(windThreshold) {
     }
   });
 
-  watch(() => route.params.region, (newValue) => {
-    region.value = newValue;
+  if (route?.params?.region) {
+    watch(() => route.params.region, (newValue) => {
+      region.value = newValue;
 
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
 
-    fetchData();
-    intervalId = setInterval(fetchData, interval);
-  });
+      fetchData();
+      intervalId = setInterval(fetchData, interval);
+    });
+  }
 
   const fetchData = async () => {
     try {
-      const res = route.params.region === 'myspots' ? await api.get('/myspots') : await fetch(`/report.${region.value}.json`);
+      const endpoint = import.meta.env.VITE_WIND_ENDPOINT || '';
+      const res = (route?.params?.region || 'tarifa') === 'myspots' ? await api.get(`${endpoint}/myspots`) : await fetch(`${endpoint}/report.${region.value}.json`);
       if (!res.ok) {
         if (res.status === 401) {
           router.push('/login');
