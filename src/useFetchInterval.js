@@ -5,13 +5,13 @@ const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
 const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
-export function useFetchInterval(windThreshold) {
+export function useFetchInterval(windThreshold, regionProp, isCE = false) {
   const report = ref(null);
   const error = ref(null);
   const route = useRoute();
   const router = useRouter();
-  const region = ref(route.params.region);
-  const api = inject('api');
+  const region = isCE ? ref(regionProp) : ref(route.params.region);
+  const api = isCE ? null : inject('api');
   let intervalId;
 
   const filterDays = (report, windThreshold) => {
@@ -34,20 +34,23 @@ export function useFetchInterval(windThreshold) {
     }
   });
 
-  watch(() => route.params.region, (newValue) => {
-    region.value = newValue;
+  if (route?.params?.region) {
+    watch(() => route.params.region, (newValue) => {
+      region.value = newValue;
 
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
 
-    fetchData();
-    intervalId = setInterval(fetchData, interval);
-  });
+      fetchData();
+      intervalId = setInterval(fetchData, interval);
+    });
+  }
 
   const fetchData = async () => {
     try {
-      const res = route.params.region === 'myspots' ? await api.get('/myspots') : await fetch(`/report.${region.value}.json`);
+      const endpoint = import.meta.env.VITE_WIND_ENDPOINT || '';
+      const res = route?.params?.region === 'myspots' ? await api.get(`${endpoint}/myspots`) : await fetch(`${endpoint}/report.${region.value}.json`);
       if (!res.ok) {
         if (res.status === 401) {
           router.push('/login');
@@ -62,7 +65,7 @@ export function useFetchInterval(windThreshold) {
 
       const {report: fetchedReport, version: theirVersion} = await res.json();
 
-      if (myVersion !== theirVersion) {
+      if (!isCE && myVersion !== theirVersion) {
         console.info('Server updated, reloading soon');
         setTimeout(() => {
           window.location.reload();

@@ -2,6 +2,8 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import regions from './fetch/region.mjs';
 
+const isCE = process.env.WIND_BUILD_MODE === 'ce';
+
 const emojiFromRegion = (region) => {
   switch (region) {
     case 'capetown':
@@ -17,8 +19,23 @@ const emojiFromRegion = (region) => {
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.VITE_WIND_ENDPOINT,
+  build: {
+    rollupOptions: {
+      input: {
+        ...(isCE ? { 'main-ce': 'src/main.ce.js' } : { 'main': 'index.html' })
+      }
+    }
+  },
   plugins: [
-    vue(),
+    vue({
+      customElement: isCE,
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'jim-wind'
+        }
+      },
+    }),
     {
       name: 'spotlist',
       resolveId(id) {

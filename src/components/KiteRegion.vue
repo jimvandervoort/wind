@@ -1,9 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import KiteSpots from './KiteSpots.vue';
-import { mapRangeClamp } from '../range';
 import { useFetchInterval } from '../useFetchInterval';
-import { PlusIcon, PencilIcon } from '@heroicons/vue/24/outline';
+import { PencilIcon } from '@heroicons/vue/24/outline';
 import WindSpeedControls from './WindSpeedControls.vue';
 const props = defineProps({
   region: {
@@ -15,11 +14,6 @@ const props = defineProps({
 const isCustomisable = computed(() => props.region === 'myspots');
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 10);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
-const showSettings = ref(false);
-
-const toggleSettings = () => {
-  showSettings.value = !showSettings.value;
-}
 
 watch(windThreshold, (newValue) => {
   localStorage.setItem('windThreshold', Math.round(newValue));
@@ -61,34 +55,3 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
   </div>
   <WindSpeedControls v-if="report && report.length > 0" v-model="windThreshold" />
 </template>
-
-<style>
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: .4rem;
-
-  background: none;
-  border: 2px solid #ccc;
-  outline: none;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: var(--scale);
-  height: var(--scale);
-  background: url('../assets/george.png') no-repeat center center;
-  background-size: cover;
-}
-
-.slider::-moz-range-thumb {
-  appearance: none;
-  border: none;
-  width: var(--scale);
-  height: var(--scale);
-  background: url('../assets/george.png') no-repeat center center;
-  background-size: cover;
-}
-</style>
