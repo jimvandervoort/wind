@@ -28,9 +28,9 @@ set -a
 source .secrets
 set +a
 for service_file in deploy/*.{service,timer}; do
-    if [ -f "$service_file" ]; then
-        envsubst < "$service_file" > "$TEMP_DIR/$(basename "$service_file")"
-    fi
+  if [ -f "$service_file" ]; then
+    envsubst < "$service_file" > "$TEMP_DIR/$(basename "$service_file")"
+  fi
 done
 
 # Copy rendered service files
