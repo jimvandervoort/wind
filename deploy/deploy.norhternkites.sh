@@ -11,7 +11,7 @@ rm -f dist/*.html
 
 rsync -av dist/* wind:wind/dist/
 
-rsync -av deploy/nginx.conf wind:wind/
-ssh wind systemctl restart wind-nginx
+#rsync -av deploy/nginx.conf wind:wind/
+#ssh wind systemctl restart wind-nginx
 
 ssh wind 'ln -sf "$(basename $(ls -t /root/wind/dist/assets/main-ce-*.js | head -n1))" /root/wind/dist/assets/latest.js'

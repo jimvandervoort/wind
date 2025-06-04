@@ -6,6 +6,7 @@ import { WebSocket } from 'ws';
  * - high: the highest wind speed in knts
  * - low: the lowest wind speed in knts
  * - dir: the compass direction string
+ * - deg: the wind direction in degrees
  * - url: the URL of the source website for the user
  */
 
@@ -161,6 +162,20 @@ async function fetchKwind(stationId) {
   });
 }
 
+async function fetchWallasey() {
+  const adjustment = 4;
+  const response = await fetch('https://peelports.port-log.net/latest/getlatest.php?item=c2l0ZT0yMTcwJmRhdGFzZXQ9NSZQSU49JTI0OEIyQw==&SID=plg_peelports_liverpool&format=JSON');
+  const json = await response.json();
+
+  return {
+    low: parseFloat(json['2170']['5']['50002']['Text']) - adjustment,
+    high: parseFloat(json['2170']['5']['50006']['Text']) - adjustment,
+    dir: parseFloat(json['2170']['5']['50003']['Text']),
+    deg: dirToDeg(parseFloat(json['2170']['5']['50003']['Text'])),
+    url: 'https://peelports.port-log.net/liverpool/Weather?site=2170&theme=Day&page=weather',
+  }
+}
+
 export async function fetchLiveWind() {
   console.log('Feching live wind data');
 
@@ -177,6 +192,7 @@ export async function fetchLiveWind() {
     schiermonnikoog: await saveExec(actueleWindStation, actueleWind, '6285'),
     lances: await saveExec(fetchKwind, '64177a9fdb592ea709c59792'),
     valdevaqueros: await saveExec(fetchKwind, '647de689181cad75ef6778b1'),
+    wallasey: await saveExec(fetchWallasey),
   }
 }
 

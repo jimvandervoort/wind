@@ -216,6 +216,38 @@ let regions = [
     ],
   },
   {
+    name: 'northernkites',
+    from: 8,
+    to: 21,
+    spots: [
+      {
+        name: 'Wallasey Beach 🌬️',
+        slug: 'wallasey',
+        url: 'https://www.windguru.cz/47839',
+      },
+      {
+        name: 'West Kirby 🏄‍♀️',
+        slug: 'westkirby',
+        url: 'https://www.windguru.cz/99',
+      },
+      {
+        name: 'Roshneigr 🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+        slug: 'roshneigr',
+        url: 'https://www.windguru.cz/47842',
+      },
+      {
+        name: 'Ainsdale',
+        slug: 'ainsdale',
+        url: 'https://www.windguru.cz/1064',
+      },
+      {
+        name: 'Lytham St Annes',
+        slug: 'lytham',
+        url: 'https://www.windguru.cz/500613',
+      }
+    ],
+  },
+  {
     name: 'restofworld',
     from: 8,
     to: 21,
