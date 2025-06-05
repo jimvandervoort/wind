@@ -176,6 +176,41 @@ async function fetchWallasey() {
   }
 }
 
+function htmlExtractText(line) {
+  const match = line.match(/>(.*)</);
+  if (!match) return null;
+  return match[1];
+}
+
+function htlmExtractNumber(line) {
+  const str = htmlExtractText(line);
+  if (!str) return null;
+  return parseInt(str, 10);
+}
+
+async function fetchWestKirby() {
+  const response = await fetch('https://skylink-pro.com/remote-index.php?domainname=wirralsailingcentre&keyword=sailing&units=kt');
+  const text = await response.text();
+  const lines = text.split('\n');
+  const result = {
+    url: 'https://skylink-pro.com/remote-index.php?domainname=wirralsailingcentre&keyword=sailing&units=kt',
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const cl = lines[i];
+    if (cl.includes('Gust knots')) {
+      result.high = htlmExtractNumber(lines[i+2]);
+    } else if (cl.includes('Avg knots')) {
+      result.low = htlmExtractNumber(lines[i+2]);
+    } else if (cl.includes('Direction')) {
+      result.dir = htmlExtractText(lines[i+2]);
+      result.deg = dirToDeg(result.dir);
+    }
+  }
+
+  return result;
+}
+
 export async function fetchLiveWind() {
   console.log('Feching live wind data');
 
@@ -193,6 +228,7 @@ export async function fetchLiveWind() {
     lances: await saveExec(fetchKwind, '64177a9fdb592ea709c59792'),
     valdevaqueros: await saveExec(fetchKwind, '647de689181cad75ef6778b1'),
     wallasey: await saveExec(fetchWallasey),
+    westkirby: await saveExec(fetchWestKirby),
   }
 }
 
