@@ -170,8 +170,8 @@ async function fetchWallasey() {
   return {
     low: parseFloat(json['2170']['5']['50002']['Text']) - adjustment,
     high: parseFloat(json['2170']['5']['50006']['Text']) - adjustment,
-    dir: parseFloat(json['2170']['5']['50003']['Text']),
-    deg: dirToDeg(parseFloat(json['2170']['5']['50003']['Text'])),
+    dir: json['2170']['5']['50003']['Text'],
+    deg: dirToDeg(json['2170']['5']['50003']['Text']),
     url: 'https://peelports.port-log.net/liverpool/Weather?site=2170&theme=Day&page=weather',
   }
 }
