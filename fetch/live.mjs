@@ -214,7 +214,7 @@ async function fetchWestKirby() {
 async function fetchAinsdale() {
   const response = await fetch('https://mmweather.net/data/current-data?paramnames=s1pwcode,s1heading1,s1winddir2,s1windspeed2,s1windbacked2,s1windveered2,s1winddir2,s1windspeed2,s1windgust2,s1winddir10,s1windspeed10,s1windgust10,s1qnh10,s1qfe10,s1tempdry10,s1dewpoint10,s1humidity10,s1windchill10,s1cloudbase1,s1cloudbase2,s1visibility10,s1winddir10,s1windspeed10,s1windgust10,s1qnh10,s1tempdry10,s1humidity10,s1windchill10,s1cloudbase1,s1visibility10,s1tshs,s1sptp&siteids=1054&metar=1');
   const json = await response.json();
-  const deg = parseInt(json.data["1054"]["13"].v, 10);
+  const deg = parseInt(json.data["1054"]["13"].v, 10) - 180;
   return {
     high: json.data["1054"]["15"].v,
     low: json.data["1054"]["14"].v,
