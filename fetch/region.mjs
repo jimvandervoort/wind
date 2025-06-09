@@ -231,8 +231,8 @@ let regions = [
         url: 'https://www.windguru.cz/99',
       },
       {
-        name: 'Roshneigr 🏴󠁧󠁢󠁷󠁬󠁳󠁿',
-        slug: 'roshneigr',
+        name: 'Rhosneigr 🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+        slug: 'rhosneigr',
         url: 'https://www.windguru.cz/47842',
       },
       {
