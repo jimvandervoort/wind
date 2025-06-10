@@ -2,6 +2,7 @@ import fs from 'fs';
 import { makeReport } from './report.js';
 import { loadRegions } from './puppet.mjs';
 import { fetchLiveWind } from './live.mjs';
+import { fetchTides } from './tides.mjs';
 
 const isProd = process.env.NODE_ENV === 'production';
 const makeDump = !isProd;
@@ -11,16 +12,18 @@ const outputDir = process.env.WIND_OUTPUT_DIR || './public';
 
 const kiteCount = JSON.parse(fs.readFileSync(`${outputDir}/kitecount.json`, 'utf8'));
 const liveWind = useDump ? JSON.parse(fs.readFileSync(`./dump.live.json`, 'utf8')) : await fetchLiveWind();
+const tides = useDump ? JSON.parse(fs.readFileSync(`./dump.tides.json`, 'utf8')) : await fetchTides();
 const regions = useDump ? JSON.parse(fs.readFileSync(`./dump.regions.json`, 'utf8')) : await loadRegions();
 
 if (makeDump) {
   console.log('Dumping before processing (debug mode)');
   fs.writeFileSync(`./dump.live.json`, JSON.stringify(liveWind, null, 2), 'utf8');
+  fs.writeFileSync(`./dump.tides.json`, JSON.stringify(tides, null, 2), 'utf8');
   fs.writeFileSync(`./dump.regions.json`, JSON.stringify(regions, null, 2), 'utf8');
 }
 
 for (const region of regions) {
-  const report = makeReport(region, liveWind, kiteCount, 10);
+  const report = makeReport(region, liveWind, kiteCount, tides, 10);
   const version = process.env.VITE_WIND_VERSION || 'local';
   fs.writeFileSync(`${outputDir}/report.${region.name}.json`, JSON.stringify({
     version,

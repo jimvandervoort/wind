@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws';
+import { saveExec } from './save.js';
 
 /**
  * This module fetches live wind data from several sources.
@@ -65,31 +66,6 @@ function metersToKnots(meters) {
 function translateWindDirection(str) {
   // from dutch to english
   return str.replaceAll('O', 'E').replaceAll('Z', 'S');
-}
-
-async function runWithTimeout(func, timeout) {
-  let timeoutId;
-  const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error(`Timeout of ${timeout}ms reached`)), timeout);
-  });
-
-  try {
-    return await Promise.race([
-      func(),
-      timeoutPromise
-    ]);
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function saveExec(func, ...args) {
-  try {
-    return await runWithTimeout(() => func(...args), 30000);
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
 }
 
 async function fetchMacWind() {
@@ -168,8 +144,8 @@ async function fetchWallasey() {
   const json = await response.json();
 
   return {
-    low: parseFloat(json['2170']['5']['50002']['Text']) - adjustment,
-    high: parseFloat(json['2170']['5']['50006']['Text']) - adjustment,
+    low: Math.max(parseFloat(json['2170']['5']['50002']['Text']) - adjustment, 0),
+    high: Math.max(parseFloat(json['2170']['5']['50006']['Text']) - adjustment, 0),
     dir: json['2170']['5']['50003']['Text'],
     deg: dirToDeg(json['2170']['5']['50003']['Text']),
     url: 'https://peelports.port-log.net/liverpool/Weather?site=2170&theme=Day&page=weather',
@@ -225,7 +201,7 @@ async function fetchAinsdale() {
 }
 
 export async function fetchLiveWind() {
-  console.log('Feching live wind data');
+  console.log('Feching live wind');
 
   const actueleWind = await saveExec(fetchActueleWind);
   return {

@@ -40,7 +40,12 @@ function getWebcamUrl(slug) {
           </span>
         </p>
       </a>
-      <a v-if="spot.kiteCount !== null" :href="getWebcamUrl(spot.spot.slug)" class="hover:underline" rel="noreferrer">
+      <a v-if="spot.tide && spot.tide.length" href="https://www.tideschart.com/United-Kingdom/England/Liverpool/New-Brighton-(Wallasey)-Beach/" class="hover:underline" rel="noreferrer">
+        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
+          Tide {{ spot.tide.map(t => `${t.text}: ${t.time}`).join(', ') }}
+        </p>
+      </a>
+      <a v-else-if="spot.kiteCount !== null" :href="getWebcamUrl(spot.spot.slug)" class="hover:underline" rel="noreferrer">
         <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
           {{ getKiteCountText(spot.kiteCount) }}
         </p>
