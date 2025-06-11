@@ -42,7 +42,12 @@ async function fetchTidesChart() {
     .filter(row => {
       const isAM = row.time.includes('am');
       const hour12 = parseInt(row.time.split(':')[0], 10);
-      const hour24 = isAM ? hour12 : hour12 + 12;
+      let hour24;
+      if (isAM) {
+        hour24 = hour12 === 12 ? 0 : hour12;
+      } else {
+        hour24 = hour12 === 12 ? 12 : hour12 + 12;
+      }
       return hour24 >= earliestTide && hour24 <= latestTide;
     })
     .slice(0, 2)
