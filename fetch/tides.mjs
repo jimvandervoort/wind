@@ -61,6 +61,7 @@ export async function fetchTides() {
   console.log('Fetching tides');
 
   return {
+    // TODO this should all be in saveExec
     'wallasey': await fetchTidesChart(),
   }
 }

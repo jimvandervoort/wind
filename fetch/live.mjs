@@ -147,7 +147,7 @@ async function fetchWallasey() {
     low: Math.max(parseFloat(json['2170']['5']['50002']['Text']) - adjustment, 0),
     high: Math.max(parseFloat(json['2170']['5']['50006']['Text']) - adjustment, 0),
     dir: json['2170']['5']['50003']['Text'],
-    deg: dirToDeg(json['2170']['5']['50003']['Text'] - 180),
+    deg: dirToDeg(json['2170']['5']['50003']['Text']) - 180,
     url: 'https://peelports.port-log.net/liverpool/Weather?site=2170&theme=Day&page=weather',
   }
 }
@@ -180,7 +180,7 @@ async function fetchWestKirby() {
       result.low = htlmExtractNumber(lines[i+2]);
     } else if (cl.includes('Direction')) {
       result.dir = htmlExtractText(lines[i+2]);
-      result.deg = dirToDeg(result.dir);
+      result.deg = dirToDeg(result.dir) - 180;
     }
   }
 
@@ -190,12 +190,12 @@ async function fetchWestKirby() {
 async function fetchAinsdale() {
   const response = await fetch('https://mmweather.net/data/current-data?paramnames=s1pwcode,s1heading1,s1winddir2,s1windspeed2,s1windbacked2,s1windveered2,s1winddir2,s1windspeed2,s1windgust2,s1winddir10,s1windspeed10,s1windgust10,s1qnh10,s1qfe10,s1tempdry10,s1dewpoint10,s1humidity10,s1windchill10,s1cloudbase1,s1cloudbase2,s1visibility10,s1winddir10,s1windspeed10,s1windgust10,s1qnh10,s1tempdry10,s1humidity10,s1windchill10,s1cloudbase1,s1visibility10,s1tshs,s1sptp&siteids=1054&metar=1');
   const json = await response.json();
-  const deg = parseInt(json.data["1054"]["13"].v, 10) - 180;
+  const deg = parseInt(json.data["1054"]["13"].v, 10);
   return {
     high: json.data["1054"]["15"].v,
     low: json.data["1054"]["14"].v,
     dir: degToDir(deg),
-    deg,
+    deg: deg - 180,
     url: 'https://mmweather.net/perl/current-site.pl?siteid=1054',
   }
 }
