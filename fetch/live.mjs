@@ -147,7 +147,7 @@ async function fetchWallasey() {
     low: Math.max(parseFloat(json['2170']['5']['50002']['Text']) - adjustment, 0),
     high: Math.max(parseFloat(json['2170']['5']['50006']['Text']) - adjustment, 0),
     dir: json['2170']['5']['50003']['Text'],
-    deg: dirToDeg(json['2170']['5']['50003']['Text']),
+    deg: dirToDeg(json['2170']['5']['50003']['Text'] - 180),
     url: 'https://peelports.port-log.net/liverpool/Weather?site=2170&theme=Day&page=weather',
   }
 }
