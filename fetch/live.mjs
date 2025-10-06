@@ -77,7 +77,7 @@ async function fetchMacWind() {
     low: windData.low,
     dir: windData.dir,
     deg: mapWindDirection(windData.dir),
-    url: 'https://mac-wind.appspot.com/data/15min.json?offset=',
+    url: 'https://mac-wind.appspot.com/',
   }
 }
 
