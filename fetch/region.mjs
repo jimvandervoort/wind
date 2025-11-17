@@ -30,6 +30,11 @@ let regions = [
         url: 'https://www.windguru.cz/67005',
       },
       {
+        name: 'Macassar 🌆',
+        slug: 'macassar',
+        url: 'https://www.windguru.cz/208292',
+      },
+      {
         name: 'Misty Cliffs 👻',
         slug: 'misty',
         url: 'https://www.windguru.cz/208280',
