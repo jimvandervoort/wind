@@ -8,3 +8,7 @@ Type=oneshot
 ExecStart=/bin/wind-fetch.sh
 StandardOutput=journal
 StandardError=journal
+
+# Kill if stuck
+TimeoutStartSec=30m
+
