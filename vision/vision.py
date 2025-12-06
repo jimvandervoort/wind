@@ -35,8 +35,17 @@ def count_kites(url, extra_args=[]):
     if os.path.exists("/tmp/frame.jpg"):
         os.remove("/tmp/frame.jpg")
 
-    subprocess.run(["ffmpeg", "-i", url, "-ss", "2", *extra_args, "-frames:v", "1", "/tmp/frame.jpg"],
-                check=True, capture_output=True)
+    result = subprocess.run(
+        ["ffmpeg", "-i", url, "-ss", "2", *extra_args, "-frames:v", "1", "/tmp/frame.jpg"],
+        capture_output=True,
+        text=True,
+        check=False
+    )
+    if result.returncode != 0:
+        print("ffmpeg exited with code", result.returncode)
+        print("stdout:", result.stdout)
+        print("stderr:", result.stderr)
+        raise subprocess.CalledProcessError(result.returncode, result.args, output=result.stdout, stderr=result.stderr)
     results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
     detections = results[0].boxes
     kite_count = sum(1 for box in detections if box.cls == CLS_KITE)
@@ -85,17 +94,17 @@ def main():
     SPOTS = [
         {
             "slug": "khaya",
-            "url": "https://conjure.co.za/blouberg/hls/media.m3u8",
+            "url": "https://high-five.conjure.co.za/hls/media.m3u8",
             # Block out windsock that gets mistaken for a kite sometimes
             "ffmpeg_extra_args": ["-vf", "drawbox=x=225:y=1015:w=200:h=100:color=black:t=fill"],
             "counter": CountBuffer()
         },
-        {
-            "slug": "bigbay",
-            "url": "https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8",
-            "ffmpeg_extra_args": [],
-            "counter": CountBuffer()
-        },
+        # {
+        #     "slug": "bigbay",
+        #     "url": "https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8",
+        #     "ffmpeg_extra_args": [],
+        #     "counter": CountBuffer()
+        # },
         # {
         #     "slug": "canos",
         #     "url": "https://flus.spotfav.com:443/canos-de-meca/index.m3u8",
