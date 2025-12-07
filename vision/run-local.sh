@@ -2,6 +2,11 @@
 
 set -eEuxo pipefail
 
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+cd "$script_dir"
+
+docker build --tag vision .
+
 docker run --rm -it \
   -e VISION_DEBUG=true \
   -e VISION_OUTPUT_FILE=/out/kitecount.json \
