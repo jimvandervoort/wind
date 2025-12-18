@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently 'docker compose up -d && vite $VITE_ARGS' 'cd backend && bun --hot src/server.js'",
+    "dev": "concurrently 'docker compose up -d && vite $VITE_ARGS' 'cd backend && bun --hot src/server.js' ; docker compose down",
     "dev:ce": "WIND_BUILD_MODE=ce npm run dev:fe",
     "dev:fe": "vite",
     "build": "vite build",

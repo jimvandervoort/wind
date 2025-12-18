@@ -100,6 +100,12 @@ def main():
             "counter": CountBuffer()
         },
         # {
+        #   "slug": "langebaan",
+        #     "url": "https://s46.ipcamlive.com/streams/2e9boixwf5rksmc4g/stream.m3u8",
+        #     "ffmpeg_extra_args": [],
+        #     "counter": CountBuffer()
+        # },
+        # {
         #     "slug": "bigbay",
         #     "url": "https://live-sec.streamworks.video/oceaneye/oceaneye12.stream/chunks.m3u8",
         #     "ffmpeg_extra_args": [],
@@ -122,7 +128,7 @@ def main():
     while True:
         now = datetime.datetime.now()
         # High five webcam is closed at night
-        is_daytime = 7 <= now.hour <= 21
+        is_daytime = 6 <= now.hour <= 21
         if not is_daytime:
             print("Not daytime, skipping")
             write_output({
