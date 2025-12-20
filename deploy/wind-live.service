@@ -1,0 +1,14 @@
+[Unit]
+Description=Fetch live wind data
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/wind-live.sh
+StandardOutput=journal
+StandardError=journal
+
+# Kill if stuck (shorter timeout than main fetch)
+TimeoutStartSec=2m
+

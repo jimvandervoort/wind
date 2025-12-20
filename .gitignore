@@ -20,7 +20,7 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Tools directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -30,6 +30,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.claude
 
 # Data
 public/*.json
@@ -37,3 +38,4 @@ dump.*.json
 
 # Local config
 .env
+

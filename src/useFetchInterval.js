@@ -1,4 +1,4 @@
-import {onMounted, onUnmounted, ref, watch, inject} from 'vue';
+import {onMounted, onUnmounted, ref, watch, inject, computed} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const interval = 10_000;
@@ -6,7 +6,9 @@ const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
 const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
 export function useFetchInterval(windThreshold, regionProp, isCE = false) {
-  const report = ref(null);
+  const baseReport = ref(null);
+  const liveWind = ref({});
+  const kiteCount = ref({});
   const error = ref(null);
   const route = useRoute();
   const router = useRouter();
@@ -14,23 +16,32 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
   const api = isCE ? null : inject('api');
   let intervalId;
 
-  const filterDays = (report, windThreshold) => {
-    report.forEach(spot => {
+  const report = computed(() => {
+    if (!baseReport.value) return null;
+
+    return baseReport.value.map(spot => ({
+      ...spot,
+      live: liveWind.value[spot.spot.slug] ?? null,
+      kiteCount: kiteCount.value[spot.spot.slug] ?? null,
+    }));
+  });
+
+  const filterDays = (reportData, threshold) => {
+    reportData.forEach(spot => {
       spot.days.forEach((day, i) => {
         day.batch = Math.floor(i / maxDays) + 1;
         day.forecast.forEach(f => {
-          f.visible = f.gust.value >= windThreshold;
+          f.visible = f.gust.value >= threshold;
         });
       })
     });
 
-    return report;
+    return reportData;
   }
 
-  // Add a watch on windThreshold to refilter existing data
   watch(windThreshold, (newValue) => {
-    if (report.value) {
-      filterDays(report.value, newValue);
+    if (baseReport.value) {
+      filterDays(baseReport.value, newValue);
     }
   });
 
@@ -42,12 +53,12 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
         clearInterval(intervalId);
       }
 
-      fetchData();
-      intervalId = setInterval(fetchData, interval);
+      fetchAll();
+      intervalId = setInterval(fetchAll, interval);
     });
   }
 
-  const fetchData = async () => {
+  const fetchReport = async () => {
     try {
       const endpoint = import.meta.env.VITE_WIND_ENDPOINT || '';
       const res = route?.params?.region === 'myspots' ? await api.get(`${endpoint}/myspots`) : await fetch(`${endpoint}/report.${region.value}.json`);
@@ -72,18 +83,43 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
         }, 120_000);
       }
 
-
-      report.value = filterDays(fetchedReport, windThreshold.value);
+      baseReport.value = filterDays(fetchedReport, windThreshold.value);
       error.value = null;
     } catch (err) {
-      console.error(err);
+      console.error('Report fetch error:', err);
       error.value = err;
     }
   };
 
+  const fetchLiveData = async () => {
+    const endpoint = import.meta.env.VITE_WIND_ENDPOINT || '';
+
+    try {
+      const res = await fetch(`${endpoint}/live.json`);
+      if (res.ok) {
+        liveWind.value = await res.json();
+      }
+    } catch (err) {
+      console.warn('Live wind fetch failed:', err);
+    }
+
+    try {
+      const res = await fetch(`${endpoint}/kitecount.json`);
+      if (res.ok) {
+        kiteCount.value = await res.json();
+      }
+    } catch (err) {
+      console.warn('Kitecount fetch failed:', err);
+    }
+  };
+
+  const fetchAll = async () => {
+    await Promise.all([fetchReport(), fetchLiveData()]);
+  };
+
   onMounted(() => {
-    fetchData(); // Initial fetch
-    intervalId = setInterval(fetchData, interval);
+    fetchAll();
+    intervalId = setInterval(fetchAll, interval);
   });
 
   onUnmounted(() => {

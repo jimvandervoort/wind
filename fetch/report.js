@@ -101,16 +101,6 @@ function processSpot(spot) {
   };
 }
 
-function addLiveWind(spot, liveWind) {
-  const wind = liveWind[spot.spot.slug];
-  if (!wind) return spot;
-
-  return {
-    ...spot,
-    live: wind,
-  }
-}
-
 function addTides(spot, tides) {
   const tide = tides[spot.spot.slug];
   if (!tide) return spot;
@@ -121,14 +111,14 @@ function addTides(spot, tides) {
   }
 }
 
-export function makeReport(region, liveWind, kiteCount, tides, windThreshold) {
+export function makeReport(region, tides, windThreshold) {
   const spots = region.spots.map(spot => processSpot(spot));
-  const spotsWithWind = spots
+  const spotsWithTides = spots
     .map(spot => ({
       ...spot,
-      kiteCount: kiteCount[spot.spot.slug] ?? null,
       days: spot.days.map(day => worthyDays(day, windThreshold, region.from, region.to))
     }))
+    .map(spot => addTides(spot, tides));
 
-  return spotsWithWind.map(spot => addLiveWind(addTides(spot, tides), liveWind));
+  return spotsWithTides;
 }

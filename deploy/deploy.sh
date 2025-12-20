@@ -50,9 +50,11 @@ ssh wind systemctl enable --now wind-postgres
 ssh wind systemctl enable --now wind-gotrue
 ssh wind systemctl enable --now wind-nginx
 ssh wind systemctl enable --now wind-puppet.timer
+ssh wind systemctl enable --now wind-live.timer
 ssh wind systemctl enable --now wind-backend
 
 ssh wind systemctl restart wind-backend
 ssh wind docker exec -i wind-backend bun migrate.ts
 ssh wind systemctl restart wind-vision
 ssh wind systemctl start wind-puppet
+ssh wind systemctl start wind-live
