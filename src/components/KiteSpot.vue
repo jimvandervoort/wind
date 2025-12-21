@@ -171,6 +171,8 @@ function getFrameUrl(slug) {
   width: 100%;
   height: auto;
   display: block;
+  aspect-ratio: 16 / 9;
+  background: #000;
 }
 
 .webcam-link {
