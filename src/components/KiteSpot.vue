@@ -1,8 +1,12 @@
 <script setup>
-defineProps({
+import { ref } from 'vue';
+
+const props = defineProps({
   spot: Object,
   batch: Number,
 });
+
+const showPopup = ref(false);
 
 function getKiteCountText(count) {
   const c = Math.round(count);
@@ -19,6 +23,10 @@ function getWebcamUrl(slug) {
   if (slug === "bigbay") return "https://www.capetown-webcam.com/west-coast/eden-on-bay-webcam";
   if (slug === "canos") return "https://www.spotfav.com/dashboard/spots/los-canos-de-meca";
   if (slug === "lances") return "https://www.spotfav.com/dashboard/spots/los-lances-norte";
+}
+
+function getFrameUrl(slug) {
+  return `/frames/${slug}.jpg?t=${Date.now()}`;
 }
 </script>
 
@@ -46,11 +54,31 @@ function getWebcamUrl(slug) {
           Tide {{ spot.tide.map(t => `${t.text}: ${t.time}`).join(', ') }}
         </p>
       </a>
-      <a v-else-if="spot.kiteCount !== null" :href="getWebcamUrl(spot.spot.slug)" class="hover:underline" rel="noreferrer">
-        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
+      <div v-else-if="spot.kiteCount !== null">
+        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold cursor-pointer hover:underline"
+           @click="showPopup = !showPopup">
           {{ getKiteCountText(spot.kiteCount) }}
         </p>
-      </a>
+        <Teleport to="body">
+          <div v-if="showPopup" class="popup-overlay" @click="showPopup = false">
+            <div class="webcam-popup" @click.stop>
+              <button class="popup-dismiss fira-code" @click="showPopup = false" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                </svg>
+                DISMISS
+              </button>
+              <img :src="getFrameUrl(spot.spot.slug)" alt="Latest webcam frame" class="popup-img" />
+              <a :href="getWebcamUrl(spot.spot.slug)" class="webcam-link fira-code" rel="noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                </svg>
+                View live webcam
+              </a>
+            </div>
+          </div>
+        </Teleport>
+      </div>
     </div>
   </div>
   <a class="flex flex-row flex-wrap mb-8" :href="spot.spot.url" rel="noreferrer">
@@ -87,6 +115,84 @@ function getWebcamUrl(slug) {
 
 .title:hover .m {
   opacity: 0;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.webcam-popup {
+  position: relative;
+  background: #1a1a1a;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .webcam-popup {
+    width: 600px;
+  }
+}
+
+.popup-dismiss {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+
+.popup-dismiss:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.popup-dismiss svg {
+  width: 16px;
+  height: 16px;
+}
+
+.popup-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.webcam-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  background: #4c3a5c;
+}
+
+.webcam-link:hover {
+  background: #5d4a6e;
+}
+
+.play-icon {
+  width: 18px;
+  height: 18px;
 }
 </style>
 

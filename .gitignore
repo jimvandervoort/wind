@@ -34,6 +34,7 @@ dist-ssr
 
 # Data
 public/*.json
+public/frames/
 dump.*.json
 
 # Local config

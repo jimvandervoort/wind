@@ -15,7 +15,7 @@ ssh wind chmod 777 wind/dist
 
 npm run build
 rm -f dist/*.json
-rsync -av dist/* wind:wind/dist/
+rsync -av --exclude 'frames' dist/* wind:wind/dist/
 
 rsync -av deploy/wind-*.sh wind:/bin/
 ssh wind 'chmod +x /bin/wind-*.sh'

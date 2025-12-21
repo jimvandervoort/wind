@@ -15,6 +15,7 @@ FETCH_SLEEP_SECS = 20
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
 LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', '../public/kitecount.json')
+LAST_FRAME_DIR = os.environ.get('VISION_LAST_FRAME_DIR', '../public/frames')
 LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
 
 model = YOLO('yolo11x.pt')
@@ -29,7 +30,7 @@ def get_stream_url(url):
 
     return url
 
-def count_kites(url, extra_args=[]):
+def count_kites(url, extra_args=[], slug=None):
     CLS_KITE = 33
 
     if os.path.exists("/tmp/frame.jpg"):
@@ -49,6 +50,13 @@ def count_kites(url, extra_args=[]):
     results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
     detections = results[0].boxes
     kite_count = sum(1 for box in detections if box.cls == CLS_KITE)
+
+    # Always save the latest frame with boxes (no confidence labels) for each spot
+    if slug:
+        os.makedirs(LAST_FRAME_DIR, exist_ok=True)
+        annotated_img = results[0].plot(conf=False, labels=True)
+        cv2.imwrite(f"{LAST_FRAME_DIR}/{slug}.jpg", annotated_img)
+        print(f"Saved annotated frame to {LAST_FRAME_DIR}/{slug}.jpg")
 
     if kite_count > 0 or DEBUG:
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -142,7 +150,7 @@ def main():
         for spot in SPOTS:
             count = 0
             try:
-                kite_count, _ = count_kites(get_stream_url(spot["url"]), spot["ffmpeg_extra_args"])
+                kite_count, _ = count_kites(get_stream_url(spot["url"]), spot["ffmpeg_extra_args"], spot["slug"])
                 count = kite_count
             except Exception as e:
                 print(f"Error counting kites: {e}")
