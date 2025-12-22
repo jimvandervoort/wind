@@ -36,8 +36,10 @@ def count_kites(url, extra_args=[], slug=None):
     if os.path.exists("/tmp/frame.jpg"):
         os.remove("/tmp/frame.jpg")
 
+    ffmpeg_cmd = ["ffmpeg", "-i", url, "-ss", "2", *extra_args, "-frames:v", "1", "/tmp/frame.jpg"]
+    print("Running ffmpeg command:", " ".join(ffmpeg_cmd))
     result = subprocess.run(
-        ["ffmpeg", "-i", url, "-ss", "2", *extra_args, "-frames:v", "1", "/tmp/frame.jpg"],
+        ffmpeg_cmd,
         capture_output=True,
         text=True,
         check=False
@@ -104,7 +106,7 @@ def main():
             "slug": "khaya",
             "url": "https://high-five.conjure.co.za/hls/media.m3u8",
             # Block out windsock that gets mistaken for a kite sometimes
-            "ffmpeg_extra_args": ["-vf", "drawbox=x=225:y=1015:w=200:h=100:color=black:t=fill"],
+            "ffmpeg_extra_args": ["-vf", "drawbox=x=140:y=815:w=200:h=100:color=black:t=fill"],
             "counter": CountBuffer()
         },
         # {
