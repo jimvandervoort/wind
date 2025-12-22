@@ -9,7 +9,7 @@ npm run build:ce
 rm -f dist/*.json
 rm -f dist/*.html
 
-rsync -av dist/* wind:wind/dist/
+rsync -av dist/* --exclude 'frames' wind:wind/dist/
 
 #rsync -av deploy/nginx.conf wind:wind/
 #ssh wind systemctl restart wind-nginx
