@@ -12,7 +12,7 @@ function getKiteCountText(count) {
   const c = Math.round(count);
   if (c === 0) return "No kites on the water";
   if (c < 5) return "A few kites out";
-  if (c < 8) return "Plenty of room for you";
+  if (c < 8) return "Still room for you";
   if (c < 10) return "Crowded out there";
   return "Just saw your mum's out";
 }
