@@ -30,7 +30,7 @@ def get_stream_url(url):
 
     return url
 
-def count_kites(url, extra_args=[], slug=None):
+def count_kites(url, extra_args=[], slug=None, mask_regions=[]):
     CLS_KITE = 33
 
     if os.path.exists("/tmp/frame.jpg"):
@@ -49,14 +49,29 @@ def count_kites(url, extra_args=[], slug=None):
         print("stdout:", result.stdout)
         print("stderr:", result.stderr)
         raise subprocess.CalledProcessError(result.returncode, result.args, output=result.stdout, stderr=result.stderr)
-    results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
+
+    # Load the original frame
+    original_img = cv2.imread("/tmp/frame.jpg")
+
+    # If mask regions are specified, create a masked copy for YOLO detection
+    if mask_regions:
+        masked_img = original_img.copy()
+        for region in mask_regions:
+            x, y, w, h = region["x"], region["y"], region["w"], region["h"]
+            cv2.rectangle(masked_img, (x, y), (x + w, y + h), (0, 0, 0), -1)
+        cv2.imwrite("/tmp/frame_masked.jpg", masked_img)
+        results = model("/tmp/frame_masked.jpg", classes=[CLS_KITE], imgsz=1024)
+    else:
+        results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
+
     detections = results[0].boxes
-    kite_count = sum(1 for box in detections if box.cls == CLS_KITE)
+    kite_count = sum(1 for box in detections if box.cls == CLS_KITE and box.conf > 0.5)
 
     # Always save the latest frame with boxes (no confidence labels) for each spot
     if slug:
         os.makedirs(LAST_FRAME_DIR, exist_ok=True)
-        annotated_img = results[0].plot(conf=False, labels=True)
+        # Plot on original image (without mask) so the saved frame looks clean
+        annotated_img = results[0].plot(conf=False, labels=True, img=original_img.copy())
         cv2.imwrite(f"{LAST_FRAME_DIR}/{slug}.jpg", annotated_img)
         print(f"Saved annotated frame to {LAST_FRAME_DIR}/{slug}.jpg")
 
@@ -105,9 +120,10 @@ def main():
         {
             "slug": "khaya",
             "url": "https://high-five.conjure.co.za/hls/media.m3u8",
-            # Block out windsock that gets mistaken for a kite sometimes
-            # "ffmpeg_extra_args": ["-vf", "drawbox=x=140:y=815:w=200:h=100:color=black:t=fill"],
             "ffmpeg_extra_args": [],
+            # Block out windsock that gets mistaken for a kite sometimes
+            # Masked for YOLO detection but not shown in saved frame
+            "mask_regions": [{"x": 140, "y": 815, "w": 200, "h": 100}],
             "counter": CountBuffer()
         },
         # {
@@ -153,7 +169,12 @@ def main():
         for spot in SPOTS:
             count = 0
             try:
-                kite_count, _ = count_kites(get_stream_url(spot["url"]), spot["ffmpeg_extra_args"], spot["slug"])
+                kite_count, _ = count_kites(
+                    get_stream_url(spot["url"]),
+                    spot.get("ffmpeg_extra_args", []),
+                    spot["slug"],
+                    spot.get("mask_regions", [])
+                )
                 count = kite_count
             except Exception as e:
                 print(f"Error counting kites: {e}")
