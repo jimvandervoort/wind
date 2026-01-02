@@ -12,7 +12,7 @@ from yt_dlp import YoutubeDL
 
 COUNT_BUFFER_LEN = 4
 FETCH_SLEEP_SECS = 20
-CONF_THRESHOLD = 0.5
+CONF_THRESHOLD = 0
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
 LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', '../public/kitecount.json')
