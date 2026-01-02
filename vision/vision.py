@@ -12,6 +12,7 @@ from yt_dlp import YoutubeDL
 
 COUNT_BUFFER_LEN = 4
 FETCH_SLEEP_SECS = 20
+CONF_THRESHOLD = 0.5
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
 LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', '../public/kitecount.json')
@@ -65,13 +66,18 @@ def count_kites(url, extra_args=[], slug=None, mask_regions=[]):
         results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
 
     detections = results[0].boxes
-    kite_count = sum(1 for box in detections if box.cls == CLS_KITE and box.conf > 0.5)
+    high_conf_boxes = [box for box in detections if box.cls == CLS_KITE and box.conf > CONF_THRESHOLD]
+    kite_count = len(high_conf_boxes)
 
     # Always save the latest frame with boxes (no confidence labels) for each spot
     if slug:
         os.makedirs(LAST_FRAME_DIR, exist_ok=True)
-        # Plot on original image (without mask) so the saved frame looks clean
-        annotated_img = results[0].plot(conf=False, labels=True, img=original_img.copy())
+        # Plot only high-confidence boxes on original image (without mask)
+        annotated_img = original_img.copy()
+        for box in high_conf_boxes:
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            cv2.rectangle(annotated_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(annotated_img, "kite", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         cv2.imwrite(f"{LAST_FRAME_DIR}/{slug}.jpg", annotated_img)
         print(f"Saved annotated frame to {LAST_FRAME_DIR}/{slug}.jpg")
 
