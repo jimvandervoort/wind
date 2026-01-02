@@ -104,7 +104,7 @@ const rangeTranslateX = computed(() => {
     leave-to-class="transform opacity-0"
   >
     <div v-if="isSettingsOpen" class="gustsettings bg-slate-900 border-t-[#2d455d] border-t-2 pl-[8rem] pr-8 flex flex-col max-w-lg">
-      <p class="mt-[.7rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
+      <p class="mt-[.4rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
       <input
         @touchstart="startRangPuff"
         @mousedown="startRangPuff"
@@ -130,7 +130,7 @@ const rangeTranslateX = computed(() => {
   background-size: cover;
   background-position: center;
   position: fixed;
-  bottom: -2.3rem;
+  bottom: -2rem;
   left: -5rem;
   height: 11rem;
   width: 8rem;
@@ -179,7 +179,7 @@ const rangeTranslateX = computed(() => {
 
 .puff.btnpuff {
   transition: all .5s ease;
-  bottom: -0.3rem;
+  bottom: 0;
   left: 1.6rem;
 }
 
