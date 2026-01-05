@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { mapRangeClamp } from '../range.js';
 
 const props = defineProps({
   modelValue: {
@@ -8,14 +9,24 @@ const props = defineProps({
   }
 });
 
+// p: current position, o: original position, k: stiffness
+function rubberBand(p, o, k = 120) {
+  const d = p - o;
+  const s = Math.sign(d);
+  const a = Math.abs(d);
+  return o + s * (k * Math.log1p(a / k)); // log1p(x) = log(1+x)
+}
+
 const emit = defineEmits(['update:modelValue']);
 
+const enableRangeDrag = window.location.hash === '#drag';
 let didInteract = localStorage.getItem('didInteractWithWindControls') === 'true';
 const closeTimer = ref(null);
-
+let puffDragStartX = 0;
+let puffDragTranslateX = ref(0);
+let isPuffDragging = ref(false);
 const isSettingsOpen = ref(!didInteract);
 const input = ref(null);
-const puff = ref(null);
 const rangePuff = ref(null);
 const isRangePuffOpen = ref(false);
 
@@ -60,6 +71,33 @@ const handleScroll = () => {
   isSettingsOpen.value = false;
 };
 
+const startPuffDrag = (e) => {
+  if (!enableRangeDrag) return;
+
+  puffDragStartX = e.touches[0].clientX;
+  isPuffDragging.value = true;
+};
+
+const handlePuffDrag = (e) => {
+  if (!enableRangeDrag) return;
+
+  e.preventDefault();
+  const dragX = e.touches[0].clientX;
+  const dragDiff = dragX - puffDragStartX;
+
+  const nextValue = Math.round(mapRangeClamp(dragDiff, puffDragStartX, window.innerWidth - 100, 10, 30));
+  emit('update:modelValue', nextValue);
+
+  puffDragTranslateX.value = `${rubberBand(dragDiff, puffDragStartX, 120) * .5}px`;
+}
+
+const endPuffDrag = () => {
+  if (!enableRangeDrag) return;
+
+  isPuffDragging.value = false;
+  puffDragTranslateX.value = '0';
+};
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
 });
@@ -87,11 +125,21 @@ const rangeTranslateX = computed(() => {
 
 <template>
   <div class="blowboy" :class="{ 'suprised': modelValue >= 30, 'side': isSettingsOpen }" @click="toggleGustSettings"></div>
-  <div ref="puff" @click="toggleGustSettings" class="puff btnpuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen}">
+  <div
+  ref="puff"
+  @click="toggleGustSettings"
+  @touchstart="startPuffDrag"
+  @touchmove="handlePuffDrag"
+  @touchend="endPuffDrag"
+  class="puff btnpuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center"
+  :class="{ 'isopen': isSettingsOpen, 'puffdragging': isPuffDragging }">
     <span class="text-xl">{{ modelValue }}+</span>
     <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
-  <div ref="rangePuff" class="puff rangepuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center" :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isSettingsOpen && isRangePuffOpen }">
+  <div
+    ref="rangePuff"
+    class="puff rangepuff fira-code text-[#2d455d] pt-[.6rem] pl-[.1rem] flex flex-col items-center"
+    :class="{ 'isopen': isSettingsOpen, 'israngepuffopen': isSettingsOpen && isRangePuffOpen }">
     <span class="text-xl">{{ modelValue }}+</span>
     <span class="font-bold text-xs mt-[-.4rem]">KNOTS</span>
   </div>
@@ -179,8 +227,13 @@ const rangeTranslateX = computed(() => {
 
 .puff.btnpuff {
   transition: all .5s ease;
+  transform: translateX(v-bind('puffDragTranslateX'));
   bottom: 0;
   left: 1.6rem;
+}
+
+.puff.btnpuff.puffdragging {
+  transition: none;
 }
 
 .puff.btnpuff.isopen {
