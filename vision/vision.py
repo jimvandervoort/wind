@@ -60,8 +60,9 @@ def count_kites(url, extra_args=[], slug=None, mask_regions=[]):
         for region in mask_regions:
             x, y, w, h = region["x"], region["y"], region["w"], region["h"]
             cv2.rectangle(masked_img, (x, y), (x + w, y + h), (0, 0, 0), -1)
-        cv2.imwrite("/tmp/frame_masked.jpg", masked_img)
-        results = model("/tmp/frame_masked.jpg", classes=[CLS_KITE], imgsz=1024)
+        masked_img_path = f"/tmp/frame_masked.jpg"
+        cv2.imwrite(masked_img_path, masked_img)
+        results = model(masked_img_path, classes=[CLS_KITE], imgsz=1024)
     else:
         results = model("/tmp/frame.jpg", classes=[CLS_KITE], imgsz=1024)
 
@@ -77,7 +78,7 @@ def count_kites(url, extra_args=[], slug=None, mask_regions=[]):
         for box in high_conf_boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cv2.rectangle(annotated_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(annotated_img, "kite", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(annotated_img, "kite", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (0, 255, 0), 2)
         cv2.imwrite(f"{LAST_FRAME_DIR}/{slug}.jpg", annotated_img)
         print(f"Saved annotated frame to {LAST_FRAME_DIR}/{slug}.jpg")
 
@@ -129,7 +130,7 @@ def main():
             "ffmpeg_extra_args": [],
             # Block out windsock that gets mistaken for a kite sometimes
             # Masked for YOLO detection but not shown in saved frame
-            "mask_regions": [{"x": 140, "y": 815, "w": 200, "h": 100}],
+            "mask_regions": [{"x": 0, "y": 700, "w": 400, "h": 200}],
             "counter": CountBuffer()
         },
         # {

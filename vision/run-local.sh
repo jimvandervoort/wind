@@ -5,9 +5,9 @@ set -eEuxo pipefail
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 cd "$script_dir"
 
-docker build --tag vision .
+docker build --platform linux/amd64 --tag vision .
 
-docker run --rm -it \
+docker run --platform linux/amd64 --rm -it \
   -e VISION_DEBUG=true \
   -e VISION_OUTPUT_FILE=/out/kitecount.json \
   -e VISION_LAST_FRAME_DIR=/frames \
