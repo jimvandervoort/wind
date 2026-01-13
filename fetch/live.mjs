@@ -81,6 +81,7 @@ async function fetchMacWind() {
   }
 }
 
+// Not used anymore, no more free version
 async function fetchLangeWind() {
   const response = await fetch('https://capekiting.co.za/wp-json/api/v1/get-wind-data/?page_id=9001&timespanhours=6');
   const data = await response.json();
@@ -206,7 +207,6 @@ export async function fetchLiveWind() {
   const actueleWind = await saveExec(fetchActueleWind);
   return {
     khaya: await saveExec(fetchMacWind),
-    langebaan: await saveExec(fetchLangeWind),
     kijkduin: await saveExec(actueleWindStation, actueleWind, '9984'),
     wijkaanzee: await saveExec(actueleWindStation, actueleWind, '6225'),
     cadzandbad: await saveExec(actueleWindStation, actueleWind, '6308'),
