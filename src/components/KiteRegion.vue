@@ -52,6 +52,7 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
   <div class="flex flex-col p-8 pl-[6.66rem] pr-2 gap-4">
     <p class="pt-0 fira-code" v-if="error">Failed to load latest wind data. Please make sure you're connected to the internet.</p>
     <p class="pt-0 fira-code" v-if="report && report.length > 0">For feedback, compliments and suggestions, email: <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
+    <p class="pt-0 fira-code" v-if="report && report.length > 0">This website built with love and is <a href="https://github.com/jimvandervoort/wind" class="underline hover:text-blue-300">open source</a>&nbsp;❤️</p>
   </div>
   <WindSpeedControls v-if="report && report.length > 0" v-model="windThreshold" />
 </template>
