@@ -220,6 +220,43 @@ let regions = [
       },
     ],
   },
+    {
+    name: 'sweden',
+    from: 8,
+    to: 21,
+    spots: [
+      {
+        name: 'Surfbolaget ❤️‍🔥',
+        slug: 'ragelund',
+        url: 'https://www.windguru.cz/47944',
+      },
+      {
+        name: 'Lapposand 🏝️',
+        slug: 'lapposand',
+        url: 'https://www.windguru.cz/47938',
+      },
+      {
+        name: 'Apelviken 🌊',
+        slug: 'apelviken',
+        url: 'https://www.windguru.cz/47945',
+      },
+      {
+        name: 'Torkelstorp',
+        slug: 'torkelstorp',
+        url: 'https://www.windguru.cz/47942',
+      },
+      {
+        name: 'Åsa Stenudden',
+        slug: 'asastenudden',
+        url: 'https://www.windguru.cz/47943',
+      },
+      {
+        name: 'Träslövsläge 🏄',
+        slug: 'traslovslage',
+        url: 'https://www.windguru.cz/47946',
+      },
+    ],
+  },
   {
     name: 'northernkites',
     from: 8,
