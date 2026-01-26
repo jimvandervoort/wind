@@ -21,6 +21,7 @@ const loadSpotsFromReports = async (slugs: string[]) => {
     ...loadSpotsFromReport('report.capetown.json'),
     ...loadSpotsFromReport('report.holland.json'),
     ...loadSpotsFromReport('report.tarifa.json'),
+    ...loadSpotsFromReport('report.sweden.json'),
     ...loadSpotsFromReport('report.restofworld.json'),
   ]
   return slugs.map(slug => spots.find(spot => spot.spot.slug === slug));

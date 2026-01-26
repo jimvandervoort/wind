@@ -1,8 +1,11 @@
 <script setup>
+import { getRegionGradient } from '../regionGradients';
+
 const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
+  { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
+  { id: 'sweden', name: 'Sweden', emoji: '🇸🇪' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
-  { id: 'holland', name: 'Holland', emoji: '🇳🇱' }
 ];
 </script>
 
@@ -15,11 +18,7 @@ const availableRegions = [
         :key="region.id"
         :to="`/${region.id}`"
         class="p-8 flex flex-col items-center justify-center gap-1 w-full h-full rounded-lg transition-transform hover:scale-105"
-        :class="{
-          'bg-gradient-to-br from-rose-500 to-orange-500': region.id === 'tarifa',
-          'bg-gradient-to-br from-emerald-500 to-teal-500': region.id === 'capetown',
-          'bg-gradient-to-br from-blue-400 to-indigo-400': region.id === 'holland',
-        }"
+        :class="getRegionGradient(region.id)"
       >
         <span class="text-6xl">{{ region.emoji }}</span>
         <span class="text-2xl font-mono text-white font-bold fira-code">{{ region.name }}</span>

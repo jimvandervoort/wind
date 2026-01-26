@@ -12,6 +12,8 @@ const emojiFromRegion = (region) => {
       return '🇪🇸';
     case 'holland':
       return '🇳🇱';
+    case 'sweden':
+      return '🇸🇪';
     default:
       return '🌍';
   }

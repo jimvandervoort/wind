@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import { getRegionGradient } from '../regionGradients';
 
 const props = defineProps({
   region: {
@@ -13,6 +14,7 @@ const availableRegions = [
   { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
+  { id: 'sweden', name: 'Sweden', emoji: '🇸🇪' },
   { id: 'myspots', name: 'My Spots', emoji: '🤩' },
   // { id: 'account', name: 'Manage Account', emoji: '💅' },
 ];
@@ -54,12 +56,7 @@ const selectedRegion = computed(() => {
                 :class="[
                   active ? 'scale-[1.02]' : '',
                   'p-4 flex items-center gap-3 w-full transition-transform',
-                  region.id === 'tarifa' ? 'bg-gradient-to-br from-rose-500 to-orange-500' : '',
-                  region.id === 'capetown' ? 'bg-gradient-to-br from-emerald-500 to-teal-500' : '',
-                  region.id === 'holland' ? 'bg-gradient-to-br from-blue-400 to-indigo-400' : '',
-                  region.id === 'myspots' ? 'bg-gradient-to-br from-amber-500 to-yellow-500' : '',
-                  // region.id === 'account' ? 'bg-gradient-to-br from-purple-400 to-fuchsia-400' : '',
-                  // region.id === 'account' ? 'bg-gradient-to-br from-pink-500 to-rose-500' : '',
+                  getRegionGradient(region.id)
                 ]"
                 @click.prevent="() => { close(); $router.push(`/${region.id}`); }"
               >
