@@ -14,8 +14,9 @@ ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
 
 npm run build
-rm -f dist/*.json
+find dist -maxdepth 1 -type f -name '*.json' ! -name 'manifest.json' -delete
 rsync -av --exclude 'frames' dist/* wind:wind/dist/
+ssh wind chmod 0666 wind/dist/manifest.json
 
 rsync -av deploy/wind-*.sh wind:/bin/
 ssh wind 'chmod +x /bin/wind-*.sh'
