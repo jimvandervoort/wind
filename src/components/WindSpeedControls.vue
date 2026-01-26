@@ -178,7 +178,7 @@ const rangeTranslateX = computed(() => {
   background-size: cover;
   background-position: center;
   position: fixed;
-  bottom: -2rem;
+  bottom: calc(-2rem + env(safe-area-inset-bottom));
   left: -5rem;
   height: 11rem;
   width: 8rem;
@@ -210,7 +210,7 @@ const rangeTranslateX = computed(() => {
 
 .gustsettings {
   position: fixed;
-  height: 5rem;
+  height: calc(5rem + env(safe-area-inset-bottom));
   width: 100vw;
   bottom: 0;
 }
@@ -228,7 +228,7 @@ const rangeTranslateX = computed(() => {
 .puff.btnpuff {
   transition: all .5s ease;
   transform: translateX(v-bind('puffDragTranslateX'));
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom);
   left: 1.6rem;
 }
 
@@ -243,7 +243,7 @@ const rangeTranslateX = computed(() => {
 
 .puff.rangepuff {
   display: none;
-  bottom: 4.5rem;
+  bottom: calc(4.5rem + env(safe-area-inset-bottom));
   left: 0;
   z-index: 3;
 }
