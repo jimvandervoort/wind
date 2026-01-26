@@ -5,6 +5,7 @@ import spots from 'virtual:spotlist';
 import { PlusIcon, TrashIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 import Sortable from 'sortablejs';
 import { RequestQueue } from '../requestqueue';
+import { getRegionGradient } from '../regionGradients';
 
 const emailTemplate = encodeURIComponent(`Hey Jim
 
@@ -46,19 +47,6 @@ const filteredSpots = computed(() => {
     spot.region.toLowerCase().includes(query))
   );
 });
-
-const getRegionColor = (region) => {
-  switch (region) {
-    case 'tarifa':
-      return 'bg-gradient-to-br from-rose-500 to-orange-500';
-    case 'capetown':
-      return 'bg-gradient-to-br from-emerald-500 to-teal-500';
-    case 'holland':
-      return 'bg-gradient-to-br from-blue-400 to-indigo-400';
-    default:
-      return 'bg-gradient-to-br from-amber-500 to-yellow-500';
-  }
-};
 
 const addSpot = async (spot) => {
   userSpots.value = [...userSpots.value, spot];
@@ -160,7 +148,7 @@ onMounted(async () => {
           :key="spot.slug"
           @click="handleSpotClick(spot)"
           class="p-4 rounded-lg text-left shadow-sm transition-transform hover:scale-[1.02] cursor-pointer"
-          :class="getRegionColor(spot.region)"
+          :class="getRegionGradient(spot.region)"
         >
           <h3 class="flex flex-row justify-between items-center text-lg font-mono text-white font-bold py-1">
             <span v-html="spot.name"></span>
@@ -187,7 +175,7 @@ onMounted(async () => {
           :key="spot.slug"
           @click="addSpot(spot)"
           class="p-4 rounded-lg text-left shadow-sm transition-transform hover:scale-[1.02]"
-          :class="getRegionColor(spot.region)"
+          :class="getRegionGradient(spot.region)"
         >
           <h3 class="flex flex-row justify-between items-center text-lg font-mono text-white font-bold py-1">
             <span v-html="spot.name"></span>
