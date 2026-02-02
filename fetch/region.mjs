@@ -97,6 +97,11 @@ let regions = [
         url: 'https://www.windguru.cz/48784',
       },
       {
+        name: 'Los Monteros ☕',
+        slug: 'losmonteros',
+        url: 'https://www.windguru.cz/48789',
+      },
+      {
         name: 'Cabopino ⛰️',
         slug: 'cabopino',
         url: 'https://www.windguru.cz/48790',
@@ -251,7 +256,7 @@ let regions = [
         url: 'https://www.windguru.cz/47943',
       },
       {
-        name: 'Träslövsläge 🏄',
+        name: `Träslövsläge ${'🏄' + randSkinTone() + randGender()}`,
         slug: 'traslovslage',
         url: 'https://www.windguru.cz/47946',
       },
@@ -268,7 +273,7 @@ let regions = [
         url: 'https://www.windguru.cz/47839',
       },
       {
-        name: 'West Kirby 🏄‍♀️',
+        name: `West Kirby ${'🏄' + randSkinTone() + randGender()}`,
         slug: 'westkirby',
         url: 'https://www.windguru.cz/99',
       },
