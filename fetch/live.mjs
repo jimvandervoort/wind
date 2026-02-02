@@ -206,7 +206,10 @@ export async function fetchLiveWind() {
 
   const actueleWind = await saveExec(fetchActueleWind);
   return {
+    // ZA
     khaya: await saveExec(fetchMacWind),
+    dolphin: await saveExec(fetchKwind, '65e23416c7c43ebae3ad600c'),
+    // NL
     kijkduin: await saveExec(actueleWindStation, actueleWind, '9984'),
     wijkaanzee: await saveExec(actueleWindStation, actueleWind, '6225'),
     cadzandbad: await saveExec(actueleWindStation, actueleWind, '6308'),
@@ -214,8 +217,10 @@ export async function fetchLiveWind() {
     vlieland: await saveExec(actueleWindStation, actueleWind, '6242'),
     mirns: await saveExec(actueleWindStation, actueleWind, '9985'),
     schiermonnikoog: await saveExec(actueleWindStation, actueleWind, '6285'),
+    // ES
     lances: await saveExec(fetchKwind, '64177a9fdb592ea709c59792'),
     valdevaqueros: await saveExec(fetchKwind, '647de689181cad75ef6778b1'),
+    // UK
     wallasey: await saveExec(fetchWallasey),
     westkirby: await saveExec(fetchWestKirby),
     ainsdale: await saveExec(fetchAinsdale),

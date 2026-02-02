@@ -10,7 +10,7 @@
     "build": "vite build",
     "build:ce": "WIND_BUILD_MODE=ce vite build",
     "preview": "vite preview",
-    "fetch": "node fetch/fetch.mjs && node/fetch-live.mjs"
+    "fetch": "node fetch/fetch.mjs && node fetch/fetch-live.mjs"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
