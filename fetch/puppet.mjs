@@ -6,6 +6,24 @@ const isProd = process.env.NODE_ENV === "production";
 const headless = (process.env.WIND_HEADLESS || 'true') === 'true';
 const optimizeLoad = (process.env.WIND_OPTIMIZE_LOAD || 'true') === 'true';
 
+async function getTides(page) {
+  return page.evaluate(() => {
+    const spot = WG.Fcst.forecasts.tabid_0.getSpot();
+    if (!spot || !spot.tideAvailable()) return null;
+
+    const now = moment();
+    const end = now.clone().add(7, 'days');
+    const extremes = spot.calcTideExtremes(now, end, 300);
+    if (!extremes) return null;
+
+    return extremes.map(e => ({
+      time: e.time.getTime(),
+      level: Math.round(e.level),
+      high: !!e.high,
+    }));
+  });
+}
+
 async function getWaves(page, len) {
   const hasWaves = !!await page.$('#tabid_0_0_HTSGW');
   if (!hasWaves) {
@@ -76,6 +94,13 @@ async function getSpotData(page, spotUrl) {
   })));
 
   const waves = await getWaves(page, gusts.length);
+  const tides = await getTides(page);
+
+  if (tides) {
+    console.log('Tides:', JSON.stringify(tides, null, 2));
+  } else {
+    console.log('No tide data available for this spot');
+  }
 
   console.log('Processing spot complete');
 
@@ -85,6 +110,7 @@ async function getSpotData(page, spotUrl) {
     gusts,
     waves,
     dir,
+    tides,
   }
 }
 

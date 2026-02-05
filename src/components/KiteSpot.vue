@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from "vue";
 
 const props = defineProps({
   spot: Object,
@@ -11,68 +11,206 @@ const showPopup = ref(false);
 function getKiteCountText(count) {
   const c = Math.round(count);
   if (c === 0) return "No kites on the water";
-  if (c < 2) return "First couple kiters out"
+  if (c < 2) return "First kites out";
   if (c < 5) return "A few kites out";
-  if (c < 8) return "Still room for you";
-  if (c < 10) return "Crowded out there";
+  if (c < 8) return "Spot filling up";
+  if (c < 10) return "Very crowded";
   return "Just saw your mum's out";
 }
 
 function getWebcamUrl(slug) {
   if (slug === "khaya") return "https://wavehub.co.za/";
-  if (slug === "langebaan") return "https://www.capetown-webcam.com/west-coast/sports-centre-webcam-langebaan";
-  if (slug === "bigbay") return "https://www.capetown-webcam.com/west-coast/eden-on-bay-webcam";
-  if (slug === "canos") return "https://www.spotfav.com/dashboard/spots/los-canos-de-meca";
-  if (slug === "lances") return "https://www.spotfav.com/dashboard/spots/los-lances-norte";
+  if (slug === "langebaan")
+    return "https://www.capetown-webcam.com/west-coast/sports-centre-webcam-langebaan";
+  if (slug === "bigbay")
+    return "https://www.capetown-webcam.com/west-coast/eden-on-bay-webcam";
+  if (slug === "canos")
+    return "https://www.spotfav.com/dashboard/spots/los-canos-de-meca";
+  if (slug === "lances")
+    return "https://www.spotfav.com/dashboard/spots/los-lances-norte";
 }
 
 function getFrameUrl(slug) {
   return `/frames/${slug}.jpg?t=${Date.now()}`;
 }
+
+function fmtTime(time) {
+  const date = new Date(time);
+  const minutes = date.getMinutes();
+  const roundedMinutes = Math.round(minutes / 10) * 10;
+
+  const adjustedDate = new Date(date);
+  adjustedDate.setMinutes(roundedMinutes);
+
+  return adjustedDate.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Africa/Johannesburg",
+  });
+}
+
+function getIntensityColor(startTime) {
+  const hour = 60 * 60 * 1000;
+  const now = new Date();
+  const start = new Date(startTime);
+  const timeDiff = start - now;
+
+  // If current time >= start time, use maximum intensity (400)
+  if (timeDiff <= 0) {
+    return 'text-rose-500';
+  }
+
+  // Map time ranges to color intensities
+  if (timeDiff <= hour) {
+    return 'text-rose-400';
+  } else if (timeDiff <= 2 * hour) {
+    return 'text-rose-300';
+  } else if (timeDiff <= 3 * hour) {
+    return 'text-rose-200';
+  } else if (timeDiff <= 4 * hour) {
+    return 'text-rose-100';
+  }
+
+  return 'text-rose-50';
+}
+
+const nextKicker = computed(() => {
+  if (!props.spot.kickers) return null;
+
+  const now = new Date();
+  const kickerTime = props.spot.kickers.find(k => new Date(k.end) > now);
+
+  if (!kickerTime) return null;
+
+  const dateStart = new Date(kickerTime.start);
+  const dateEnd = new Date(kickerTime.end);
+  return {
+    clrClass: getIntensityColor(kickerTime.start),
+    start: fmtTime(kickerTime.start),
+    end: fmtTime(kickerTime.end),
+    isToday: dateStart.toDateString() === now.toDateString(),
+    isNow: dateStart <= now && dateEnd >= now,
+  }
+});
 </script>
 
 <template>
-  <div class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12">
+<p v-if="nextKicker && nextKicker.isNow" class="roboto roboto-medium block pl-8 pr-12 pb-6">
+  Lekker kickers <span class="fira-code font-bold text-rose-500">NOW!</span> until <span class="fira-code font-bold text-rose-500">{{ nextKicker.end }}</span>
+</p>
+<p v-else-if="nextKicker" class="roboto roboto-medium block pl-8 pr-12 pb-6">
+  Lekker kickers <span v-if="!nextKicker.isToday" class="fira-code font-bold text-rose-500">tomorrow</span> between
+  <span class="fira-code font-bold" :class="nextKicker.clrClass">{{ nextKicker.start }}</span>
+  and
+  <span class="fira-code font-bold" :class="nextKicker.clrClass">{{ nextKicker.end }}</span>
+</p>
+  <div
+    class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12"
+  >
     <a :href="spot.spot.url" rel="noreferrer">
-      <h1 class="mb-1 text-lg sm:text-2xl font-semibold title" :class="`slug_${spot.spot.slug}`" v-html="spot.spot.name"></h1>
+      <h1
+        class="mb-1 text-lg sm:text-2xl font-semibold title"
+        :class="`slug_${spot.spot.slug}`"
+        v-html="spot.spot.name"
+      ></h1>
     </a>
     <div class="flex flex-col items-end sm:items-start">
-      <a v-if="spot.live" :href="spot.live.url" class="hover:underline" rel="noreferrer">
-        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
-          Live: {{ Math.round(spot.live.low) }} - {{ Math.round(spot.live.high) }} knts
+      <a
+        v-if="spot.live"
+        :href="spot.live.url"
+        class="hover:underline"
+        rel="noreferrer"
+      >
+        <p
+          class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold"
+        >
+          Live: {{ Math.round(spot.live.low) }} -
+          {{ Math.round(spot.live.high) }} knts
           <span class="whitespace-nowrap">
             {{ spot.live.dir }}
-            <svg class="-ml-1 -mt-1 size-3 inline" :style="`transform: rotate(${spot.live.deg}deg)`"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none" viewBox="0 0 24 24" stroke-width="4" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+            <svg
+              class="-ml-1 -mt-1 size-3 inline"
+              :style="`transform: rotate(${spot.live.deg}deg)`"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="4"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 15.75 7.5-7.5 7.5 7.5"
+              />
             </svg>
           </span>
         </p>
       </a>
-      <a v-if="spot.tide && spot.tide.length" href="https://www.tideschart.com/United-Kingdom/England/Liverpool/New-Brighton-(Wallasey)-Beach/" class="hover:underline" rel="noreferrer">
-        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold">
-          Tide {{ spot.tide.map(t => `${t.text}: ${t.time}`).join(', ') }}
+      <a
+        v-if="spot.tide && spot.tide.length"
+        href="https://www.tideschart.com/United-Kingdom/England/Liverpool/New-Brighton-(Wallasey)-Beach/"
+        class="hover:underline"
+        rel="noreferrer"
+      >
+        <p
+          class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold"
+        >
+          Tide {{ spot.tide.map((t) => `${t.text}: ${t.time}`).join(", ") }}
         </p>
       </a>
       <div v-else-if="spot.kiteCount !== null">
-        <p class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold cursor-pointer hover:underline"
-           @click="showPopup = !showPopup">
+        <p
+          class="fira-code pl-3 sm:pl-6 text-xs tracking-tighter font-semibold cursor-pointer hover:underline"
+          @click="showPopup = !showPopup"
+        >
           {{ getKiteCountText(spot.kiteCount) }}
         </p>
         <Teleport to="body">
-          <div v-if="showPopup" class="popup-overlay" @click="showPopup = false">
+          <div
+            v-if="showPopup"
+            class="popup-overlay"
+            @click="showPopup = false"
+          >
             <div class="webcam-popup" @click.stop>
-              <button class="popup-dismiss fira-code" @click="showPopup = false" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              <button
+                class="popup-dismiss fira-code"
+                @click="showPopup = false"
+                aria-label="Close"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 DISMISS
               </button>
-              <img :src="getFrameUrl(spot.spot.slug)" alt="Latest webcam frame" class="popup-img" />
-              <a :href="getWebcamUrl(spot.spot.slug)" class="webcam-link fira-code" rel="noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="play-icon">
-                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+              <img
+                :src="getFrameUrl(spot.spot.slug)"
+                alt="Latest webcam frame"
+                class="popup-img"
+              />
+              <a
+                :href="getWebcamUrl(spot.spot.slug)"
+                class="webcam-link fira-code"
+                rel="noreferrer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="play-icon"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 View live webcam
               </a>
@@ -82,21 +220,44 @@ function getFrameUrl(slug) {
       </div>
     </div>
   </div>
-  <a class="flex flex-row flex-wrap mb-8" :href="spot.spot.url" rel="noreferrer">
+  <a
+    class="flex flex-row flex-wrap mb-8"
+    :href="spot.spot.url"
+    rel="noreferrer"
+  >
     <template v-for="day in spot.days">
       <div v-if="day.batch === batch" class="flex flex-row items-end fira-code">
-        <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto" v-if="day.forecast.some(f => f.visible)">{{ day.name }}</h3>
+        <h3
+          class="font-semibold flex rotate-270 pt-2 pl-1.5 ml-auto"
+          v-if="day.forecast.some((f) => f.visible)"
+        >
+          {{ day.name }}
+        </h3>
         <template v-else>
-          <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">{{ day.name }}</h3>
+          <h3 class="font-semibold flex rotate-270 pt-2 pl-1.5 text-gray-500">
+            {{ day.name }}
+          </h3>
           <div class="h-16"></div>
         </template>
-        <div v-for="f in day.forecast.filter(f => f.visible)" class="mt-6">
-          <div class="gust w-12 flex flex-col justify-end pl-1"
-              :style="`${f.gust.style}; --wave: '${f.waveStr}'; --wp: ${f.wavePos}`">
+        <div v-for="f in day.forecast.filter((f) => f.visible)" class="mt-6">
+          <div
+            class="gust w-12 flex flex-col justify-end pl-1"
+            :style="`${f.gust.style}; --wave: '${f.waveStr}'; --wp: ${f.wavePos}`"
+          >
             <div class="dir opacity-90" :style="`--deg: ${f.deg}`">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="4"
-                  stroke="currentColor" class="size-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="4"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                />
               </svg>
             </div>
             <span class="">{{ f.wind.value }}</span>
@@ -206,8 +367,8 @@ h3 {
 
 .dir {
   position: absolute;
-  top: .03rem;
-  right: .2rem;
+  top: 0.03rem;
+  right: 0.2rem;
   width: 1rem;
   transform: rotate(var(--deg));
 }
@@ -217,8 +378,8 @@ h3 {
 }
 
 .gust::before {
-  content: '';
-  background-image: url('/src/assets/wave.png');
+  content: "";
+  background-image: url("/src/assets/wave.png");
   /* background-color: tomato; */
   background-repeat: no-repeat;
   background-size: 100% auto;
@@ -234,9 +395,9 @@ h3 {
 .gust::after {
   content: var(--wave);
   position: absolute;
-  right: .1rem;
-  font-size: .8rem;
+  right: 0.1rem;
+  font-size: 0.8rem;
   opacity: 1;
-  top: -1.0rem;
+  top: -1rem;
 }
 </style>

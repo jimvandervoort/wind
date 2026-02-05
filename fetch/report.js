@@ -81,6 +81,29 @@ function recolorGust(gust) {
   };
 }
 
+function tidesToKickers(spot) {
+  if (spot.slug !== "khaya") return null;
+
+  const tides = spot.data.tides;
+
+  const dayTides = tides.filter(tide => {
+    const date = new Date(tide.time);
+    // Convert UTC to Cape Town time (UTC+2)
+    const capeTownDate = new Date(date.getTime() + (2 * 60 * 60 * 1000));
+    const hour = capeTownDate.getHours();
+    return hour >= 8 && hour <= 22;
+  });
+  const highTides = tides.filter(tide => tide.high);
+  const kickers = highTides.map(tide => {
+    return {
+      start: tide.time - 2 * 60 * 60 * 1000, // 2 hours before high tide
+      end: tide.time,
+    }
+  });
+
+  return kickers.slice(0,5);
+}
+
 function processSpot(spot) {
   const combined = spot.data.dates.map((day, i) => {
     return {
@@ -94,10 +117,13 @@ function processSpot(spot) {
 
   const days = mapToDay(combined);
 
+  const kickers = tidesToKickers(spot);
+
   delete spot.data;
   return {
     spot,
     days,
+    kickers,
   };
 }
 
