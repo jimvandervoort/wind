@@ -95,10 +95,10 @@ const nextKicker = computed(() => {
 </script>
 
 <template>
-<p v-if="nextKicker && nextKicker.isNow" class="roboto roboto-medium block pl-8 pr-12 pb-6">
+<p v-if="nextKicker && nextKicker.isNow" class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6">
   Lekker kickers <span class="fira-code font-bold text-rose-500">NOW!</span> until <span class="fira-code font-bold text-rose-500">{{ nextKicker.end }}</span>
 </p>
-<p v-else-if="nextKicker" class="roboto roboto-medium block pl-8 pr-12 pb-6">
+<p v-else-if="nextKicker" class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6">
   Lekker kickers <span v-if="!nextKicker.isToday" class="fira-code font-bold text-rose-500">tomorrow</span> between
   <span class="fira-code font-bold" :class="nextKicker.clrClass">{{ nextKicker.start }}</span>
   and
