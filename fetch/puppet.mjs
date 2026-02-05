@@ -96,9 +96,7 @@ async function getSpotData(page, spotUrl) {
   const waves = await getWaves(page, gusts.length);
   const tides = await getTides(page);
 
-  if (tides) {
-    console.log('Tides:', JSON.stringify(tides, null, 2));
-  } else {
+  if (!tides) {
     console.log('No tide data available for this spot');
   }
 
