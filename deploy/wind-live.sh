@@ -10,8 +10,10 @@ fetch_live() {
     --rm \
     -e NODE_ENV=production \
     -e WIND_OUTPUT_DIR=/wind/dist \
+    -e WIND_LOG_FILE=/wind/live_history.jsonl \
     --name wind_live \
     -v "/root/wind/dist:/wind/dist" \
+    -v "/root/wind/live_history.jsonl:/wind/live_history.jsonl" \
     wind node fetch/fetch-live.mjs
 
   echo "LIVE END $(date)"

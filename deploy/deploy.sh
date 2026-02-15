@@ -12,6 +12,7 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 ssh wind mkdir -p wind/dist
 ssh wind chmod 777 wind/dist
+ssh wind touch wind/vision_history.jsonl wind/live_history.jsonl
 
 npm run build
 find dist -maxdepth 1 -type f -name '*.json' ! -name 'manifest.json' -delete

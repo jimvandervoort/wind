@@ -9,6 +9,7 @@ vision/frame*.jpg
 # Logs
 logs
 *.log
+*.jsonl
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -33,6 +34,7 @@ dist-ssr
 .claude
 
 # Data
+analytics/plots/
 public/*.json
 !public/manifest.json
 public/frames/

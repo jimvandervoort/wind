@@ -11,7 +11,10 @@
     "build:ce": "WIND_BUILD_MODE=ce vite build",
     "preview": "vite preview",
     "lastvision": "scp wind:wind/vision_debug/$(ssh wind 'ls -1 wind/vision_debug | tail -n1') .",
-    "fetch": "node fetch/fetch.mjs && node fetch/fetch-live.mjs"
+    "fetch": "node fetch/fetch.mjs && node fetch/fetch-live.mjs",
+    "analytics": "npm run analytics:fetch && npm run analytics:plot",
+    "analytics:fetch": "scp wind:wind/vision_history.jsonl wind:wind/live_history.jsonl analytics/",
+    "analytics:plot": "cd analytics && uv run python plot.py"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
