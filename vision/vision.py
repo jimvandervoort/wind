@@ -14,12 +14,22 @@ COUNT_BUFFER_LEN = 4
 FETCH_SLEEP_SECS = 20
 CONF_THRESHOLD = 0
 DEBUG = os.environ.get('VISION_DEBUG', 'false').lower() == 'true'
-LOG_FILE = os.environ.get('VISION_LOG_FILE', 'vision_log.txt')
+LOG_FILE = os.environ.get('VISION_LOG_FILE', '/dev/stdout')
 OUTPUT_FILE = os.environ.get('VISION_OUTPUT_FILE', '../public/kitecount.json')
 LAST_FRAME_DIR = os.environ.get('VISION_LAST_FRAME_DIR', '../public/frames')
 LOOP = os.environ.get('VISION_LOOP', 'false').lower() == 'true'
 
 model = YOLO('yolo11x.pt')
+
+def log(data_dict):
+    data_dict['datetime'] = datetime.datetime.now().isoformat()
+
+    try:
+        with open(LOG_FILE, 'a') as f:
+            f.write(json.dumps(data_dict) + '\n')
+    except Exception as err:
+        print(err, file=sys.stderr)
+
 
 def get_stream_url(url):
     if url.startswith('https://www.youtube.com/'):
@@ -114,11 +124,6 @@ def write_output(j):
     with open(OUTPUT_FILE, 'w') as f:
         json.dump(j, f)
 
-def log_output(s):
-    print(s)
-    with open(LOG_FILE, 'a') as f:
-        f.write(f"{datetime.datetime.now()}: {s}\n")
-
 def main():
     # Langebaan cams
     # "https://www.youtube.com/watch?v=Hhc6vesmrNk"
@@ -187,14 +192,16 @@ def main():
                 print(f"Error counting kites: {e}")
 
             spot["counter"].observe(count)
-            log_output(f"[{spot['slug']}]: {count}")
+            log({
+                "spot": spot["slug"],
+                "count": count
+            })
 
         avg = {}
         for spot in SPOTS:
             avg[spot["slug"]] = spot["counter"].average()
 
         write_output(avg)
-        log_output(f"[avg]: {json.dumps(avg)}")
 
         if not LOOP:
             break

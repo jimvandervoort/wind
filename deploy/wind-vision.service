@@ -18,6 +18,8 @@ ExecStartPre=/usr/bin/docker create \
     -e VISION_LAST_FRAME_DIR=/frames \
     -e VISION_DEBUG=false \
     -e VISION_LOOP=true \
+    -e VISION_LOG_FILE=/wind/vision_history.jsonl \
+    -v "/root/wind/vision_history.jsonl:/wind/vision_history.jsonl" \
     -v "/root/wind/dist/kitecount.json:/out/kitecount.json" \
     -v "/root/wind/dist/frames:/frames" \
     -v "/root/wind/vision_debug:/vision/vision_debug" \
