@@ -10,6 +10,7 @@
     "build": "vite build",
     "build:ce": "WIND_BUILD_MODE=ce vite build",
     "preview": "vite preview",
+    "lastvision": "scp wind:wind/vision_debug/$(ssh wind 'ls -1 wind/vision_debug | tail -n1') .",
     "fetch": "node fetch/fetch.mjs && node fetch/fetch-live.mjs"
   },
   "dependencies": {
