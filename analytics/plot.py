@@ -86,6 +86,8 @@ def plot_spot(spot, kite_by_day, wind_by_day, out_dir):
     ax_wind.set_ylabel("Max wind speed (knots)", color="#5b9bd5")
     ax_kites.set_ylabel("Max kite count", color="#e74c3c")
 
+    ax_wind.set_ylim(bottom=0)
+    ax_kites.set_ylim(bottom=0)
     ax_wind.tick_params(axis="y", labelcolor="#5b9bd5")
     ax_kites.tick_params(axis="y", labelcolor="#e74c3c")
 

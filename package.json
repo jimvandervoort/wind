@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "lastvision": "scp wind:wind/vision_debug/$(ssh wind 'ls -1 wind/vision_debug | tail -n1') .",
     "fetch": "node fetch/fetch.mjs && node fetch/fetch-live.mjs",
-    "analytics": "npm run analytics:fetch && npm run analytics:plot",
+    "analytics": "npm run analytics:fetch && npm run analytics:plot && kitty +kitten icat analytics/plots/khaya.png",
     "analytics:fetch": "scp wind:wind/vision_history.jsonl wind:wind/live_history.jsonl analytics/",
     "analytics:plot": "cd analytics && uv run python plot.py"
   },
