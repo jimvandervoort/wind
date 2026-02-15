@@ -93,7 +93,7 @@ function tidesToKickers(spot) {
     const hour = capeTownDate.getHours();
     return hour >= 8 && hour <= 22;
   });
-  const highTides = tides.filter(tide => tide.high);
+  const highTides = dayTides.filter(tide => tide.high);
   const kickers = highTides.map(tide => {
     return {
       start: tide.time - 2 * 60 * 60 * 1000, // 2 hours before high tide
