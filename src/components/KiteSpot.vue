@@ -8,6 +8,15 @@ const props = defineProps({
 
 const showPopup = ref(false);
 
+const noKickerPhrases = [
+  'Can\'t see any lekker kickers coming up 🥺',
+  'No epic kickers on the horizon... yet 🤷',
+  'Kicker gods are taking a break 😴',
+  'No kickers found, time to practice your yoga 🧘',
+  '404 - kickers not found 🕵️‍♂️',
+  'Kickers shall commence when the elements align 🌌',
+];
+
 function getKiteCountText(count) {
   const c = Math.round(count);
   if (c === 0) return "No kites on the water";
@@ -74,36 +83,93 @@ function getIntensityColor(startTime) {
   return 'text-rose-50';
 }
 
+// Collect the time range of visible forecast blocks in the current batch
+function getBatchTimeRange() {
+  if (!props.spot.days) return null;
+
+  let min = Infinity;
+  let max = -Infinity;
+
+  for (const day of props.spot.days) {
+    if (day.batch !== props.batch) continue;
+    for (const f of day.forecast) {
+      if (!f.visible) continue;
+      if (f.unixTime < min) min = f.unixTime;
+      if (f.unixTime > max) max = f.unixTime;
+    }
+  }
+
+  if (min === Infinity) return null;
+  // forecast unixTime is in seconds, kickers use milliseconds — convert to ms
+  return { min: min * 1000, max: max * 1000 };
+}
+
 const nextKicker = computed(() => {
   if (!props.spot.kickers) return null;
 
+  const range = getBatchTimeRange();
+  if (!range) return null;
+
   const now = new Date();
-  const kickerTime = props.spot.kickers.find(k => new Date(k.end) > now);
+  const kickerTime = props.spot.kickers.find(k => {
+    if (new Date(k.end) <= now) return false;
+    // Show kicker if its start or end falls within the displayed time range
+    return (k.start >= range.min && k.start <= range.max)
+        || (k.end >= range.min && k.end <= range.max);
+  });
 
   if (!kickerTime) return null;
 
   const dateStart = new Date(kickerTime.start);
   const dateEnd = new Date(kickerTime.end);
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayName = dateStart.toLocaleDateString(undefined, { weekday: 'long', timeZone: 'Africa/Johannesburg' });
   return {
     clrClass: getIntensityColor(kickerTime.start),
     start: fmtTime(kickerTime.start),
     end: fmtTime(kickerTime.end),
     isToday: dateStart.toDateString() === now.toDateString(),
+    isTomorrow: dateStart.toDateString() === tomorrow.toDateString(),
     isNow: dateStart <= now && dateEnd >= now,
+    dayName,
   }
 });
 </script>
 
 <template>
-<p v-if="nextKicker && nextKicker.isNow" class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6">
-  Lekker kickers <span class="fira-code font-bold text-rose-500">NOW!</span> until <span class="fira-code font-bold text-rose-500">{{ nextKicker.end }}</span>
-</p>
-<p v-else-if="nextKicker" class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6">
-  Lekker kickers <span v-if="!nextKicker.isToday" class="fira-code font-bold text-rose-500">tomorrow</span> between
-  <span class="fira-code font-bold" :class="nextKicker.clrClass">{{ nextKicker.start }}</span>
-  and
-  <span class="fira-code font-bold" :class="nextKicker.clrClass">{{ nextKicker.end }}</span>
-</p>
+  <p
+    v-if="nextKicker && nextKicker.isNow"
+    class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6"
+  >
+    Lekker kickers
+    <span class="fira-code font-bold text-rose-500">NOW!</span> until
+    <span class="fira-code font-bold text-rose-500">{{ nextKicker.end }}</span>
+  </p>
+  <p
+    v-else-if="nextKicker"
+    class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6"
+  >
+    Lekker kickers
+    <span class="fira-code font-bold text-rose-300">{{
+      nextKicker.isTomorrow
+        ? "tomorrow"
+        : nextKicker.isToday
+          ? "today"
+          : nextKicker.dayName
+    }}</span>
+    between
+    <span class="fira-code font-bold" :class="nextKicker.clrClass">{{
+      nextKicker.start
+    }}</span>
+    and
+    <span class="fira-code font-bold" :class="nextKicker.clrClass">{{
+      nextKicker.end
+    }}</span>
+  </p>
+  <p v-else-if="spot.spot.slug === 'khaya'" class="roboto roboto-medium text-sm block pl-8 pr-12 pb-6">
+    {{ noKickerPhrases[Math.floor(Math.random() * noKickerPhrases.length)] }}
+  </p>
   <div
     class="flex flex-row items-center justify-between sm:justify-start pl-8 pr-12"
   >
