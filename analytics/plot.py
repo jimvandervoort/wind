@@ -16,6 +16,11 @@ import matplotlib.dates as mdates
 
 DIR = Path(__file__).parent
 
+# Only consider records between these hours (local time, 24h format).
+# Records outside this window are ignored for both wind and kite data.
+DAYTIME_START_HOUR = 7  # inclusive
+DAYTIME_END_HOUR = 20  # exclusive
+
 
 def read_jsonl(path):
     lines = []
@@ -30,8 +35,12 @@ def read_jsonl(path):
     return lines
 
 
-def parse_date(dt_str):
-    return datetime.fromisoformat(dt_str).date()
+def parse_datetime(dt_str):
+    return datetime.fromisoformat(dt_str)
+
+
+def is_daytime(dt):
+    return DAYTIME_START_HOUR <= dt.hour < DAYTIME_END_HOUR
 
 
 def gather_kite_counts(records):
@@ -43,7 +52,10 @@ def gather_kite_counts(records):
         dt = rec.get("datetime")
         if spot is None or count is None or dt is None:
             continue
-        day = parse_date(dt)
+        dt_parsed = parse_datetime(dt)
+        if not is_daytime(dt_parsed):
+            continue
+        day = dt_parsed.date()
         data[spot][day] = max(data[spot][day], count)
     return data
 
@@ -55,7 +67,10 @@ def gather_wind_speeds(records):
         dt = rec.get("datetime")
         if dt is None:
             continue
-        day = parse_date(dt)
+        dt_parsed = parse_datetime(dt)
+        if not is_daytime(dt_parsed):
+            continue
+        day = dt_parsed.date()
         for key, val in rec.items():
             if key == "datetime" or not isinstance(val, dict):
                 continue
