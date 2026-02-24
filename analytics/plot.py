@@ -89,30 +89,29 @@ def plot_spot(spot, kite_by_day, wind_by_day, out_dir):
     wind = [wind_by_day[d] for d in dates]
     kites = [kite_by_day[d] for d in dates]
 
-    fig, ax_wind = plt.subplots(figsize=(12, 5))
-    ax_kites = ax_wind.twinx()
+    import numpy as np
 
-    ax_wind.bar(dates, wind, color="#5b9bd5", alpha=0.6, label="Wind (knots)")
-    ax_kites.plot(
-        dates, kites, color="#e74c3c", marker="o", linewidth=2, label="Kite count"
+    fig, ax = plt.subplots(figsize=(12, 5))
+
+    x = np.arange(len(dates))
+    bar_width = 0.35
+
+    bars_wind = ax.bar(
+        x - bar_width / 2, wind, bar_width, color="#5b9bd5", label="Wind (knots)"
+    )
+    bars_kites = ax.bar(
+        x + bar_width / 2, kites, bar_width, color="#e74c3c", label="Kite count"
     )
 
-    ax_wind.set_xlabel("Date")
-    ax_wind.set_ylabel("Max wind speed (knots)", color="#5b9bd5")
-    ax_kites.set_ylabel("Max kite count", color="#e74c3c")
+    ax.bar_label(bars_wind, fmt="%.0f", padding=2, fontsize=7)
+    ax.bar_label(bars_kites, fmt="%d", padding=2, fontsize=7)
 
-    ax_wind.set_ylim(bottom=0)
-    ax_kites.set_ylim(bottom=0)
-    ax_wind.tick_params(axis="y", labelcolor="#5b9bd5")
-    ax_kites.tick_params(axis="y", labelcolor="#e74c3c")
-
-    ax_wind.xaxis.set_major_formatter(mdates.DateFormatter("%b %d"))
-    ax_wind.xaxis.set_major_locator(mdates.AutoDateLocator())
-    fig.autofmt_xdate()
-
-    lines_1, labels_1 = ax_wind.get_legend_handles_labels()
-    lines_2, labels_2 = ax_kites.get_legend_handles_labels()
-    ax_wind.legend(lines_1 + lines_2, labels_1 + labels_2, loc="upper left")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Value")
+    ax.set_ylim(bottom=0)
+    ax.set_xticks(x)
+    ax.set_xticklabels([d.strftime("%b %d") for d in dates], rotation=45, ha="right")
+    ax.legend(loc="upper left")
 
     plt.title(f"{spot} — Wind Speed vs Kite Count")
     plt.tight_layout()
