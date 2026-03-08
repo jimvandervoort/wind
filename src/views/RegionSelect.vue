@@ -6,6 +6,7 @@ const availableRegions = [
   { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
   { id: 'sweden', name: 'Sweden', emoji: '🇸🇪' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
+  { id: 'germany', name: 'Germany', emoji: '🇩🇪' }
 ];
 </script>
 
