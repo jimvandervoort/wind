@@ -17,13 +17,13 @@ const loadSpotsFromReport = (report: string) => {
 }
 
 const loadSpotsFromReports = async (slugs: string[]) => {
-  const spots = [
-    ...loadSpotsFromReport('report.capetown.json'),
-    ...loadSpotsFromReport('report.holland.json'),
-    ...loadSpotsFromReport('report.tarifa.json'),
-    ...loadSpotsFromReport('report.sweden.json'),
-    ...loadSpotsFromReport('report.restofworld.json'),
-  ]
+  // Find report.*.json files in REPORT_DIR using only node built-ins
+  const reportFiles = fs.readdirSync(REPORT_DIR)
+    .filter(file => file.startsWith('report.') && file.endsWith('.json'));
+
+  const spots = reportFiles
+    .flatMap(report => loadSpotsFromReport(report));
+
   return slugs.map(slug => spots.find(spot => spot.spot.slug === slug));
 }
 
