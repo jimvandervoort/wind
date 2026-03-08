@@ -11,11 +11,12 @@ const props = defineProps({
 });
 
 const availableRegions = [
-  { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'holland', name: 'Holland', emoji: '🇳🇱' },
+  { id: 'capetown', name: 'Cape Town', emoji: '🇿🇦' },
   { id: 'tarifa', name: 'Tarifa', emoji: '🇪🇸' },
   { id: 'sweden', name: 'Sweden', emoji: '🇸🇪' },
-  { id: 'myspots', name: 'My Spots', emoji: '🤩' },
+  { id: 'germany', name: 'Germany', emoji: '🇩🇪' },
+  { id: 'myspots', name: 'My Spots', emoji: '💅' },
   // { id: 'account', name: 'Manage Account', emoji: '💅' },
 ];
 
