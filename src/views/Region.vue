@@ -11,7 +11,7 @@ const props = defineProps({
 });
 
 watch(() => props.region, (newRegion) => {
-  ['capetown', 'tarifa', 'holland', 'sweden', 'myspots'].includes(newRegion) && localStorage.setItem('lastRegion', newRegion);
+  ['capetown', 'tarifa', 'holland', 'sweden', 'germany', 'myspots'].includes(newRegion) && localStorage.setItem('lastRegion', newRegion);
 });
 </script>
 
