@@ -263,6 +263,23 @@ let regions = [
     ],
   },
   {
+    name: "germany",
+    from: 8,
+    to: 21,
+    spots: [
+      {
+        name: "Rügen - Suhrendorf",
+        slug: "ruegen-suhrendorf",
+        url: "https://www.windguru.cz/48115",
+      },
+      {
+        name: "Loissin",
+        slug: "loissin",
+        url: "https://www.windguru.cz/500783",
+      },
+    ],
+  },
+  {
     name: 'northernkites',
     from: 8,
     to: 21,
