@@ -39,7 +39,7 @@ const routes = [
     component: Region,
     props: true,
     beforeEnter: (to, from, next) => {
-      ['capetown', 'tarifa', 'holland', 'myspots'].includes(to.params.region) && localStorage.setItem('lastRegion', to.params.region);
+      ['capetown', 'tarifa', 'holland', 'germany', 'myspots'].includes(to.params.region) && localStorage.setItem('lastRegion', to.params.region);
       if (to.params.region === 'myspots') {
         requireAuth(to, from, next);
       } else {
