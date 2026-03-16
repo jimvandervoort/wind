@@ -321,6 +321,16 @@ let regions = [
         slug: 'lemorne',
         url: 'https://www.windguru.cz/118',
       },
+      {
+        name: 'Melkbos 🐮',
+        slug: 'melkbos',
+        url: 'https://www.windguru.cz/208274',
+      },
+      {
+        name: 'Van Riebeeckstrand 🏖️',
+        slug: 'riebeeckstrand',
+        url: 'https://www.windguru.cz/973546',
+      }
     ],
   }
 ];
