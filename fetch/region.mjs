@@ -330,6 +330,11 @@ let regions = [
         name: 'Van Riebeeckstrand 🏖️',
         slug: 'riebeeckstrand',
         url: 'https://www.windguru.cz/973546',
+      },
+      {
+        name: 'Cape Hatteras 🌾',
+        slug: 'hatteras',
+        url: 'https://www.windguru.cz/62',
       }
     ],
   }
