@@ -256,8 +256,8 @@ const rangeTranslateX = computed(() => {
 
 input[type="range"] {
   appearance: none;
-  background: none;
-  border: 2px solid #ccc;
+  background: hsl(214, 29%, 40%);
+  border: none;
   outline: none;
   border-radius: .2rem;
   height: .4rem;
