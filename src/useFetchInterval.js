@@ -31,7 +31,7 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
       spot.days.forEach((day, i) => {
         day.batch = Math.floor(i / maxDays) + 1;
         day.forecast.forEach(f => {
-          f.visible = f.gust.value >= threshold;
+          f.visible = f.wind.value >= threshold;
         });
       })
     });
