@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import puppeteer from 'puppeteer';
 
 import regions from './region.mjs';
@@ -5,6 +8,19 @@ import regions from './region.mjs';
 const isProd = process.env.NODE_ENV === "production";
 const headless = (process.env.WIND_HEADLESS || 'true') === 'true';
 const optimizeLoad = (process.env.WIND_OPTIMIZE_LOAD || 'true') === 'true';
+const outputDir = process.env.WIND_OUTPUT_DIR || './public';
+const errorScreenshotDir = path.join(outputDir, 'error_screenshots');
+
+async function screenshotError(page, name) {
+  try {
+    fs.mkdirSync(errorScreenshotDir, { recursive: true });
+    const file = path.join(errorScreenshotDir, `${name}.png`);
+    await page.screenshot({ path: file, fullPage: true });
+    console.error('Saved error screenshot:', file);
+  } catch (e) {
+    console.error('Failed to save error screenshot', e);
+  }
+}
 
 async function getTides(page) {
   return page.evaluate(() => {
@@ -112,23 +128,28 @@ async function getSpotData(page, spotUrl) {
   }
 }
 
-async function loadSpots(browser, spots) {
+async function loadSpots(browser, spots, name) {
   console.log('Loading spots');
   const page = await browser.newPage();
   page.on('request', (request) => shouldLoad(request) ? request.continue() : request.abort());
   await page.setRequestInterception(true);
 
   const datas = [];
-  for (const spot of spots) {
-    console.log('Processing:', spot.slug);
-    const data = await getSpotData(page, spot.url);
-    datas.push({
-      ...spot,
-      data
-    });
+  try {
+    for (const spot of spots) {
+      console.log('Processing:', spot.slug);
+      const data = await getSpotData(page, spot.url);
+      datas.push({
+        ...spot,
+        data
+      });
+    }
+  } catch (e) {
+    await screenshotError(page, name);
+    throw e;
+  } finally {
+    await page.close();
   }
-
-  await page.close();
 
   return datas;
 }
@@ -142,7 +163,7 @@ async function loadRegion(spots, name) {
 
   let result;
   try {
-    result = await loadSpots(browser, spots);
+    result = await loadSpots(browser, spots, name);
   } catch (e) {
     console.error('Error loading spots', e);
     process.exitCode = 1;
