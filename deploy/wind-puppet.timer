@@ -2,7 +2,8 @@
 Description=Scrape windguru
 
 [Timer]
-OnUnitActiveSec=4min
+OnUnitActiveSec=30min
+RandomizedDelaySec=5min
 Persistent=true
 
 [Install]

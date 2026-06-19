@@ -1,4 +1,4 @@
-FROM ghcr.io/puppeteer/puppeteer:23.8.0
+FROM ghcr.io/puppeteer/puppeteer:25.1.0
 
 WORKDIR /wind
 

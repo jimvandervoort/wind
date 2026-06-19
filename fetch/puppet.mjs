@@ -11,6 +11,20 @@ const optimizeLoad = (process.env.WIND_OPTIMIZE_LOAD || 'true') === 'true';
 const outputDir = process.env.WIND_OUTPUT_DIR || './public';
 const errorScreenshotDir = path.join(outputDir, 'error_screenshots');
 
+// Wait between spots so requests aren't a tight burst. Defaults to a random
+// 3-8s pause; tune via WIND_SPOT_DELAY_MIN / WIND_SPOT_DELAY_MAX (ms).
+const spotDelayMin = parseInt(process.env.WIND_SPOT_DELAY_MIN || '3000', 10);
+const spotDelayMax = parseInt(process.env.WIND_SPOT_DELAY_MAX || '8000', 10);
+
+function jitterDelay() {
+  const span = Math.max(0, spotDelayMax - spotDelayMin);
+  return spotDelayMin + Math.floor(Math.random() * (span + 1));
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function screenshotError(page, name) {
   try {
     fs.mkdirSync(errorScreenshotDir, { recursive: true });
@@ -136,7 +150,15 @@ async function loadSpots(browser, spots, name) {
 
   const datas = [];
   try {
+    let first = true;
     for (const spot of spots) {
+      if (!first) {
+        const delay = jitterDelay();
+        console.log(`Waiting ${delay}ms before next spot`);
+        await sleep(delay);
+      }
+      first = false;
+
       console.log('Processing:', spot.slug);
       const data = await getSpotData(page, spot.url);
       datas.push({
