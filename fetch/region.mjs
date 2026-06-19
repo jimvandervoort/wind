@@ -263,19 +263,64 @@ let regions = [
     ],
   },
   {
-    name: "germany",
+    name: 'germany',
     from: 8,
     to: 21,
     spots: [
       {
-        name: "Rügen - Suhrendorf",
-        slug: "ruegen-suhrendorf",
-        url: "https://www.windguru.cz/48115",
+        name: 'Usedom - Ückeritz 🍲',
+        slug: 'ruegen-suhrendorf',
+        url: 'https://www.windguru.cz/48119',
       },
       {
-        name: "Loissin",
-        slug: "loissin",
-        url: "https://www.windguru.cz/500783",
+        name: 'Rügen - Suhrendorf 🪨',
+        slug: 'ruegen-suhrendorf',
+        url: 'https://www.windguru.cz/48115',
+      },
+      {
+        name: 'Rügen - Mukran 🏭',
+        slug: 'ruegen-mukran',
+        url: 'https://www.windguru.cz/48106',
+      },
+      {
+        name: 'Loissin 🏕️',
+        slug: 'loissin',
+        url: 'https://www.windguru.cz/500783',
+      },
+      {
+        name: 'Saaler Bodden 🎏',
+        slug: 'saaler-bodden',
+        url: 'https://www.windguru.cz/122',
+      },
+      {
+        name: 'Ahrenshoop 🌅',
+        slug: 'ahrenshop',
+        url: 'https://www.windguru.cz/48129',
+      },
+      {
+        name: 'Kiel - Laboe 🌇',
+        slug: 'kiel-laboe',
+        url: 'https://www.windguru.cz/48189',
+      },
+      {
+        name: 'Fehmarn - Lemkenhafen 🐂',
+        slug: 'fehmarn-lemkenhafen',
+        url: 'https://www.windguru.cz/48172',
+      },
+      {
+        name: 'St. Peter Ording 🛖',
+        slug: 'st-peter-ording',
+        url: 'https://www.windguru.cz/233',
+      },
+      {
+        name: 'Büsum 𓀄',
+        slug: 'busum',
+        url: 'https://www.windguru.cz/48225',
+      },
+      {
+        name: 'Norddeich 🟩',
+        slug: 'norddeich',
+        url: 'https://www.windguru.cz/500846',
       },
     ],
   },
