@@ -96,7 +96,9 @@ async function fetchLangeWind() {
 }
 
 async function fetchActueleWind() {
-  const response = await fetch('https://actuelewind.nl/getActualSpotData6.php?t=web&p=null');
+  const response = await fetch('https://actuelewind.nl/api/getSpotOverview.php?t=web&p=web&ss=', {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+  });
   return response.json();
 }
 
