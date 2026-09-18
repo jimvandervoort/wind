@@ -99,7 +99,12 @@ async function fetchActueleWind() {
   const response = await fetch('https://actuelewind.nl/api/getSpotOverview.php?t=web&p=web&ss=', {
     headers: { 'User-Agent': 'Mozilla/5.0' },
   });
-  return response.json();
+  const k = await response.json();
+  if (!response.ok || k.error) {
+    const retryAfter = k.retry_after != null ? `, retry_after: ${k.retry_after}` : '';
+    throw new Error(`actuelewind error: ${k.error || response.status}${retryAfter}`);
+  }
+  return k;
 }
 
 function actueleWindStation(actueleWind, sid) {
