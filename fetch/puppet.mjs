@@ -94,7 +94,9 @@ async function getSpotData(page, spotUrl) {
 
   const dates = await page.$eval('#tabid_0_0_dates',
     el => Array.from(el.querySelectorAll('td')).map(td => {
-      const data = td.innerHTML.split('<br>');
+      // Windguru injects extra markup (e.g. <div class="wg-nowline">) into the
+      // current-hour cell, so strip all tags from each <br>-separated part.
+      const data = td.innerHTML.split('<br>').map(part => part.replace(/<[^>]*>/g, '').trim());
       return {
         dayName: data[0],
         dayNum: data[1].replace('.', ''),
