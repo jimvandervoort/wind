@@ -6,8 +6,18 @@ const props = defineProps({
   modelValue: {
     type: Number,
     required: true
+  },
+  windMode: {
+    type: String,
+    default: 'base',
+    validator: (v) => ['gust', 'base'].includes(v)
   }
 });
+
+const windModes = [
+  { value: 'gust', label: 'Gust' },
+  { value: 'base', label: 'Base' },
+];
 
 // p: current position, o: original position, k: stiffness
 function rubberBand(p, o, k = 120) {
@@ -17,7 +27,7 @@ function rubberBand(p, o, k = 120) {
   return o + s * (k * Math.log1p(a / k)); // log1p(x) = log(1+x)
 }
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:windMode']);
 
 const enableRangeDrag = window.location.hash === '#drag';
 let didInteract = localStorage.getItem('didInteractWithWindControls') === 'true';
@@ -62,6 +72,15 @@ const setCloseTimer = () => {
 
 const handleRangeInput = (e) => {
   emit('update:modelValue', parseInt(e.target.value));
+};
+
+const setWindMode = (mode) => {
+  // Treat a toggle tap like a slider release: restart the dismiss timer so the
+  // panel stays open briefly to show the change, then closes on its own.
+  unsetCloseTimer();
+  setCloseTimer();
+  if (mode === props.windMode) return;
+  emit('update:windMode', mode);
 };
 
 const handleScroll = () => {
@@ -151,21 +170,35 @@ const rangeTranslateX = computed(() => {
     leave-from-class="transform opacity-100"
     leave-to-class="transform opacity-0"
   >
-    <div v-if="isSettingsOpen" class="gustsettings bg-slate-900 border-t-[#2d455d] border-t-2 pl-[8rem] pr-8 flex flex-col max-w-lg">
+    <div v-if="isSettingsOpen" class="gustsettings bg-slate-900 border-t-[#2d455d] border-t-2 pl-[8rem] pr-5 flex flex-col max-w-lg">
       <p class="mt-[.4rem]">Show me at least <span class="font-semibold fira-code">{{ modelValue }}</span> knots</p>
-      <input
-        @touchstart="startRangPuff"
-        @mousedown="startRangPuff"
-        @touchend="endRangePuff"
-        @mouseup="endRangePuff"
-        ref="input"
-        class="mt-[.7rem]"
-        type="range"
-        min="10"
-        max="30"
-        :value="modelValue"
-        @input="handleRangeInput"
-      />
+      <div class="mt-[.1rem] flex flex-row items-center gap-3">
+        <input
+          @touchstart="startRangPuff"
+          @mousedown="startRangPuff"
+          @touchend="endRangePuff"
+          @mouseup="endRangePuff"
+          ref="input"
+          class="flex-1 min-w-0"
+          type="range"
+          min="10"
+          max="30"
+          :value="modelValue"
+          @input="handleRangeInput"
+        />
+        <div class="windmode fira-code flex flex-row shrink-0" role="radiogroup" aria-label="Wind value">
+          <button
+            v-for="mode in windModes"
+            :key="mode.value"
+            type="button"
+            role="radio"
+            :aria-checked="windMode === mode.value"
+            class="windmode-option"
+            :class="{ 'isactive': windMode === mode.value }"
+            @click="setWindMode(mode.value)"
+          >{{ mode.label }}</button>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -252,6 +285,32 @@ const rangeTranslateX = computed(() => {
   display: flex;
   transition: none;
   transform: translateX(v-bind('rangeTranslateX'));
+}
+
+.windmode {
+  border: 2px solid #2d455d;
+  border-radius: .4rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+.windmode-option {
+  padding: .15rem .55rem;
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 1.2rem;
+  color: rgba(255, 255, 255, .7);
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.windmode-option + .windmode-option {
+  border-left: 2px solid #2d455d;
+}
+
+.windmode-option.isactive {
+  background: #2d455d;
+  color: #fff;
 }
 
 input[type="range"] {

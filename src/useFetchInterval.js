@@ -5,7 +5,7 @@ const interval = 10_000;
 const myVersion = import.meta.env.VITE_WIND_VERSION ?? 'local';
 const maxDays = new URL(window.location.href).searchParams.get('days') ?? 7;
 
-export function useFetchInterval(windThreshold, regionProp, isCE = false) {
+export function useFetchInterval(windThreshold, regionProp, isCE = false, windMode = ref('base')) {
   const baseReport = ref(null);
   const liveWind = ref({});
   const kiteCount = ref({});
@@ -26,12 +26,13 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
     }));
   });
 
-  const filterDays = (reportData, threshold) => {
+  const filterDays = (reportData, threshold, mode) => {
     reportData.forEach(spot => {
       spot.days.forEach((day, i) => {
         day.batch = Math.floor(i / maxDays) + 1;
         day.forecast.forEach(f => {
-          f.visible = f.wind.value >= threshold;
+          const value = mode === 'gust' ? f.gust.value : f.wind.value;
+          f.visible = value >= threshold;
         });
       })
     });
@@ -39,9 +40,9 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
     return reportData;
   }
 
-  watch(windThreshold, (newValue) => {
+  watch([windThreshold, windMode], ([threshold, mode]) => {
     if (baseReport.value) {
-      filterDays(baseReport.value, newValue);
+      filterDays(baseReport.value, threshold, mode);
     }
   });
 
@@ -83,7 +84,7 @@ export function useFetchInterval(windThreshold, regionProp, isCE = false) {
         }, 120_000);
       }
 
-      baseReport.value = filterDays(fetchedReport, windThreshold.value);
+      baseReport.value = filterDays(fetchedReport, windThreshold.value, windMode.value);
       error.value = null;
     } catch (err) {
       console.error('Report fetch error:', err);

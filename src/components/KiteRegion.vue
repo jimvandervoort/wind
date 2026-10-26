@@ -14,13 +14,19 @@ const props = defineProps({
 const isCustomisable = computed(() => props.region === 'myspots');
 const windThreshold = ref(Number(localStorage.getItem('windThreshold')) || 10);
 const roundedWindThreshold = ref(Math.round(windThreshold.value));
+const storedWindMode = localStorage.getItem('windMode');
+const windMode = ref(storedWindMode === 'gust' ? 'gust' : 'base');
 
 watch(windThreshold, (newValue) => {
   localStorage.setItem('windThreshold', Math.round(newValue));
   roundedWindThreshold.value = Math.round(newValue);
 });
 
-const { report, error } = useFetchInterval(roundedWindThreshold);
+watch(windMode, (newValue) => {
+  localStorage.setItem('windMode', newValue);
+});
+
+const { report, error } = useFetchInterval(roundedWindThreshold, undefined, false, windMode);
 </script>
 
 <template>
@@ -54,5 +60,5 @@ const { report, error } = useFetchInterval(roundedWindThreshold);
     <p class="pt-0 fira-code" v-if="report && report.length > 0">For feedback, compliments and suggestions, email: <a href="mailto:wind@jim.computer" class="underline hover:text-blue-300">wind@jim.computer</a></p>
     <p class="pt-0 fira-code" v-if="report && report.length > 0">This website is built with love and is <a href="https://github.com/jimvandervoort/wind" class="underline hover:text-blue-300">open source</a>&nbsp;❤️</p>
   </div>
-  <WindSpeedControls v-if="report && report.length > 0" v-model="windThreshold" />
+  <WindSpeedControls v-if="report && report.length > 0" v-model="windThreshold" v-model:windMode="windMode" />
 </template>
